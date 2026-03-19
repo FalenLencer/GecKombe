@@ -1,7 +1,7 @@
 ESP32-WROOM32 -> Micro controler
 ESP32-CAM -> Module video
 HPS-0618SG -> Servos
-12V 5000mAh Ni-MH -> Gattery
+12V 5000mAh Ni-MH -> Battery
 MQ-9B -> Gas sensor
 PCA9685 -> Driver for servos
 Buck LM2596 -> Voltage regulator
