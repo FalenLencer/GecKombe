@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QUAD // Robot Control</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">QUAD<span>/</span>BOT</div>
+  <div class="status-bar">
+    <div class="status-dot">
+      <div class="dot" id="dot"></div>
+      <span id="ws-status">DÉCONNECTÉ</span>
+    </div>
+    <span id="latency" style="color:var(--dim)">— ms</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- Robot view -->
+  <div class="panel robot-view">
+    <div class="panel-label">Vue robot</div>
+    <div class="robot-svg-wrap">
+      <svg width="360" height="320" viewBox="0 0 360 320" xmlns="http://www.w3.org/2000/svg">
+        <!-- Corps -->
+        <rect x="110" y="100" width="140" height="80" rx="16"
+          fill="#0d1520" stroke="#1a2a3a" stroke-width="1.5"/>
+        <rect x="118" y="108" width="124" height="64" rx="10"
+          fill="none" stroke="#00d4ff" stroke-width=".8" opacity=".3"/>
+        <!-- Logo centre -->
+        <text x="180" y="145" text-anchor="middle" font-family="Orbitron" font-size="14"
+          fill="#00d4ff" opacity=".6" font-weight="700">QUAD</text>
+        <!-- Capteur MQ-9 indicateur -->
+        <circle cx="180" cy="162" r="5" fill="none" stroke="#00ff88" stroke-width="1" id="mq9-dot"/>
+
+        <!-- Membre postérieur droit (PCA 01+02) -->
+        <g class="leg leg-idle" id="leg-br">
+          <line x1="250" y1="120" x2="295" y2="155" stroke="#1a2a3a" stroke-width="8" stroke-linecap="round"/>
+          <line x1="295" y1="155" x2="310" y2="200" stroke="#1a2a3a" stroke-width="6" stroke-linecap="round"/>
+          <line x1="250" y1="120" x2="295" y2="155" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+          <line x1="295" y1="155" x2="310" y2="200" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round" opacity=".4"/>
+          <circle cx="295" cy="155" r="5" fill="#0d1520" stroke="#00d4ff" stroke-width="1.5"/>
+          <circle cx="310" cy="200" r="4" fill="#0d1520" stroke="#00d4ff" stroke-width="1.5"/>
+          <text x="325" y="135" font-family="DM Mono" font-size="9" fill="#3a5570">PD 01+02</text>
+        </g>
+
+        <!-- Membre postérieur gauche (PCA 03+04) -->
+        <g class="leg leg-idle" id="leg-bl">
+          <line x1="110" y1="120" x2="65" y2="155" stroke="#1a2a3a" stroke-width="8" stroke-linecap="round"/>
+          <line x1="65" y1="155" x2="50" y2="200" stroke="#1a2a3a" stroke-width="6" stroke-linecap="round"/>
+          <line x1="110" y1="120" x2="65" y2="155" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+          <line x1="65" y1="155" x2="50" y2="200" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round" opacity=".4"/>
+          <circle cx="65" cy="155" r="5" fill="#0d1520" stroke="#00d4ff" stroke-width="1.5"/>
+          <circle cx="50" cy="200" r="4" fill="#0d1520" stroke="#00d4ff" stroke-width="1.5"/>
+          <text x="10" y="135" font-family="DM Mono" font-size="9" fill="#3a5570">PG 03+04</text>
+        </g>
+
+        <!-- Membre antérieur droit (PCA 05+06) -->
+        <g class="leg leg-idle" id="leg-fr">
+          <line x1="250" y1="148" x2="295" y2="115" stroke="#1a2a3a" stroke-width="8" stroke-linecap="round"/>
+          <line x1="295" y1="115" x2="310" y2="70" stroke="#1a2a3a" stroke-width="6" stroke-linecap="round"/>
+          <line x1="250" y1="148" x2="295" y2="115" stroke="#ff6b00" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+          <line x1="295" y1="115" x2="310" y2="70" stroke="#ff6b00" stroke-width="1.5" stroke-linecap="round" opacity=".4"/>
+          <circle cx="295" cy="115" r="5" fill="#0d1520" stroke="#ff6b00" stroke-width="1.5"/>
+          <circle cx="310" cy="70" r="4" fill="#0d1520" stroke="#ff6b00" stroke-width="1.5"/>
+          <text x="325" y="200" font-family="DM Mono" font-size="9" fill="#3a5570">AD 05+06</text>
+        </g>
+
+        <!-- Membre antérieur gauche (PCA 07+08) -->
+        <g class="leg leg-idle" id="leg-fl">
+          <line x1="110" y1="148" x2="65" y2="115" stroke="#1a2a3a" stroke-width="8" stroke-linecap="round"/>
+          <line x1="65" y1="115" x2="50" y2="70" stroke="#1a2a3a" stroke-width="6" stroke-linecap="round"/>
+          <line x1="110" y1="148" x2="65" y2="115" stroke="#ff6b00" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+          <line x1="65" y1="115" x2="50" y2="70" stroke="#ff6b00" stroke-width="1.5" stroke-linecap="round" opacity=".4"/>
+          <circle cx="65" cy="115" r="5" fill="#0d1520" stroke="#ff6b00" stroke-width="1.5"/>
+          <circle cx="50" cy="70" r="4" fill="#0d1520" stroke="#ff6b00" stroke-width="1.5"/>
+          <text x="10" y="200" font-family="DM Mono" font-size="9" fill="#3a5570">AG 07+08</text>
+        </g>
+
+        <!-- Légende -->
+        <line x1="118" y1="290" x2="148" y2="290" stroke="#00d4ff" stroke-width="2"/>
+        <text x="154" y="294" font-family="DM Mono" font-size="9" fill="#3a5570">Postérieur</text>
+        <line x1="218" y1="290" x2="248" y2="290" stroke="#ff6b00" stroke-width="2"/>
+        <text x="254" y="294" font-family="DM Mono" font-size="9" fill="#3a5570">Antérieur</text>
+      </svg>
+    </div>
+    <div id="current-cmd" style="text-align:center;font-size:.7rem;letter-spacing:.15em;color:var(--dim);margin-top:.5rem;">
+      EN ATTENTE
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="panel controls-panel">
+    <div class="panel-label">Contrôle</div>
+    <div class="conn-row">
+      <input class="conn-input" id="ip-input" type="text" value="192.168.1.100" placeholder="IP ESP32"/>
+      <button class="conn-btn" onclick="connect()">CONN.</button>
+    </div>
+
+    <div class="dpad">
+      <div class="btn empty"></div>
+      <div class="btn" id="btn-forward"  data-cmd="forward">&#9650;</div>
+      <div class="btn empty"></div>
+      <div class="btn" id="btn-left"     data-cmd="left">&#9664;</div>
+      <div class="btn stop" id="btn-stop" data-cmd="stop">STOP</div>
+      <div class="btn" id="btn-right"    data-cmd="right">&#9654;</div>
+      <div class="btn empty"></div>
+      <div class="btn" id="btn-backward" data-cmd="backward">&#9660;</div>
+      <div class="btn empty"></div>
+    </div>
+
+    <div class="speed-row">
+      <div class="speed-label">
+        <span>VITESSE</span>
+        <span id="speed-val">50%</span>
+      </div>
+      <input type="range" id="speed" min="0" max="100" value="50"
+        oninput="document.getElementById('speed-val').textContent=this.value+'%'">
+    </div>
+  </div>
+
+  <!-- Sensors -->
+  <div class="panel sensor-panel">
+    <div class="panel-label">Capteur MQ-9</div>
+
+    <div class="metric">
+      <div class="metric-row">
+        <span class="metric-name">CO estimé</span>
+        <span class="metric-unit">ppm</span>
+      </div>
+      <div class="metric-val" id="ppm">—</div>
+      <div class="bar-track"><div class="bar-fill" id="ppm-bar" style="width:0%"></div></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem">
+      <div class="metric">
+        <div class="metric-name">Brut ADC</div>
+        <div class="metric-val" style="font-size:1rem" id="raw">—</div>
+      </div>
+      <div class="metric">
+        <div class="metric-name">Tension</div>
+        <div class="metric-val" style="font-size:1rem" id="voltage">—<span class="metric-unit" style="font-size:.65rem">V</span></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:.65rem;letter-spacing:.12em;color:var(--dim)">SEUIL DIGITAL</span>
+      <div class="alert-badge" id="alert-badge">
+        <span id="alert-dot" style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block"></span>
+        <span id="alert-text">NORMAL</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Log -->
+  <div class="panel log-panel" style="grid-column:1;grid-row:3">
+    <div class="panel-label">Journaux</div>
+    <div id="log"></div>
+  </div>
+
+</main>
+
+<script>
+  // ── Config ──────────────────────────────────────────────────
+  const MAX_PPM    = 1000;
+  const WARN_PPM   = 200;
+  const DANGER_PPM = 500;
+  let ws           = null;
+  let pingInterval = null;
+  let pingTime     = 0;
+  let currentCmd   = null;
+  let sendInterval = null;
+
+  // ── WebSocket ───────────────────────────────────────────────
+  function connect() {
+    const ip = document.getElementById('ip-input').value.trim();
+    if (ws) ws.close();
+    log(`Connexion à ws://${ip}/ws ...`, 'entry');
+    ws = new WebSocket(`ws://${ip}/ws`);
+
+    ws.onopen = () => {
+      setStatus(true);
+      log('WebSocket connecté', 'entry');
+      pingInterval = setInterval(sendPing, 2000);
+    };
+
+    ws.onclose = () => {
+      setStatus(false);
+      clearInterval(pingInterval);
+      clearInterval(sendInterval);
+      log('WebSocket déconnecté', 'err');
+    };
+
+    ws.onerror = () => log('Erreur WebSocket', 'err');
+
+    ws.onmessage = (e) => {
+      try {
+        const d = JSON.parse(e.data);
+        if (d.type === 'pong') {
+          document.getElementById('latency').textContent = (Date.now() - pingTime) + ' ms';
+          return;
+        }
+        if (d.type === 'sensor') updateSensors(d);
+      } catch(_) {}
+    };
+  }
+
+  function sendPing() {
+    if (ws?.readyState === 1) {
+      pingTime = Date.now();
+      ws.send(JSON.stringify({ type: 'ping' }));
+    }
+  }
+
+  function sendCmd(cmd) {
+    if (ws?.readyState !== 1) { log('Non connecté', 'warn'); return; }
+    const speed = parseInt(document.getElementById('speed').value);
+    ws.send(JSON.stringify({ type: 'cmd', cmd, speed }));
+    log(`> CMD ${cmd.toUpperCase()} speed=${speed}`, 'cmd');
+  }
+
+  function setStatus(ok) {
+    document.getElementById('dot').className        = 'dot' + (ok ? ' connected' : '');
+    document.getElementById('ws-status').textContent = ok ? 'CONNECTÉ' : 'DÉCONNECTÉ';
+    document.getElementById('ws-status').className  = ok ? 'connected' : '';
+    if (!ok) document.getElementById('latency').textContent = '— ms';
+  }
+
+  // ── Sensors ─────────────────────────────────────────────────
+  function updateSensors(d) {
+    const ppmEl  = document.getElementById('ppm');
+    const ppm    = parseFloat(d.ppm) || 0;
+
+    document.getElementById('raw').textContent     = d.raw ?? '—';
+    document.getElementById('voltage').textContent = d.voltage ? parseFloat(d.voltage).toFixed(2) : '—';
+    ppmEl.textContent = ppm.toFixed(1);
+
+    const pct = Math.min(ppm / MAX_PPM * 100, 100);
+    document.getElementById('ppm-bar').style.width = pct + '%';
+
+    if (ppm >= DANGER_PPM)      ppmEl.className = 'metric-val danger';
+    else if (ppm >= WARN_PPM)   ppmEl.className = 'metric-val warn';
+    else                        ppmEl.className = 'metric-val';
+
+    const badge = document.getElementById('alert-badge');
+    const txt   = document.getElementById('alert-text');
+    if (d.alert) {
+      badge.className = 'alert-badge danger';
+      txt.textContent = 'ALERTE GAZ';
+    } else {
+      badge.className = 'alert-badge';
+      txt.textContent = 'NORMAL';
+    }
+
+    const mq9dot = document.getElementById('mq9-dot');
+    mq9dot.setAttribute('stroke', d.alert ? '#ff3366' : '#00ff88');
+  }
+
+  // ── D-Pad ───────────────────────────────────────────────────
+  const LEG_MAP = {
+    forward:  ['leg-fr','leg-bl'],
+    backward: ['leg-br','leg-fl'],
+    left:     ['leg-fl','leg-bl'],
+    right:    ['leg-fr','leg-br'],
+    stop:     []
+  };
+
+  function activateLegs(cmd) {
+    document.querySelectorAll('.leg').forEach(l => {
+      l.classList.remove('active');
+      l.classList.add('leg-idle');
+    });
+    const active = LEG_MAP[cmd] || [];
+    active.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.classList.add('active'); el.classList.remove('leg-idle'); }
+    });
+    document.getElementById('current-cmd').textContent =
+      cmd === 'stop' ? 'ARRÊT' : cmd.toUpperCase();
+    document.getElementById('current-cmd').style.color =
+      cmd === 'stop' ? 'var(--red)' : 'var(--accent)';
+  }
+
+  function startCmd(cmd, el) {
+    if (currentCmd === cmd) return;
+    stopCmd();
+    currentCmd = cmd;
+    el.classList.add('pressed');
+    activateLegs(cmd);
+    sendCmd(cmd);
+    if (cmd !== 'stop') sendInterval = setInterval(() => sendCmd(cmd), 150);
+  }
+
+  function stopCmd() {
+    if (!currentCmd || currentCmd === 'stop') return;
+    clearInterval(sendInterval);
+    document.querySelectorAll('.btn').forEach(b => b.classList.remove('pressed'));
+    document.querySelectorAll('.leg').forEach(l => { l.classList.remove('active'); l.classList.add('leg-idle'); });
+    document.getElementById('current-cmd').textContent = 'EN ATTENTE';
+    document.getElementById('current-cmd').style.color = 'var(--dim)';
+    currentCmd = null;
+    sendCmd('stop');
+  }
+
+  document.querySelectorAll('.btn[data-cmd]').forEach(btn => {
+    const cmd = btn.dataset.cmd;
+
+    btn.addEventListener('mousedown',  e => { e.preventDefault(); startCmd(cmd, btn); });
+    btn.addEventListener('touchstart', e => { e.preventDefault(); startCmd(cmd, btn); }, { passive: false });
+
+    if (cmd !== 'stop') {
+      btn.addEventListener('mouseup',   () => stopCmd());
+      btn.addEventListener('mouseleave',() => stopCmd());
+      btn.addEventListener('touchend',  () => stopCmd());
+    }
+  });
+
+  // Keyboard
+  const KEY_CMD = { ArrowUp:'forward', ArrowDown:'backward', ArrowLeft:'left', ArrowRight:'right', ' ':'stop' };
+  document.addEventListener('keydown', e => {
+    const cmd = KEY_CMD[e.key];
+    if (!cmd) return;
+    e.preventDefault();
+    const btn = document.querySelector(`.btn[data-cmd="${cmd}"]`);
+    if (btn) startCmd(cmd, btn);
+  });
+  document.addEventListener('keyup', e => {
+    const cmd = KEY_CMD[e.key];
+    if (cmd && cmd !== 'stop') stopCmd();
+  });
+
+  // ── Log ─────────────────────────────────────────────────────
+  function log(msg, cls = 'entry') {
+    const el  = document.getElementById('log');
+    const now = new Date().toLocaleTimeString('fr-FR');
+    el.innerHTML += `<div class="entry ${cls}">[${now}] ${msg}</div>`;
+    el.scrollTop = el.scrollHeight;
+    while (el.children.length > 40) el.removeChild(el.firstChild);
+  }
+
+  log('Dashboard initialisé — entrez l\'IP de l\'ESP32 et cliquez CONN.', 'entry');
+</script>
+</body>
+</html>

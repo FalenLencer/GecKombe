@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Documentation ESP32 — QuadBot</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #f8f7f4;
+    --surface: #ffffff;
+    --border:  #e8e4dc;
+    --accent:  #0f9b6e;
+    --accent2: #e85d04;
+    --blue:    #1a6ef5;
+    --purple:  #6b3fa0;
+    --red:     #c0392b;
+    --text:    #1c1c1c;
+    --muted:   #6b7280;
+    --code-bg: #0f1117;
+    --code-text: #e2e8f0;
+    --tag-ws:  #d1fae5;
+    --tag-ws-t:#065f46;
+    --tag-pca: #fef3c7;
+    --tag-pca-t:#92400e;
+    --tag-mq:  #ede9fe;
+    --tag-mq-t:#4c1d95;
+    --tag-net: #dbeafe;
+    --tag-net-t:#1e40af;
+    --topbar-h: 50px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  nav {
+    width: 268px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 2rem 0;
+    position: sticky;
+    top: var(--topbar-h); /* 🔥 synchro parfaite */
+    height: calc(100vh - var(--topbar-h));
+    overflow-y: auto;
+}
+
+  .nav-brand {
+    padding: 0 1.5rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+  .nav-brand h2 {
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .nav-brand p { font-size: .75rem; color: var(--muted); margin-top: .2rem; }
+
+  .nav-section { padding: .4rem 1.5rem; }
+  .nav-section-title {
+    font-size: .65rem;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: .4rem;
+    margin-top: 1rem;
+  }
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .35rem .6rem;
+    border-radius: 6px;
+    font-size: .8rem;
+    color: var(--text);
+    text-decoration: none;
+    transition: background .15s;
+    margin-bottom: .1rem;
+  }
+  .nav-link:hover { background: var(--bg); }
+  .badge {
+    font-size: .6rem;
+    padding: .1rem .35rem;
+    border-radius: 3px;
+    font-weight: 600;
+    letter-spacing: .05em;
+  }
+  .ws  { background: var(--tag-ws);  color: var(--tag-ws-t);  }
+  .pca { background: var(--tag-pca); color: var(--tag-pca-t); }
+  .mq  { background: var(--tag-mq);  color: var(--tag-mq-t);  }
+  .net { background: var(--tag-net); color: var(--tag-net-t); }
+
+  /* ── Main ── */
+  main {
+    flex: 1;
+    padding: 3rem 4rem;
+    max-width: 920px;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2.5rem;
+    margin-bottom: 3rem;
+  }
+  .hero h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: .75rem;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p { color: var(--muted); max-width: 62ch; }
+
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+    margin: 1.5rem 0;
+    font-size: .82rem;
+  }
+  .flow-box {
+    padding: .35rem .85rem;
+    border-radius: 6px;
+    font-weight: 600;
+    border: 1px solid;
+  }
+  .flow-arrow { color: var(--muted); font-size: 1.1rem; }
+
+  .tags { display: flex; gap: .4rem; flex-wrap: wrap; margin: .6rem 0; }
+  .tag {
+    font-size: .65rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: .15rem .5rem;
+    border-radius: 4px;
+  }
+
+  /* ── Sections ── */
+  .fn-section {
+    margin-bottom: 4rem;
+    scroll-margin-top: 2rem;
+  }
+
+  .fn-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .fn-number {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: .85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .fn-number.orange { background: var(--accent2); }
+  .fn-number.blue   { background: var(--blue); }
+  .fn-number.purple { background: var(--purple); }
+  .fn-number.red    { background: var(--red); }
+
+  .fn-title h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: .3rem; }
+  .fn-name {
+    font-family: 'Fira Code', monospace;
+    font-size: .85rem;
+    color: var(--accent);
+    background: #ecfdf5;
+    padding: .15rem .5rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  p { margin-bottom: .9rem; color: #374151; }
+  p:last-child { margin-bottom: 0; }
+  strong { color: var(--text); font-weight: 600; }
+
+  code {
+    font-family: 'Fira Code', monospace;
+    font-size: .82em;
+    background: #f1f5f9;
+    padding: .1em .35em;
+    border-radius: 3px;
+    color: #1e293b;
+  }
+
+  /* ── Code blocks ── */
+  .code-block {
+    background: var(--code-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 1.2rem 0;
+    border: 1px solid #1e293b;
+  }
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .6rem 1rem;
+    background: #1a2233;
+    border-bottom: 1px solid #1e293b;
+  }
+  .code-lang { font-family: 'Fira Code', monospace; font-size: .7rem; color: #64748b; letter-spacing: .1em; text-transform: uppercase; }
+  .code-desc { font-size: .72rem; color: #475569; }
+  pre { padding: 1.2rem 1.4rem; overflow-x: auto; margin: 0; }
+  pre code {
+    font-family: 'Fira Code', monospace;
+    font-size: .82rem;
+    background: none; padding: 0;
+    color: var(--code-text);
+    line-height: 1.75;
+    white-space: pre;
+  }
+
+  /* Syntax */
+  .kw  { color: #f472b6; }
+  .fn  { color: #60a5fa; }
+  .str { color: #86efac; }
+  .num { color: #fb923c; }
+  .cmt { color: #4b5563; font-style: italic; }
+  .typ { color: #f9a8d4; }
+  .pp  { color: #c084fc; }  /* preprocessor */
+  .cn  { color: #fde68a; }  /* constants */
+
+  /* ── Callouts ── */
+  .callout {
+    border-left: 3px solid;
+    padding: .9rem 1.1rem;
+    border-radius: 0 8px 8px 0;
+    margin: 1.2rem 0;
+    font-size: .88rem;
+  }
+  .callout.info  { border-color: var(--blue);   background: #eff6ff; }
+  .callout.warn  { border-color: #f59e0b; background: #fffbeb; }
+  .callout.tip   { border-color: var(--accent);  background: #ecfdf5; }
+  .callout.danger{ border-color: var(--red);    background: #fef2f2; }
+  .callout-title { font-weight: 700; margin-bottom: .3rem; font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; }
+  .callout.info   .callout-title { color: var(--blue); }
+  .callout.warn   .callout-title { color: #d97706; }
+  .callout.tip    .callout-title { color: var(--accent); }
+  .callout.danger .callout-title { color: var(--red); }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: .85rem;
+  }
+  th {
+    background: #f1f5f9;
+    padding: .5rem .8rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: .78rem;
+    letter-spacing: .05em;
+    border-bottom: 2px solid var(--border);
+  }
+  td {
+    padding: .5rem .8rem;
+    border-bottom: 1px solid var(--border);
+    color: #374151;
+  }
+  td code { font-size: .78rem; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f8fafc; }
+
+  /* ── Steps ── */
+  .steps { list-style: none; padding: 0; }
+  .steps li {
+    display: flex;
+    gap: .9rem;
+    margin-bottom: .9rem;
+    font-size: .88rem;
+    color: #374151;
+  }
+  .step-n {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── ASCII diagram ── */
+  .ascii {
+    background: #0f1117;
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+    font-family: 'Fira Code', monospace;
+    font-size: .78rem;
+    color: #94a3b8;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin: 1.2rem 0;
+  }
+  .ascii .hl  { color: #86efac; }
+  .ascii .hl2 { color: #60a5fa; }
+  .ascii .hl3 { color: #fde68a; }
+  .ascii .hl4 { color: #f9a8d4; }
+
+  .sep { border: none; border-top: 1px solid var(--border); margin: 3rem 0; }
+
+  @media (max-width: 900px) {
+    nav { display: none; }
+    main { padding: 2rem 1.5rem; }
+  }
+
+  .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: .7rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.nav-links a {
+  margin-left: 1rem;
+  text-decoration: none;
+  font-size: .85rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.nav-links a:hover {
+  color: var(--accent);
+}
+
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="nav-left">
+      <a href="index.html" class="brand">QuadBot</a>
+    </div>
+
+    <div class="nav-links">
+      <a href="explication_dashboard.html">Dashboard</a>
+      <a href="explication_esp32.html">ESP32</a>
+    </div>
+  </div>
+
+<div class="layout">
+
+<!-- ── Navigation ── -->
+<nav>
+  <div class="nav-brand">
+    <h2>QuadBot — ESP32</h2>
+    <p>Documentation du firmware C++</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Vue d'ensemble</div>
+    <a href="#architecture" class="nav-link">Architecture</a>
+    <a href="#setup" class="nav-link">setup()</a>
+    <a href="#loop" class="nav-link">loop()</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Réception commandes</div>
+    <a href="#onwsevent" class="nav-link">
+      <span class="badge ws">WS</span> onWsEvent()
+    </a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Déplacement</div>
+    <a href="#tickgait" class="nav-link">
+      <span class="badge pca">PCA</span> tickGait()
+    </a>
+    <a href="#applyframe" class="nav-link">
+      <span class="badge pca">PCA</span> applyFrame()
+    </a>
+    <a href="#setservo" class="nav-link">
+      <span class="badge pca">PCA</span> setServo()
+    </a>
+    <a href="#standstill" class="nav-link">
+      <span class="badge pca">PCA</span> standStill()
+    </a>
+    <a href="#gaits" class="nav-link">
+      <span class="badge pca">PCA</span> Séquences GaitFrame
+    </a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Capteur MQ-9</div>
+    <a href="#readmq9" class="nav-link">
+      <span class="badge mq">MQ9</span> readMQ9()
+    </a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Envoi données</div>
+    <a href="#sendsensor" class="nav-link">
+      <span class="badge net">NET</span> Broadcast sensor
+    </a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Résumé</div>
+    <a href="#flux" class="nav-link">Flux complet</a>
+  </div>
+</nav>
+
+<!-- ── Contenu ── -->
+<main>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>Documentation<br><span>Firmware ESP32</span></h1>
+    <p>Explication détaillée du code C++ embarqué — réception des commandes WebSocket, pilotage du PCA9685, séquences de marche quadrupède, lecture du MQ-9, et envoi des données capteur.</p>
+
+    <div class="flow">
+      <div class="flow-box net" style="background:#dbeafe;color:#1e40af;border-color:#bfdbfe">Dashboard</div>
+      <span class="flow-arrow">⟷</span>
+      <div class="flow-box ws" style="background:#d1fae5;color:#065f46;border-color:#a7f3d0">WebSocket :81</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box ws" style="background:#d1fae5;color:#065f46;border-color:#a7f3d0">onWsEvent()</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box pca" style="background:#fef3c7;color:#92400e;border-color:#fde68a">tickGait()</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box pca" style="background:#fef3c7;color:#92400e;border-color:#fde68a">PCA9685</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box" style="background:#f3e8ff;color:#6b21a8;border-color:#e9d5ff">8 servos</div>
+    </div>
+
+    <div class="tags">
+      <span class="tag ws">WS = WebSocket</span>
+      <span class="tag pca">PCA = PCA9685 / servos</span>
+      <span class="tag mq">MQ9 = capteur gaz</span>
+      <span class="tag net">NET = envoi réseau</span>
+    </div>
+  </div>
+
+  <!-- ── Architecture ── -->
+  <div class="fn-section" id="architecture">
+    <div class="fn-header">
+      <div class="fn-number">0</div>
+      <div class="fn-title">
+        <h2>Architecture du firmware</h2>
+        <div class="tags"><span class="tag ws">WS</span><span class="tag pca">PCA</span><span class="tag mq">MQ9</span></div>
+      </div>
+    </div>
+
+    <p>Le firmware tourne sur un seul cœur de l'ESP32 et gère <strong>trois tâches en parallèle</strong> dans la boucle principale : répondre aux clients WebSocket, avancer d'une frame de marche, et envoyer les données MQ-9 toutes les 2 secondes.</p>
+
+    <div class="ascii">
+<span class="hl">┌─────────────────── loop() — tourne en continu ───────────────────────┐</span>
+│                                                                       │
+│  httpServer.handleClient()  ←── répond aux requêtes HTTP port 80      │
+│  wsServer.loop()            ←── traite les messages WebSocket port 81 │
+│                │                                                      │
+│                └──► <span class="hl2">onWsEvent()</span>  ←── parse JSON, met à jour currentCmd  │
+│                                                                       │
+│  <span class="hl3">tickGait()</span>   ←── avance d'une frame si le délai est écoulé          │
+│       │                                                               │
+│       └──► <span class="hl3">applyFrame()</span>  ──► <span class="hl3">setServo() x8</span>  ──► PCA9685 (I2C)       │
+│                                                        │              │
+│                                                   8 servo-moteurs     │
+│                                                                       │
+│  toutes les 2 s : <span class="hl4">readMQ9()</span>  ──► JSON ──► wsServer.broadcastTXT()  │
+└───────────────────────────────────────────────────────────────────────┘</div>
+
+    <p>Les variables <code>currentCmd</code> et <code>speed</code> sont déclarées <code>volatile</code> car elles sont modifiées depuis le handler WebSocket et lues depuis la boucle principale — deux contextes d'exécution différents.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">Variables d'état globales</span></div>
+      <pre><code><span class="cmt">// Commande en cours — mise à jour par onWsEvent(), lue par tickGait()</span>
+<span class="kw">enum</span> <span class="typ">Command</span> { CMD_STOP, CMD_FORWARD, CMD_BACKWARD, CMD_LEFT, CMD_RIGHT };
+<span class="kw">volatile</span> <span class="typ">Command</span> currentCmd = CMD_STOP;
+
+<span class="cmt">// Vitesse 0-100 reçue du dashboard</span>
+<span class="kw">volatile</span> <span class="typ">uint8_t</span> speed = <span class="num">50</span>;
+
+<span class="cmt">// Index de la frame de marche en cours (avance à chaque tickGait)</span>
+<span class="typ">uint8_t</span>  gaitFrame      = <span class="num">0</span>;
+
+<span class="cmt">// Timestamps pour les timers non-bloquants</span>
+<span class="typ">uint32_t</span> lastGaitStep   = <span class="num">0</span>;  <span class="cmt">// Dernière frame de marche</span>
+<span class="typ">uint32_t</span> lastSensorSend = <span class="num">0</span>;  <span class="cmt">// Dernier envoi MQ-9</span></code></pre>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- ── setup() ── -->
+  <div class="fn-section" id="setup">
+    <div class="fn-header">
+      <div class="fn-number">1</div>
+      <div class="fn-title">
+        <h2>Initialisation — <span class="fn-name">setup()</span></h2>
+        <div class="tags"><span class="tag ws">WS</span><span class="tag pca">PCA</span><span class="tag net">NET</span></div>
+      </div>
+    </div>
+
+    <p>Exécutée <strong>une seule fois</strong> au démarrage. Elle initialise dans l'ordre : les pins GPIO, le PCA9685 via I2C, la connexion WiFi, puis les deux serveurs réseau.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">setup() — séquence d'initialisation complète</span></div>
+      <pre><code><span class="kw">void</span> <span class="fn">setup</span>() {
+  Serial.<span class="fn">begin</span>(<span class="num">115200</span>);
+
+  <span class="cmt">// ── 1. Pins MQ-9 ─────────────────────────────────────────────
+  // GPIO34 = entrée analogique (ADC1, compatible WiFi)
+  // GPIO32 = entrée digitale (seuil du comparateur interne)</span>
+  <span class="fn">pinMode</span>(MQ9_ANALOG_PIN,  INPUT);
+  <span class="fn">pinMode</span>(MQ9_DIGITAL_PIN, INPUT);
+
+  <span class="cmt">// ── 2. PCA9685 via I2C (SDA=GPIO21, SCL=GPIO22) ──────────────
+  // Adresse I2C par défaut : 0x40 (toutes les cavalières ouvertes)</span>
+  Wire.<span class="fn">begin</span>();
+  pca.<span class="fn">begin</span>();
+  pca.<span class="fn">setOscillatorFrequency</span>(<span class="num">27000000</span>); <span class="cmt">// Fréquence interne réelle du quartz</span>
+  pca.<span class="fn">setPWMFreq</span>(<span class="cn">SERVO_FREQ</span>);          <span class="cmt">// 50 Hz = fréquence standard servo</span>
+  <span class="fn">delay</span>(<span class="num">10</span>);
+  <span class="fn">standStill</span>();  <span class="cmt">// Place tous les servos en position neutre au démarrage</span>
+
+  <span class="cmt">// ── 3. Connexion WiFi ─────────────────────────────────────────</span>
+  WiFi.<span class="fn">begin</span>(SSID, PASSWORD);
+  <span class="kw">while</span> (WiFi.<span class="fn">status</span>() != WL_CONNECTED) {
+    <span class="fn">delay</span>(<span class="num">500</span>);
+    Serial.<span class="fn">print</span>(<span class="str">"."</span>);
+  }
+  <span class="cmt">// Affiche l'IP à ouvrir dans le dashboard</span>
+  Serial.<span class="fn">printf</span>(<span class="str">"\nIP : http://%s\n"</span>, WiFi.<span class="fn">localIP</span>().<span class="fn">toString</span>().c_str());
+
+  <span class="cmt">// ── 4. Serveur HTTP port 80 (page de statut simple) ───────────</span>
+  httpServer.<span class="fn">on</span>(<span class="str">"/"</span>, handleRoot);
+  httpServer.<span class="fn">begin</span>();
+
+  <span class="cmt">// ── 5. Serveur WebSocket port 81 ─────────────────────────────
+  // onWsEvent est le callback appelé à chaque événement WebSocket</span>
+  wsServer.<span class="fn">begin</span>();
+  wsServer.<span class="fn">onEvent</span>(onWsEvent);
+}</code></pre>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-title">Pourquoi setOscillatorFrequency(27000000) ?</div>
+      Le PCA9685 possède un oscillateur interne censé fonctionner à 25 MHz, mais en pratique la plupart des modules chinois oscillent à ~27 MHz. Sans cette correction, la fréquence PWM réelle serait ~54 Hz au lieu de 50 Hz, et les servos recevraient des impulsions légèrement décalées — ce qui les ferait vibrer ou se positionner incorrectement.
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- ── loop() ── -->
+  <div class="fn-section" id="loop">
+    <div class="fn-header">
+      <div class="fn-number">2</div>
+      <div class="fn-title">
+        <h2>Boucle principale — <span class="fn-name">loop()</span></h2>
+        <div class="tags"><span class="tag ws">WS</span><span class="tag pca">PCA</span><span class="tag mq">MQ9</span></div>
+      </div>
+    </div>
+
+    <p>Tourne en permanence après <code>setup()</code>. Elle ne contient <strong>aucun <code>delay()</code></strong> — tout est géré par des timers non-bloquants basés sur <code>millis()</code>. Cela permet de traiter les WebSocket et de faire avancer la marche simultanément sans qu'une tâche bloque l'autre.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">loop() — trois tâches en parallèle sans blocage</span></div>
+      <pre><code><span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="cmt">// ── Tâche 1 : réseau ─────────────────────────────────────────
+  // handleClient() traite les requêtes HTTP en attente
+  // wsServer.loop() traite les messages WebSocket et appelle onWsEvent()</span>
+  httpServer.<span class="fn">handleClient</span>();
+  wsServer.<span class="fn">loop</span>();
+
+  <span class="cmt">// ── Tâche 2 : marche ─────────────────────────────────────────
+  // tickGait() vérifie en interne si le délai entre frames est écoulé
+  // Si oui → avance d'une frame et pilote les servos
+  // Si non → retour immédiat sans rien faire</span>
+  <span class="fn">tickGait</span>();
+
+  <span class="cmt">// ── Tâche 3 : envoi capteur MQ-9 toutes les 2 secondes ────────</span>
+  <span class="kw">if</span> (<span class="fn">millis</span>() - lastSensorSend > <span class="num">2000</span>) {
+    lastSensorSend = <span class="fn">millis</span>();
+
+    <span class="typ">SensorData</span> d = <span class="fn">readMQ9</span>();
+
+    <span class="cmt">// Construit le JSON et le diffuse à tous les clients connectés</span>
+    <span class="typ">StaticJsonDocument</span>&lt;<span class="num">160</span>&gt; doc;
+    doc[<span class="str">"type"</span>]    = <span class="str">"sensor"</span>;
+    doc[<span class="str">"raw"</span>]     = d.raw;
+    doc[<span class="str">"voltage"</span>] = <span class="fn">serialized</span>(<span class="typ">String</span>(d.voltage, <span class="num">3</span>));
+    doc[<span class="str">"ppm"</span>]     = <span class="fn">serialized</span>(<span class="typ">String</span>(d.ppm,     <span class="num">1</span>));
+    doc[<span class="str">"alert"</span>]   = d.alert;
+
+    <span class="typ">String</span> out;
+    <span class="fn">serializeJson</span>(doc, out);
+    wsServer.<span class="fn">broadcastTXT</span>(out);  <span class="cmt">// Envoi à tous les clients WebSocket</span>
+  }
+}</code></pre>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-title">Pourquoi pas de delay() ?</div>
+      Un <code>delay(100)</code> bloquerait tout : pendant ces 100 ms, aucun paquet WebSocket ne serait traité, la marche serait hachée, et le dashboard verrait la connexion comme instable. La technique <code>millis()</code> permet de "vérifier" si le temps est écoulé sans jamais bloquer le processeur.
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- ── onWsEvent() ── -->
+  <div class="fn-section" id="onwsevent">
+    <div class="fn-header">
+      <div class="fn-number orange">3</div>
+      <div class="fn-title">
+        <h2>Réception des commandes — <span class="fn-name">onWsEvent()</span></h2>
+        <div class="tags"><span class="tag ws">WebSocket entrant</span></div>
+      </div>
+    </div>
+
+    <p>C'est la fonction appelée automatiquement par la librairie WebSocketsServer à chaque événement réseau. Elle reçoit les messages JSON du dashboard, les décode, et met à jour <code>currentCmd</code> et <code>speed</code> — les deux variables que <code>tickGait()</code> lit pour savoir quoi faire.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">onWsEvent() — parsing JSON et routage des commandes</span></div>
+      <pre><code><span class="kw">void</span> <span class="fn">onWsEvent</span>(<span class="typ">uint8_t</span> num, <span class="typ">WStype_t</span> type,
+               <span class="typ">uint8_t</span>* payload, <span class="typ">size_t</span> length) {
+
+  <span class="cmt">// L'événement WStype_TEXT signifie qu'un message texte a été reçu
+  // (le dashboard envoie toujours du JSON texte)</span>
+  <span class="kw">if</span> (type == <span class="cn">WStype_TEXT</span>) {
+
+    <span class="cmt">// Décode le JSON reçu dans un document de 128 octets max
+    // StaticJsonDocument alloue sur la pile (pas de malloc)</span>
+    <span class="typ">StaticJsonDocument</span>&lt;<span class="num">128</span>&gt; doc;
+    <span class="kw">if</span> (<span class="fn">deserializeJson</span>(doc, payload, length)) <span class="kw">return</span>; <span class="cmt">// JSON invalide → ignore</span>
+
+    <span class="kw">const char</span>* t = doc[<span class="str">"type"</span>];
+    <span class="kw">if</span> (!t) <span class="kw">return</span>;
+
+    <span class="cmt">// ── Ping du dashboard → répondre immédiatement ────────────────
+    // Le dashboard mesure Date.now() - pingTime pour calculer la latence</span>
+    <span class="kw">if</span> (<span class="fn">strcmp</span>(t, <span class="str">"ping"</span>) == <span class="num">0</span>) {
+      wsServer.<span class="fn">sendTXT</span>(num, <span class="str">"{\"type\":\"pong\"}"</span>);
+      <span class="kw">return</span>;
+    }
+
+    <span class="cmt">// ── Commande de déplacement ───────────────────────────────────</span>
+    <span class="kw">if</span> (<span class="fn">strcmp</span>(t, <span class="str">"cmd"</span>) == <span class="num">0</span>) {
+      <span class="kw">const char</span>* cmd = doc[<span class="str">"cmd"</span>];
+
+      <span class="cmt">// Extrait la vitesse (0-100), valeur par défaut 50 si absente</span>
+      speed = <span class="fn">constrain</span>((<span class="kw">int</span>)doc[<span class="str">"speed"</span>] | <span class="num">50</span>, <span class="num">0</span>, <span class="num">100</span>);
+
+      <span class="cmt">// Met à jour currentCmd — tickGait() la lira au prochain cycle</span>
+      <span class="kw">if</span>      (<span class="fn">strcmp</span>(cmd, <span class="str">"forward"</span>)  == <span class="num">0</span>) currentCmd = CMD_FORWARD;
+      <span class="kw">else if</span> (<span class="fn">strcmp</span>(cmd, <span class="str">"backward"</span>) == <span class="num">0</span>) currentCmd = CMD_BACKWARD;
+      <span class="kw">else if</span> (<span class="fn">strcmp</span>(cmd, <span class="str">"left"</span>)     == <span class="num">0</span>) currentCmd = CMD_LEFT;
+      <span class="kw">else if</span> (<span class="fn">strcmp</span>(cmd, <span class="str">"right"</span>)    == <span class="num">0</span>) currentCmd = CMD_RIGHT;
+      <span class="kw">else</span>                                    currentCmd = CMD_STOP;
+
+      gaitFrame = <span class="num">0</span>; <span class="cmt">// Repart du début de la séquence à chaque nouvelle commande</span>
+    }
+  }
+
+  <span class="cmt">// Déconnexion d'un client → sécurité : immobiliser le robot</span>
+  <span class="kw">if</span> (type == <span class="cn">WStype_DISCONNECTED</span>) {
+    currentCmd = CMD_STOP;
+    <span class="fn">standStill</span>(); <span class="cmt">// Servobrakes en position neutre immédiatement</span>
+  }
+}</code></pre>
+    </div>
+
+    <p>Le paramètre <code>num</code> est l'identifiant du client WebSocket. Un même ESP32 peut gérer plusieurs clients connectés simultanément — <code>sendTXT(num, ...)</code> répond uniquement au client qui a envoyé le message, tandis que <code>broadcastTXT()</code> envoie à tous.</p>
+
+    <div class="callout warn">
+      <div class="callout-title">Sécurité — déconnexion</div>
+      Si le WiFi coupe ou si le navigateur est fermé, <code>WStype_DISCONNECTED</code> est déclenché. Sans le <code>standStill()</code> à cet endroit, les servos continueraient la dernière frame de marche indéfiniment — le robot marcherait sans contrôle.
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- ── tickGait() ── -->
+  <div class="fn-section" id="tickgait">
+    <div class="fn-header">
+      <div class="fn-number blue">4</div>
+      <div class="fn-title">
+        <h2>Moteur de marche — <span class="fn-name">tickGait()</span></h2>
+        <div class="tags"><span class="tag pca">PCA9685</span></div>
+      </div>
+    </div>
+
+    <p>Appelée à chaque tour de <code>loop()</code>, elle décide si le moment est venu d'avancer d'une frame de marche. Si la commande est <code>STOP</code>, elle immobilise le robot. Sinon, elle sélectionne la bonne séquence et appelle <code>applyFrame()</code>.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">tickGait() — timer non-bloquant et sélection de séquence</span></div>
+      <pre><code><span class="cmt">// Calcule le délai entre deux frames selon la vitesse reçue du dashboard
+// speed=0   → 400 ms entre chaque frame (très lent)
+// speed=100 → 80 ms entre chaque frame  (rapide)</span>
+<span class="typ">uint32_t</span> <span class="fn">gaitDelay</span>() {
+  <span class="kw">return</span> (<span class="typ">uint32_t</span>)<span class="fn">map</span>(speed, <span class="num">0</span>, <span class="num">100</span>, <span class="num">400</span>, <span class="num">80</span>);
+}
+
+<span class="kw">void</span> <span class="fn">tickGait</span>() {
+  <span class="cmt">// Timer non-bloquant : si le délai n'est pas écoulé, on ne fait rien</span>
+  <span class="kw">if</span> (<span class="fn">millis</span>() - lastGaitStep &lt; <span class="fn">gaitDelay</span>()) <span class="kw">return</span>;
+  lastGaitStep = <span class="fn">millis</span>();
+
+  <span class="cmt">// Sélectionne la séquence de marche selon la commande active</span>
+  <span class="kw">switch</span> (currentCmd) {
+
+    <span class="kw">case</span> CMD_FORWARD:
+      <span class="cmt">// GAIT_FORWARD contient 4 frames → modulo 4 pour boucler</span>
+      <span class="fn">applyFrame</span>(GAIT_FORWARD[gaitFrame % <span class="num">4</span>]);
+      gaitFrame++;
+      <span class="kw">break</span>;
+
+    <span class="kw">case</span> CMD_BACKWARD:
+      <span class="fn">applyFrame</span>(GAIT_BACKWARD[gaitFrame % <span class="num">4</span>]);
+      gaitFrame++;
+      <span class="kw">break</span>;
+
+    <span class="kw">case</span> CMD_LEFT:
+      <span class="cmt">// Les virages n'ont que 2 frames</span>
+      <span class="fn">applyFrame</span>(GAIT_LEFT[gaitFrame % <span class="num">2</span>]);
+      gaitFrame++;
+      <span class="kw">break</span>;
+
+    <span class="kw">case</span> CMD_RIGHT:
+      <span class="fn">applyFrame</span>(GAIT_RIGHT[gaitFrame % <span class="num">2</span>]);
+      gaitFrame++;
+      <span class="kw">break</span>;
+
+    <span class="kw">case</span> CMD_STOP:
+    <span class="kw">default</span>:
+      <span class="fn">standStill</span>();
+      <span class="kw">break</span>;
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- ── GaitFrame ── -->
+  <div class="fn-section" id="gaits">
+    <div class="fn-header">
+      <div class="fn-number blue">5</div>
+      <div class="fn-title">
+        <h2>Séquences de marche — <span class="fn-name">GaitFrame</span></h2>
+        <div class="tags"><span class="tag pca">PCA9685</span></div>
+      </div>
+    </div>
+
+    <p>Chaque <code>GaitFrame</code> est un <strong>instantané de position</strong> : il décrit exactement où doit être chaque hanche et chaque genou des 4 membres à un instant donné. Enchaîner plusieurs frames crée l'illusion du mouvement.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">Structure GaitFrame et mapping des membres</span></div>
+      <pre><code><span class="cmt">// Position d'un membre : hanche + genou, en ticks PCA9685</span>
+<span class="kw">struct</span> <span class="typ">LegPos</span> { <span class="typ">uint16_t</span> hip; <span class="typ">uint16_t</span> knee; };
+
+<span class="cmt">// Un instantané complet des 4 membres</span>
+<span class="kw">struct</span> <span class="typ">GaitFrame</span> {
+  <span class="typ">LegPos</span> br;  <span class="cmt">// Postérieur Droit  → ch0 (LED01) + ch1 (LED02)</span>
+  <span class="typ">LegPos</span> bl;  <span class="cmt">// Postérieur Gauche → ch2 (LED03) + ch3 (LED04)</span>
+  <span class="typ">LegPos</span> fr;  <span class="cmt">// Antérieur Droit   → ch4 (LED05) + ch5 (LED06)</span>
+  <span class="typ">LegPos</span> fl;  <span class="cmt">// Antérieur Gauche  → ch6 (LED07) + ch7 (LED08)</span>
+};
+
+<span class="cmt">// Ticks PCA9685 à 50 Hz (4096 ticks = une période de 20 ms)
+// SERVO_MIN=150 ≈ 0°   SERVO_MID=375 ≈ 90°   SERVO_MAX=600 ≈ 180°
+// Ces valeurs sont à calibrer selon ton modèle de servo</span>
+<span class="pp">#define</span> <span class="cn">SERVO_MIN</span>  <span class="num">150</span>
+<span class="pp">#define</span> <span class="cn">SERVO_MID</span>  <span class="num">375</span>
+<span class="pp">#define</span> <span class="cn">SERVO_MAX</span>  <span class="num">600</span></code></pre>
+    </div>
+
+    <p>La marche utilise un <strong>trot diagonal</strong> : deux membres diagonalement opposés bougent ensemble pendant que les deux autres restent en appui. C'est la démarche naturelle des quadrupèdes à vitesse moyenne.</p>
+
+    <div class="ascii">
+<span class="hl">Trot diagonal — vue de dessus du robot</span>
+
+  Phase 1 : FR + BL lèvent         Phase 2 : FL + BR lèvent
+  ┌────────────────────┐            ┌────────────────────┐
+  │  FL ●          FR ↑│            │  FL ↑          FR ●│
+  │                    │            │                    │
+  │  BL ↑          BR ●│            │  BL ●          BR ↑│
+  └────────────────────┘            └────────────────────┘
+  <span class="hl2">● = pied au sol (appui)</span>              <span class="hl3">↑ = pied levé (avance)</span></div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">Séquence GAIT_FORWARD — 4 frames de trot diagonal</span></div>
+      <pre><code><span class="kw">const</span> <span class="typ">GaitFrame</span> GAIT_FORWARD[<span class="num">4</span>] = {
+
+  <span class="cmt">// Frame 0 : FR et BL se lèvent, FL et BR restent en appui</span>
+  { {<span class="cn">SERVO_MID</span>,      <span class="cn">SERVO_MID</span>},        <span class="cmt">// BR : hanche et genou neutres (appui)</span>
+    {<span class="cn">SERVO_MID</span>+<span class="num">50</span>,   <span class="cn">SERVO_MID</span>-<span class="num">60</span>},    <span class="cmt">// BL : hanche avance, genou se lève</span>
+    {<span class="cn">SERVO_MID</span>-<span class="num">50</span>,   <span class="cn">SERVO_MID</span>-<span class="num">60</span>},    <span class="cmt">// FR : hanche avance, genou se lève</span>
+    {<span class="cn">SERVO_MID</span>,      <span class="cn">SERVO_MID</span>} },      <span class="cmt">// FL : neutre (appui)</span>
+
+  <span class="cmt">// Frame 1 : FR et BL se posent en avant</span>
+  { {<span class="cn">SERVO_MID</span>,      <span class="cn">SERVO_MID</span>},
+    {<span class="cn">SERVO_MID</span>-<span class="num">30</span>,   <span class="cn">SERVO_MID</span>},        <span class="cmt">// BL : genou redescend, pied se pose</span>
+    {<span class="cn">SERVO_MID</span>+<span class="num">30</span>,   <span class="cn">SERVO_MID</span>},        <span class="cmt">// FR : genou redescend, pied se pose</span>
+    {<span class="cn">SERVO_MID</span>,      <span class="cn">SERVO_MID</span>} },
+
+  <span class="cmt">// Frame 2 : FL et BR se lèvent, FR et BL restent en appui</span>
+  { {<span class="cn">SERVO_MID</span>+<span class="num">50</span>,   <span class="cn">SERVO_MID</span>-<span class="num">60</span>},    <span class="cmt">// BR : hanche avance, genou se lève</span>
+    {<span class="cn">SERVO_MID</span>,      <span class="cn">SERVO_MID</span>},
+    {<span class="cn">SERVO_MID</span>,      <span class="cn">SERVO_MID</span>},
+    {<span class="cn">SERVO_MID</span>-<span class="num">50</span>,   <span class="cn">SERVO_MID</span>-<span class="num">60</span>} },  <span class="cmt">// FL : hanche avance, genou se lève</span>
+
+  <span class="cmt">// Frame 3 : FL et BR se posent en avant</span>
+  { {<span class="cn">SERVO_MID</span>-<span class="num">30</span>,   <span class="cn">SERVO_MID</span>},
+    {<span class="cn">SERVO_MID</span>,      <span class="cn">SERVO_MID</span>},
+    {<span class="cn">SERVO_MID</span>,      <span class="cn">SERVO_MID</span>},
+    {<span class="cn">SERVO_MID</span>+<span class="num">30</span>,   <span class="cn">SERVO_MID</span>} }
+};</code></pre>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-title">Comment calibrer les frames</div>
+      Les deltas comme <code>+50</code> ou <code>-60</code> sont des points de départ. Pour les affiner : branche un seul servo, envoie manuellement des ticks via <code>pca.setPWM(ch, 0, valeur)</code> et observe l'angle obtenu. Ajuste ensuite les frames selon la géométrie réelle de tes membres.
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- ── applyFrame() ── -->
+  <div class="fn-section" id="applyframe">
+    <div class="fn-header">
+      <div class="fn-number blue">6</div>
+      <div class="fn-title">
+        <h2>Application d'une frame — <span class="fn-name">applyFrame()</span></h2>
+        <div class="tags"><span class="tag pca">PCA9685 I2C</span></div>
+      </div>
+    </div>
+
+    <p>Reçoit un <code>GaitFrame</code> et envoie les 8 positions (4 hanches + 4 genoux) au PCA9685 via I2C. C'est la fonction qui <strong>traduit les données en mouvement physique</strong>.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">applyFrame() — envoi de 8 positions servo au PCA9685</span></div>
+      <pre><code><span class="kw">void</span> <span class="fn">applyFrame</span>(<span class="kw">const</span> <span class="typ">GaitFrame</span>&amp; f) {
+  <span class="cmt">// Postérieur Droit  — LED01 (ch0) = hanche, LED02 (ch1) = genou</span>
+  <span class="fn">setServo</span>(<span class="cn">SERVO_BR_HIP</span>,  f.br.hip);
+  <span class="fn">setServo</span>(<span class="cn">SERVO_BR_KNEE</span>, f.br.knee);
+
+  <span class="cmt">// Postérieur Gauche — LED03 (ch2) = hanche, LED04 (ch3) = genou</span>
+  <span class="fn">setServo</span>(<span class="cn">SERVO_BL_HIP</span>,  f.bl.hip);
+  <span class="fn">setServo</span>(<span class="cn">SERVO_BL_KNEE</span>, f.bl.knee);
+
+  <span class="cmt">// Antérieur Droit   — LED05 (ch4) = hanche, LED06 (ch5) = genou</span>
+  <span class="fn">setServo</span>(<span class="cn">SERVO_FR_HIP</span>,  f.fr.hip);
+  <span class="fn">setServo</span>(<span class="cn">SERVO_FR_KNEE</span>, f.fr.knee);
+
+  <span class="cmt">// Antérieur Gauche  — LED07 (ch6) = hanche, LED08 (ch7) = genou</span>
+  <span class="fn">setServo</span>(<span class="cn">SERVO_FL_HIP</span>,  f.fl.hip);
+  <span class="fn">setServo</span>(<span class="cn">SERVO_FL_KNEE</span>, f.fl.knee);
+}
+
+<span class="cmt">// Mapping des canaux PCA9685 → constantes définies en haut du fichier</span>
+<span class="pp">#define</span> <span class="cn">SERVO_BR_HIP</span>   <span class="num">0</span>   <span class="cmt">// ch0 = LED01</span>
+<span class="pp">#define</span> <span class="cn">SERVO_BR_KNEE</span>  <span class="num">1</span>   <span class="cmt">// ch1 = LED02</span>
+<span class="pp">#define</span> <span class="cn">SERVO_BL_HIP</span>   <span class="num">2</span>   <span class="cmt">// ch2 = LED03</span>
+<span class="pp">#define</span> <span class="cn">SERVO_BL_KNEE</span>  <span class="num">3</span>   <span class="cmt">// ch3 = LED04</span>
+<span class="pp">#define</span> <span class="cn">SERVO_FR_HIP</span>   <span class="num">4</span>   <span class="cmt">// ch4 = LED05</span>
+<span class="pp">#define</span> <span class="cn">SERVO_FR_KNEE</span>  <span class="num">5</span>   <span class="cmt">// ch5 = LED06</span>
+<span class="pp">#define</span> <span class="cn">SERVO_FL_HIP</span>   <span class="num">6</span>   <span class="cmt">// ch6 = LED07</span>
+<span class="pp">#define</span> <span class="cn">SERVO_FL_KNEE</span>  <span class="num">7</span>   <span class="cmt">// ch7 = LED08</span></code></pre>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- ── setServo() ── -->
+  <div class="fn-section" id="setservo">
+    <div class="fn-header">
+      <div class="fn-number blue">7</div>
+      <div class="fn-title">
+        <h2>Pilotage d'un servo — <span class="fn-name">setServo()</span></h2>
+        <div class="tags"><span class="tag pca">PCA9685 PWM</span></div>
+      </div>
+    </div>
+
+    <p>Envoie une commande PWM à un canal précis du PCA9685. Elle protège les servos en <strong>bornant la valeur</strong> entre <code>SERVO_MIN</code> et <code>SERVO_MAX</code> — un dépassement mécaniquement dangereux est ainsi impossible.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">setServo() — envoi PWM sécurisé au PCA9685</span></div>
+      <pre><code><span class="kw">void</span> <span class="fn">setServo</span>(<span class="typ">uint8_t</span> ch, <span class="typ">uint16_t</span> ticks) {
+  <span class="cmt">// constrain() empêche d'envoyer une valeur hors des limites mécaniques
+  // Un servo forcé hors de sa plage peut brûler son moteur interne</span>
+  ticks = <span class="fn">constrain</span>(ticks, <span class="cn">SERVO_MIN</span>, <span class="cn">SERVO_MAX</span>);
+
+  <span class="cmt">// setPWM(canal, délai_début, délai_fin)
+  //   canal       = 0 à 15 sur le PCA9685
+  //   délai_début = 0 (impulsion commence au début de la période)
+  //   délai_fin   = ticks (nombre de ticks avant la fin de l'impulsion)
+  //
+  // À 50 Hz : période = 20 ms = 4096 ticks
+  //   150 ticks → impulsion de 150/4096 × 20 ms ≈ 0.73 ms ≈ 0°
+  //   375 ticks → impulsion de 375/4096 × 20 ms ≈ 1.83 ms ≈ 90°
+  //   600 ticks → impulsion de 600/4096 × 20 ms ≈ 2.93 ms ≈ 180°</span>
+  pca.<span class="fn">setPWM</span>(ch, <span class="num">0</span>, ticks);
+}</code></pre>
+    </div>
+
+    <table>
+      <thead><tr><th>Ticks</th><th>Durée impulsion</th><th>Angle approximatif</th></tr></thead>
+      <tbody>
+        <tr><td><code>150</code> (SERVO_MIN)</td><td>~0.73 ms</td><td>~0°</td></tr>
+        <tr><td><code>375</code> (SERVO_MID)</td><td>~1.83 ms</td><td>~90° (position neutre)</td></tr>
+        <tr><td><code>600</code> (SERVO_MAX)</td><td>~2.93 ms</td><td>~180°</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="sep">
+
+  <!-- ── standStill() ── -->
+  <div class="fn-section" id="standstill">
+    <div class="fn-header">
+      <div class="fn-number blue">8</div>
+      <div class="fn-title">
+        <h2>Posture neutre — <span class="fn-name">standStill()</span></h2>
+        <div class="tags"><span class="tag pca">PCA9685</span></div>
+      </div>
+    </div>
+
+    <p>Place tous les servos en position <code>SERVO_MID</code> (90°). Appelée au démarrage, à l'arrêt et à la déconnexion du dashboard. C'est la posture de repos du robot — debout, stable, prêt à recevoir des commandes.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">standStill() — posture neutre tous servos à 90°</span></div>
+      <pre><code><span class="kw">void</span> <span class="fn">standStill</span>() {
+  <span class="cmt">// Construit un GaitFrame où tous les membres sont en position neutre
+  // STAND = { SERVO_MID, SERVO_MID } pour hanche et genou</span>
+  <span class="fn">applyFrame</span>({ <span class="cn">STAND</span>, <span class="cn">STAND</span>, <span class="cn">STAND</span>, <span class="cn">STAND</span> });
+
+  <span class="cmt">// Remet le compteur de frame à 0 pour que la prochaine commande
+  // reparte proprement depuis le début de sa séquence</span>
+  gaitFrame = <span class="num">0</span>;
+}
+
+<span class="kw">const</span> <span class="typ">LegPos</span> STAND = { <span class="cn">SERVO_MID</span>, <span class="cn">SERVO_MID</span> }; <span class="cmt">// { 375, 375 }</span></code></pre>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- ── readMQ9() ── -->
+  <div class="fn-section" id="readmq9">
+    <div class="fn-header">
+      <div class="fn-number purple">9</div>
+      <div class="fn-title">
+        <h2>Lecture du capteur gaz — <span class="fn-name">readMQ9()</span></h2>
+        <div class="tags"><span class="tag mq">MQ-9 ADC</span></div>
+      </div>
+    </div>
+
+    <p>Lit les deux sorties du module MQ-9 et calcule une estimation en ppm de CO. Le calcul suit la courbe caractéristique publiée dans la datasheet du MQ-9, modélisée par une loi puissance <strong>log-log</strong>.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">readMQ9() — lecture ADC et calcul ppm CO</span></div>
+      <pre><code><span class="typ">SensorData</span> <span class="fn">readMQ9</span>() {
+  <span class="typ">SensorData</span> d;
+
+  <span class="cmt">// ── Lecture analogique (GPIO34, ADC1) ─────────────────────────
+  // analogRead() retourne 0-4095 (résolution 12 bits de l'ESP32)
+  // GPIO34 est sur ADC1 → compatible avec le WiFi actif</span>
+  d.raw = <span class="fn">analogRead</span>(<span class="cn">MQ9_ANALOG_PIN</span>);
+
+  <span class="cmt">// ── Lecture digitale (GPIO32) ─────────────────────────────────
+  // LOW = le comparateur interne du module a détecté un dépassement
+  // Le seuil est réglable via le potentiomètre bleu du module</span>
+  d.alert = <span class="fn">digitalRead</span>(<span class="cn">MQ9_DIGITAL_PIN</span>) == LOW;
+
+  <span class="cmt">// ── Conversion en volts ───────────────────────────────────────
+  // L'ADC 12 bits de l'ESP32 couvre 0 à 3.3V
+  // tension = (raw / 4095) × 3.3</span>
+  d.voltage = (d.raw / <span class="num">4095.0f</span>) * <span class="num">3.3f</span>;
+
+  <span class="cmt">// ── Calcul de RS (résistance du capteur) ──────────────────────
+  // Le module MQ-9 est un pont diviseur de tension :
+  //   VCC ─── RS(capteur) ─── Vout ─── RL(résistance charge) ─── GND
+  // D'où : RS = RL × (VCC - Vout) / Vout
+  // RL_VALUE = 10 kΩ (valeur typique sur les modules MQ-9)</span>
+  <span class="kw">if</span> (d.voltage > <span class="num">0.01f</span>) {
+    d.rs = <span class="cn">RL_VALUE</span> * (<span class="num">3.3f</span> - d.voltage) / d.voltage;
+  } <span class="kw">else</span> {
+    d.rs = <span class="num">0</span>;
+  }
+
+  <span class="cmt">// ── Calcul du ratio RS/RO ─────────────────────────────────────
+  // RO = résistance du capteur dans l'air pur (à calibrer)
+  // Plus le ratio est bas, plus la concentration de gaz est élevée</span>
+  d.ratio = d.rs / <span class="cn">RO</span>;
+
+  <span class="cmt">// ── Estimation CO en ppm (courbe datasheet MQ-9) ─────────────
+  // La datasheet donne une droite en échelle log-log :
+  //   log(ppm) = a × log(RS/RO) + b
+  // Soit en linéaire :  ppm = a × (RS/RO)^b
+  // Pour le CO : a = 599.65, b = -2.244
+  // (valeurs ajustées depuis la courbe graphique de la datasheet)</span>
+  <span class="kw">if</span> (d.ratio > <span class="num">0</span>) {
+    d.ppm = <span class="num">599.65f</span> * <span class="fn">pow</span>(d.ratio, -<span class="num">2.244f</span>);
+  } <span class="kw">else</span> {
+    d.ppm = <span class="num">0</span>;
+  }
+
+  <span class="kw">return</span> d;
+}</code></pre>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-title">Calibration obligatoire — la valeur RO</div>
+      La constante <code>RO</code> (résistance dans l'air pur) varie d'un capteur à l'autre. Pour calibrer : laisse le MQ-9 chauffer <strong>5 minutes en air pur</strong>, relève la valeur de <code>d.rs</code> dans le moniteur série, et remplace <code>RO = 10.0</code> par cette valeur. Sans calibration, les ppm affichées sont indicatives mais pas précises.
+    </div>
+
+    <table>
+      <thead><tr><th>Variable</th><th>Unité</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>raw</code></td><td>0 – 4095</td><td>Valeur brute ADC 12 bits</td></tr>
+        <tr><td><code>voltage</code></td><td>V</td><td>Tension mesurée en sortie du capteur</td></tr>
+        <tr><td><code>rs</code></td><td>kΩ</td><td>Résistance interne du capteur (varie avec le gaz)</td></tr>
+        <tr><td><code>ratio</code></td><td>—</td><td>RS/RO — entrée de la courbe datasheet</td></tr>
+        <tr><td><code>ppm</code></td><td>ppm</td><td>Estimation CO par la loi puissance datasheet</td></tr>
+        <tr><td><code>alert</code></td><td>bool</td><td>Dépassement du seuil réglable via potentiomètre</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="sep">
+
+  <!-- ── Broadcast sensor ── -->
+  <div class="fn-section" id="sendsensor">
+    <div class="fn-header">
+      <div class="fn-number red">10</div>
+      <div class="fn-title">
+        <h2>Envoi des données au dashboard — <span class="fn-name">broadcastTXT()</span></h2>
+        <div class="tags"><span class="tag net">WebSocket sortant</span></div>
+      </div>
+    </div>
+
+    <p>Toutes les 2 secondes, l'ESP sérialise les données du MQ-9 en JSON et les diffuse à <strong>tous les clients WebSocket connectés</strong> simultanément. Le dashboard reçoit ce JSON dans son <code>ws.onmessage</code> et appelle <code>updateSensors()</code>.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">Sérialisation JSON et broadcast WebSocket</span></div>
+      <pre><code><span class="kw">if</span> (<span class="fn">millis</span>() - lastSensorSend > <span class="num">2000</span>) {
+  lastSensorSend = <span class="fn">millis</span>();
+
+  <span class="typ">SensorData</span> d = <span class="fn">readMQ9</span>();
+
+  <span class="cmt">// StaticJsonDocument<160> = buffer JSON de 160 octets alloué sur la pile
+  // Taille calculée : environ 120 octets pour ce JSON + marge</span>
+  <span class="typ">StaticJsonDocument</span>&lt;<span class="num">160</span>&gt; doc;
+
+  doc[<span class="str">"type"</span>]    = <span class="str">"sensor"</span>;
+  doc[<span class="str">"raw"</span>]     = d.raw;
+
+  <span class="cmt">// serialized(String(...)) insère une valeur float déjà formatée
+  // plutôt que de laisser ArduinoJson choisir le nombre de décimales</span>
+  doc[<span class="str">"voltage"</span>] = <span class="fn">serialized</span>(<span class="typ">String</span>(d.voltage, <span class="num">3</span>)); <span class="cmt">// 3 décimales</span>
+  doc[<span class="str">"rs"</span>]      = <span class="fn">serialized</span>(<span class="typ">String</span>(d.rs,      <span class="num">3</span>));
+  doc[<span class="str">"ratio"</span>]   = <span class="fn">serialized</span>(<span class="typ">String</span>(d.ratio,   <span class="num">3</span>));
+  doc[<span class="str">"ppm"</span>]     = <span class="fn">serialized</span>(<span class="typ">String</span>(d.ppm,     <span class="num">1</span>)); <span class="cmt">// 1 décimale</span>
+  doc[<span class="str">"alert"</span>]   = d.alert;                             <span class="cmt">// true / false</span>
+
+  <span class="typ">String</span> out;
+  <span class="fn">serializeJson</span>(doc, out); <span class="cmt">// Convertit le document en String JSON</span>
+
+  <span class="cmt">// broadcastTXT() envoie à tous les clients connectés
+  // sendTXT(num, ...) enverrait uniquement au client numéro "num"</span>
+  wsServer.<span class="fn">broadcastTXT</span>(out);
+
+  <span class="cmt">// Log série pour le moniteur PlatformIO</span>
+  Serial.<span class="fn">printf</span>(<span class="str">"[MQ-9] %.1f ppm | alert=%s | CMD=%d speed=%d\n"</span>,
+    d.ppm, d.alert ? <span class="str">"OUI"</span> : <span class="str">"non"</span>, (<span class="kw">int</span>)currentCmd, speed);
+}</code></pre>
+    </div>
+
+    <p>Le JSON produit et envoyé ressemble à :</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">JSON</span><span class="code-desc">Exemple de paquet sensor envoyé au dashboard</span></div>
+      <pre><code>{
+  <span class="str">"type"</span>:    <span class="str">"sensor"</span>,
+  <span class="str">"raw"</span>:     <span class="num">1842</span>,
+  <span class="str">"voltage"</span>: <span class="str">"1.482"</span>,
+  <span class="str">"rs"</span>:      <span class="str">"12.340"</span>,
+  <span class="str">"ratio"</span>:   <span class="str">"1.234"</span>,
+  <span class="str">"ppm"</span>:     <span class="str">"47.3"</span>,
+  <span class="str">"alert"</span>:   <span class="kw">false</span>
+}</code></pre>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- Flux complet -->
+  <div class="fn-section" id="flux">
+    <h2 style="font-size:1.3rem;margin-bottom:1.5rem">Flux complet — du clic au servo</h2>
+
+    <div class="ascii">
+<span class="hl">DASHBOARD (navigateur)</span>                    <span class="hl2">ESP32 (firmware C++)</span>
+
+Appui flèche ↑
+  startCmd('forward')
+  sendCmd('forward')
+    ws.send({"type":"cmd",                ──► <span class="hl2">onWsEvent()</span>
+             "cmd":"forward",                   deserializeJson()
+             "speed":50})                       currentCmd = CMD_FORWARD
+                                                gaitFrame  = 0
+
+  [setInterval 150ms]                     ──► onWsEvent() [ignoré si même cmd]
+
+                                          loop() → <span class="hl2">tickGait()</span>
+                                            millis() - lastGaitStep >= gaitDelay()
+                                            applyFrame(GAIT_FORWARD[0])
+                                              <span class="hl3">setServo(ch0, BR_hip)</span>   ──► PCA9685 I2C
+                                              <span class="hl3">setServo(ch1, BR_knee)</span>  ──► PCA9685 I2C
+                                              <span class="hl3">setServo(ch2..7, ...)</span>   ──► PCA9685 I2C
+                                                        │
+                                                   8 servos bougent
+
+  [toutes les 2s, en parallèle]           loop() → <span class="hl4">readMQ9()</span>
+                                            analogRead(GPIO34)
+                                            calcul RS, ratio, ppm
+                                            broadcastTXT(JSON sensor)
+    ws.onmessage → updateSensors()  ◄──
+      affiche ppm, barre, alertes
+
+Relâche flèche
+  stopCmd()
+  sendCmd('stop')
+    ws.send({"type":"cmd",                ──► <span class="hl2">onWsEvent()</span>
+             "cmd":"stop"})                     currentCmd = CMD_STOP
+
+                                          tickGait() → <span class="hl2">standStill()</span>
+                                            applyFrame(STAND×4)
+                                              tous servos → SERVO_MID (90°)</div>
+
+    <p style="margin-top:1.5rem"><strong>Résumé des fonctions :</strong></p>
+    <table>
+      <thead><tr><th>Fonction</th><th>Tag</th><th>Rôle</th></tr></thead>
+      <tbody>
+        <tr><td><code>setup()</code></td><td><span class="tag ws">WS</span> <span class="tag pca">PCA</span></td><td>Initialise GPIO, PCA9685, WiFi, serveurs</td></tr>
+        <tr><td><code>loop()</code></td><td><span class="tag ws">WS</span> <span class="tag pca">PCA</span> <span class="tag mq">MQ9</span></td><td>Boucle principale — 3 tâches non-bloquantes</td></tr>
+        <tr><td><code>onWsEvent()</code></td><td><span class="tag ws">WS</span></td><td>Reçoit et route les messages JSON du dashboard</td></tr>
+        <tr><td><code>tickGait()</code></td><td><span class="tag pca">PCA</span></td><td>Timer de marche — avance d'une frame selon la vitesse</td></tr>
+        <tr><td><code>applyFrame()</code></td><td><span class="tag pca">PCA</span></td><td>Envoie 8 positions servo au PCA9685</td></tr>
+        <tr><td><code>setServo()</code></td><td><span class="tag pca">PCA</span></td><td>Envoie un tick PWM sécurisé à un canal PCA9685</td></tr>
+        <tr><td><code>standStill()</code></td><td><span class="tag pca">PCA</span></td><td>Place tous les servos en position neutre 90°</td></tr>
+        <tr><td><code>readMQ9()</code></td><td><span class="tag mq">MQ9</span></td><td>Lit l'ADC et calcule tension, RS, ratio, ppm, alerte</td></tr>
+        <tr><td><code>broadcastTXT()</code></td><td><span class="tag net">NET</span></td><td>Sérialise et diffuse le JSON capteur à tous les clients</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+</div>
+</body>
+</html>

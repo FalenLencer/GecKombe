@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuadBot — Documentation</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #f8f7f4;
+  --card: #ffffff;
+  --border: #e8e4dc;
+  --accent: #1a6ef5;
+  --accent2: #0f9b6e;
+  --text: #1c1c1c;
+  --muted: #6b7280;
+}
+
+body {
+  margin: 0;
+  font-family: 'Sora', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+/* NAVBAR */
+.topbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: white;
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 2rem;
+  font-weight: 600;
+}
+
+/* CONTENT */
+.container {
+  text-align: center;
+}
+
+h1 {
+  font-size: 2.2rem;
+  margin-bottom: .5rem;
+}
+
+p {
+  color: var(--muted);
+  margin-bottom: 2rem;
+}
+
+/* CARDS */
+.cards {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.card {
+  width: 260px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+}
+
+.card h2 {
+  margin-bottom: .5rem;
+}
+
+.card p {
+  font-size: .9rem;
+}
+
+/* TAG */
+.tag {
+  display: inline-block;
+  padding: .2rem .5rem;
+  border-radius: 5px;
+  font-size: .7rem;
+  font-weight: 600;
+  margin-top: .5rem;
+}
+
+.blue { background: #dbeafe; color: #1e40af; }
+.green { background: #dcfce7; color: #166534; }
+
+</style>
+</head>
+
+<body>
+
+<div class="topbar">QuadBot — Documentation</div>
+
+<div class="container">
+  <h1>Bienvenue 👋</h1>
+  <p>Choisis la documentation que tu veux consulter</p>
+
+  <div class="cards">
+
+    <a href="explication_dashboard.html" class="card">
+      <h2>Dashboard</h2>
+      <p>Interface Web, WebSocket, commandes moteur</p>
+      <span class="tag blue">Front / JS</span>
+    </a>
+
+    <a href="explication_esp32.html" class="card">
+      <h2>ESP32</h2>
+      <p>Firmware, PCA9685, gait, capteurs MQ-9</p>
+      <span class="tag green">Embedded / C++</span>
+    </a>
+
+  </div>
+</div>
+
+</body>
+</html>
