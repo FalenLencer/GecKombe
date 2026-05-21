@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QUAD // Calibration</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080c10; --surface:#0d1520; --border:#1a2a3a;
+  --accent:#00d4ff; --accent2:#ff6b00; --green:#00ff88;
+  --red:#ff3366; --text:#c8dce8; --dim:#3a5570; --warn:#ffbb00;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-height:100vh;padding:1.5rem 2rem 3rem}
+body::before{content:'';position:fixed;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,212,255,.012) 2px,rgba(0,212,255,.012) 4px);pointer-events:none}
+
+header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:1rem;margin-bottom:1.8rem}
+.logo{font-family:'Orbitron',monospace;font-weight:900;font-size:1.3rem;letter-spacing:.2em;color:var(--accent);text-shadow:0 0 20px rgba(0,212,255,.4)}
+.logo span{color:var(--accent2)}
+
+.conn-row{display:flex;gap:.6rem;align-items:center;margin-bottom:1.8rem}
+.conn-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Mono',monospace;font-size:.8rem;padding:.45rem .8rem;outline:none;max-width:260px;transition:border-color .2s}
+.conn-input:focus{border-color:var(--accent)}
+.conn-btn{background:rgba(0,212,255,.1);border:1px solid var(--accent);border-radius:6px;color:var(--accent);font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.1em;padding:.45rem 1rem;cursor:pointer;transition:all .2s}
+.conn-btn:hover{background:rgba(0,212,255,.2)}
+.status-dot{display:flex;align-items:center;gap:.5rem;font-size:.7rem;color:var(--dim)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--red)}
+.dot.on{background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,255,136,.4)}50%{box-shadow:0 0 0 5px rgba(0,255,136,0)}}
+
+.instr{background:rgba(255,187,0,.07);border:1px solid rgba(255,187,0,.25);border-radius:8px;padding:.9rem 1.2rem;margin-bottom:1.8rem;font-size:.72rem;line-height:1.9;color:var(--warn)}
+.instr strong{color:#fff}
+
+.section-label{font-size:.65rem;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.legs-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+.balls-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-bottom:1.5rem}
+@media(max-width:700px){.legs-grid{grid-template-columns:1fr}.balls-grid{grid-template-columns:1fr 1fr}}
+
+.leg-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.4rem;position:relative;overflow:hidden;transition:border-color .2s}
+.leg-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--card-color,var(--accent)),transparent);opacity:.5}
+.ball-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem 1rem;position:relative;overflow:hidden}
+.ball-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--card-color,var(--accent)),transparent);opacity:.4}
+
+.leg-title{font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;letter-spacing:.15em;color:var(--card-color,var(--accent));margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center}
+.ball-title{font-family:'Orbitron',monospace;font-size:.65rem;font-weight:700;letter-spacing:.12em;color:var(--card-color,var(--accent));margin-bottom:.7rem}
+.ch-badge{font-family:'DM Mono',monospace;font-size:.6rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:3px;padding:.1rem .4rem;color:var(--dim);letter-spacing:.05em}
+
+.servo-row{display:flex;flex-direction:column;gap:.25rem;margin-bottom:.9rem}
+.servo-row:last-of-type{margin-bottom:0}
+.servo-label{display:flex;justify-content:space-between;align-items:center;font-size:.65rem;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+.ticks-val{font-family:'Orbitron',monospace;font-size:.85rem;font-weight:700;color:var(--accent);min-width:36px;text-align:right;transition:color .15s}
+.ticks-val.changed{color:var(--warn)}
+
+.slider-wrap{display:flex;gap:.6rem;align-items:center}
+input[type=range]{flex:1;accent-color:var(--accent);cursor:pointer;height:4px}
+.nudge{background:var(--border);border:1px solid var(--dim);border-radius:4px;color:var(--text);cursor:pointer;font-size:.75rem;width:24px;height:24px;display:flex;align-items:center;justify-content:center;transition:all .1s;flex-shrink:0;user-select:none}
+.nudge:hover{border-color:var(--accent);color:var(--accent)}
+.nudge:active{transform:scale(.9)}
+
+.send-leg{width:100%;margin-top:.8rem;background:rgba(0,212,255,.08);border:1px solid var(--dim);border-radius:6px;color:var(--dim);font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;padding:.4rem;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.send-leg:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,.12)}
+.send-leg.sent{border-color:var(--green);color:var(--green)}
+
+.send-ball{width:100%;margin-top:.4rem;background:transparent;border:1px solid var(--dim);border-radius:5px;color:var(--dim);font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;padding:.3rem;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.send-ball:hover{border-color:var(--accent);color:var(--accent)}
+
+.global-actions{display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.action-btn{background:rgba(0,212,255,.08);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.12em;padding:.6rem 1.2rem;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.action-btn:hover{border-color:var(--accent);color:var(--accent)}
+.action-btn.danger{border-color:rgba(255,51,102,.3);color:var(--red)}
+.action-btn.danger:hover{background:rgba(255,51,102,.1);border-color:var(--red)}
+.action-btn.success{border-color:rgba(0,255,136,.3);color:var(--green)}
+.action-btn.success:hover{background:rgba(0,255,136,.1);border-color:var(--green)}
+
+.export-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin-bottom:1.5rem;display:none}
+.export-label{font-size:.65rem;letter-spacing:.15em;color:var(--dim);margin-bottom:.7rem}
+pre{font-size:.7rem;line-height:1.7;color:var(--accent);white-space:pre-wrap;word-break:break-all}
+.copy-btn{margin-top:.7rem;background:transparent;border:1px solid var(--dim);border-radius:5px;color:var(--dim);font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.1em;padding:.35rem .8rem;cursor:pointer;transition:all .2s}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+#log{font-size:.7rem;line-height:1.8;color:var(--dim);max-height:70px;overflow-y:auto;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.7rem 1rem}
+.e{color:var(--text)}.ecmd{color:var(--accent)}.eok{color:var(--green)}.eerr{color:var(--red)}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">QUAD<span>/</span>BOT <span style="font-size:.8rem;color:var(--dim)">CALIBRATION</span></div>
+    <div style="font-size:.62rem;letter-spacing:.2em;color:var(--dim);margin-top:.3rem">AJUSTEMENT INDIVIDUEL DE CHAQUE SERVO</div>
+  </div>
+  <div class="status-dot">
+    <div class="dot" id="dot"></div>
+    <span id="wslbl">DECONNECTE</span>
+  </div>
+</header>
+
+<div class="conn-row">
+  <input class="conn-input" id="ip" value="192.168.83.149:81" placeholder="IP:port ESP32">
+  <button class="conn-btn" onclick="wsConnect()">CONNECT</button>
+</div>
+
+<div class="instr">
+  <strong>Procedure :</strong><br>
+  1. Connectez l'ESP32 · 2. Cliquez <strong>CENTRE ABSOLU</strong> pour partir d'une base connue<br>
+  3. Ajustez chaque servo avec les sliders ou boutons +/- · 4. Cliquez <strong>Envoyer</strong> pour tester en live<br>
+  5. Quand le robot est bien en position debout, cliquez <strong>EXPORTER</strong> pour copier les constantes dans main.cpp<br><br>
+  <strong>Position home :</strong> hanche verticale dans l'axe du corps · genou etendu, tibia vertical, patte au sol<br>
+  <strong>Rotules :</strong> position fixe de contre-couple (ne bougent pas pendant la marche)
+</div>
+
+<div class="global-actions">
+  <button class="action-btn success" onclick="sendHome()">HOME COMPLET</button>
+  <button class="action-btn" onclick="sendAllNeutral()">CENTRE ABSOLU (307)</button>
+  <button class="action-btn" onclick="sendAllBalls()">ENVOYER ROTULES</button>
+  <button class="action-btn danger" onclick="sendZero()">STOP PWM</button>
+  <button class="action-btn success" onclick="exportConfig()">EXPORTER CONSTANTES</button>
+</div>
+
+<!-- Pattes de mouvement -->
+<div class="section-label">Pattes de mouvement — ch 0 a 7</div>
+<div class="legs-grid" id="legs-grid"></div>
+
+<!-- Rotules -->
+<div class="section-label">Rotules de hanche — ch 8 a 11 (contre-couple fixe)</div>
+<div class="balls-grid" id="balls-grid"></div>
+
+<!-- Export -->
+<div class="export-box" id="export-box">
+  <div class="export-label">CONSTANTES A COPIER DANS main.cpp</div>
+  <pre id="export-pre"></pre>
+  <button class="copy-btn" onclick="copyExport()">COPIER</button>
+</div>
+
+<div id="log"></div>
+
+<script>
+// ── Donnees servos ───────────────────────────────────────────
+var LEGS = [
+  { ch:0, label:'Hanche', type:'hip',  leg:'BR', legLabel:'Arriere Droit',  color:'#00d4ff' },
+  { ch:1, label:'Genou',  type:'knee', leg:'BR', legLabel:'Arriere Droit',  color:'#00d4ff' },
+  { ch:2, label:'Hanche', type:'hip',  leg:'BL', legLabel:'Arriere Gauche', color:'#00aaff' },
+  { ch:3, label:'Genou',  type:'knee', leg:'BL', legLabel:'Arriere Gauche', color:'#00aaff' },
+  { ch:4, label:'Hanche', type:'hip',  leg:'FR', legLabel:'Avant Droit',    color:'#ff6b00' },
+  { ch:5, label:'Genou',  type:'knee', leg:'FR', legLabel:'Avant Droit',    color:'#ff6b00' },
+  { ch:6, label:'Hanche', type:'hip',  leg:'FL', legLabel:'Avant Gauche',   color:'#ff9900' },
+  { ch:7, label:'Genou',  type:'knee', leg:'FL', legLabel:'Avant Gauche',   color:'#ff9900' }
+];
+
+var BALLS = [
+  { ch:8,  legLabel:'Arriere Droit',  color:'#00d4ff' },
+  { ch:9,  legLabel:'Arriere Gauche', color:'#00aaff' },
+  { ch:10, legLabel:'Avant Droit',    color:'#ff6b00' },
+  { ch:11, legLabel:'Avant Gauche',   color:'#ff9900' }
+];
+
+// Valeurs courantes
+var vals = { 0:307, 1:265, 2:307, 3:265, 4:307, 5:265, 6:307, 7:265 };
+var bvals = { 8:102, 9:102, 10:102, 11:102 };
+var home  = {};
+Object.assign(home, vals);
+
+var ws = null;
+
+// ── Build UI pattes ──────────────────────────────────────────
+function buildLegs() {
+  var grid = document.getElementById('legs-grid');
+  var byLeg = {};
+  LEGS.forEach(function(s) {
+    if (!byLeg[s.leg]) byLeg[s.leg] = { legLabel: s.legLabel, color: s.color, servos: [] };
+    byLeg[s.leg].servos.push(s);
+  });
+
+  Object.keys(byLeg).forEach(function(legKey) {
+    var leg = byLeg[legKey];
+    var card = document.createElement('div');
+    card.className = 'leg-card';
+    card.style.setProperty('--card-color', leg.color);
+
+    var chs = leg.servos.map(function(s){ return 'CH'+s.ch; }).join('+');
+    var html = '<div class="leg-title">' + leg.legLabel +
+      '<span class="ch-badge">' + chs + '</span></div>';
+
+    leg.servos.forEach(function(s) {
+      html += '<div class="servo-row">' +
+        '<div class="servo-label"><span>' + s.label + ' ch' + s.ch + '</span>' +
+        '<span class="ticks-val" id="d' + s.ch + '">' + vals[s.ch] + '</span></div>' +
+        '<div class="slider-wrap">' +
+        '<button class="nudge" onclick="nudge(' + s.ch + ',-1)">-</button>' +
+        '<input type="range" id="sl' + s.ch + '" min="0" max="600" value="' + vals[s.ch] + '"' +
+        ' oninput="onSlide(' + s.ch + ',this.value)" onchange="sendServo(' + s.ch + ')">' +
+        '<button class="nudge" onclick="nudge(' + s.ch + ',1)">+</button>' +
+        '</div></div>';
+    });
+
+    var lk = legKey;
+    html += '<button class="send-leg" id="sb' + legKey + '" onclick="sendLeg(\'' + lk + '\')">' +
+      'Envoyer ' + leg.legLabel + '</button>';
+
+    card.innerHTML = html;
+    grid.appendChild(card);
+  });
+}
+
+// ── Build UI rotules ─────────────────────────────────────────
+function buildBalls() {
+  var grid = document.getElementById('balls-grid');
+  BALLS.forEach(function(b) {
+    var card = document.createElement('div');
+    card.className = 'ball-card';
+    card.style.setProperty('--card-color', b.color);
+
+    card.innerHTML =
+      '<div class="ball-title">' + b.legLabel +
+      '<br><span style="font-size:.55rem;color:var(--dim);font-weight:400">ch' + b.ch + ' rotule</span></div>' +
+      '<div class="servo-row">' +
+        '<div class="servo-label"><span>POSITION</span>' +
+        '<span class="ticks-val" id="bd' + b.ch + '">' + bvals[b.ch] + '</span></div>' +
+        '<div class="slider-wrap">' +
+          '<button class="nudge" onclick="nudgeBall(' + b.ch + ',-1)">-</button>' +
+          '<input type="range" id="bsl' + b.ch + '" min="0" max="600" value="' + bvals[b.ch] + '"' +
+          ' oninput="onBallSlide(' + b.ch + ',this.value)" onchange="sendBall(' + b.ch + ')">' +
+          '<button class="nudge" onclick="nudgeBall(' + b.ch + ',1)">+</button>' +
+        '</div>' +
+      '</div>' +
+      '<button class="send-ball" onclick="sendBall(' + b.ch + ')">Envoyer</button>';
+
+    grid.appendChild(card);
+  });
+}
+
+// ── Interactions sliders pattes ──────────────────────────────
+function onSlide(ch, v) {
+  v = parseInt(v);
+  vals[ch] = v;
+  var d = document.getElementById('d' + ch);
+  d.textContent = v;
+  d.className = 'ticks-val changed';
+}
+
+function nudge(ch, delta) {
+  var sl = document.getElementById('sl' + ch);
+  var v = Math.max(0, Math.min(600, parseInt(sl.value) + delta));
+  sl.value = v;
+  onSlide(ch, v);
+  sendServo(ch);
+}
+
+function sendServo(ch) {
+  if (!sendCal(ch, vals[ch])) return;
+  var d = document.getElementById('d' + ch);
+  d.className = 'ticks-val';
+  log('cal ch' + ch + ' = ' + vals[ch] + ' ticks', 'ecmd');
+}
+
+function sendLeg(legKey) {
+  LEGS.filter(function(s){ return s.leg === legKey; }).forEach(function(s) {
+    home[s.ch] = vals[s.ch];
+    sendCal(s.ch, vals[s.ch]);
+  });
+  var btn = document.getElementById('sb' + legKey);
+  btn.classList.add('sent');
+  btn.textContent = 'Envoye !';
+  setTimeout(function() {
+    btn.classList.remove('sent');
+    btn.textContent = 'Envoyer ' + btn.textContent.replace('Envoye !','');
+    // Remettre le bon label
+    var leg = null;
+    LEGS.forEach(function(s){ if(s.leg===legKey) leg=s; });
+    if(leg) btn.textContent = 'Envoyer ' + leg.legLabel;
+  }, 1500);
+}
+
+// ── Interactions sliders rotules ─────────────────────────────
+function onBallSlide(ch, v) {
+  v = parseInt(v);
+  bvals[ch] = v;
+  document.getElementById('bd' + ch).textContent = v;
+}
+
+function nudgeBall(ch, delta) {
+  var sl = document.getElementById('bsl' + ch);
+  var v = Math.max(0, Math.min(600, parseInt(sl.value) + delta));
+  sl.value = v;
+  onBallSlide(ch, v);
+  sendBall(ch);
+}
+
+function sendBall(ch) {
+  if (sendCal(ch, bvals[ch]))
+    log('rotule ch' + ch + ' = ' + bvals[ch] + ' ticks', 'ecmd');
+}
+
+function sendAllBalls() {
+  BALLS.forEach(function(b){ sendBall(b.ch); });
+  log('Rotules ch8-11 envoyees', 'eok');
+}
+
+// ── Actions globales ─────────────────────────────────────────
+function sendHome() {
+  LEGS.forEach(function(s) {
+    home[s.ch] = vals[s.ch];
+    sendCal(s.ch, vals[s.ch]);
+  });
+  sendAllBalls();
+  log('HOME complet envoye (pattes + rotules)', 'eok');
+}
+
+function sendAllNeutral() {
+  LEGS.forEach(function(s) {
+    var sl = document.getElementById('sl' + s.ch);
+    sl.value = 307; onSlide(s.ch, 307); sendCal(s.ch, 307);
+  });
+  log('Centre absolu 307 envoye sur ch0-7', 'ecmd');
+}
+
+function sendZero() {
+  if (!ws || ws.readyState !== 1) { log('Non connecte', 'eerr'); return; }
+  for (var i = 0; i < 16; i++) ws.send(JSON.stringify({ type:'cal', ch:i, ticks:0 }));
+  log('PWM coupe - servos libres', 'eerr');
+}
+
+// ── WebSocket ────────────────────────────────────────────────
+function wsConnect() {
+  var ip = document.getElementById('ip').value.trim();
+  if (ws) ws.close();
+  ws = new WebSocket('ws://' + ip + '/ws');
+  ws.onopen  = function() { setStatus(true);  log('Connecte', 'eok'); };
+  ws.onclose = function() { setStatus(false); log('Deconnecte', 'eerr'); };
+  ws.onerror = function() { log('Erreur WebSocket', 'eerr'); };
+  ws.onmessage = function() {};
+}
+
+function setStatus(ok) {
+  document.getElementById('dot').className = 'dot' + (ok ? ' on' : '');
+  document.getElementById('wslbl').textContent = ok ? 'CONNECTE' : 'DECONNECTE';
+}
+
+function sendCal(ch, ticks) {
+  if (!ws || ws.readyState !== 1) { log('Non connecte', 'eerr'); return false; }
+  ticks = Math.max(0, Math.min(600, parseInt(ticks)));
+  ws.send(JSON.stringify({ type:'cal', ch:ch, ticks:ticks }));
+  return true;
+}
+
+// ── Export ───────────────────────────────────────────────────
+function exportConfig() {
+  var hipAvg  = Math.round((vals[0]+vals[2]+vals[4]+vals[6]) / 4);
+  var kneeAvg = Math.round((vals[1]+vals[3]+vals[5]+vals[7]) / 4);
+  var ballAvg = Math.round((bvals[8]+bvals[9]+bvals[10]+bvals[11]) / 4);
+
+  var now = new Date().toLocaleString('fr-FR');
+  var lines = [
+    '// Constantes calibrees - ' + now,
+    '',
+    '// HOME_POS[12] - position debout par canal',
+    'static const uint16_t HOME_POS[12] = {',
+    '  ' + vals[0]  + ',  // ch0  BR hanche',
+    '  ' + vals[1]  + ',  // ch1  BR genou',
+    '  ' + vals[2]  + ',  // ch2  BL hanche',
+    '  ' + vals[3]  + ',  // ch3  BL genou',
+    '  ' + vals[4]  + ',  // ch4  FR hanche',
+    '  ' + vals[5]  + ',  // ch5  FR genou',
+    '  ' + vals[6]  + ',  // ch6  FL hanche',
+    '  ' + vals[7]  + ',  // ch7  FL genou',
+    '  ' + bvals[8]  + ',  // ch8  BR rotule (contre-couple)',
+    '  ' + bvals[9]  + ',  // ch9  BL rotule (contre-couple)',
+    '  ' + bvals[10] + ',  // ch10 FR rotule (contre-couple)',
+    '  ' + bvals[11] + ',  // ch11 FL rotule (contre-couple)',
+    '};',
+    '',
+    '// Moyennes calculees (reference)',
+    '// HIP_MID  = ' + hipAvg,
+    '// KNEE_STAND = ' + kneeAvg,
+    '// BALL_POS  = ' + ballAvg,
+    '',
+    '// Si une hanche est inversee mecaniquement,',
+    '// changez son HIP_DIR[ch] de +1 a -1 dans main.cpp',
+    '// Offsets par hanche vs moyenne:',
+    '//   BR: ' + (vals[0]-hipAvg) + '  BL: ' + (vals[2]-hipAvg) +
+      '  FR: ' + (vals[4]-hipAvg) + '  FL: ' + (vals[6]-hipAvg)
+  ];
+
+  document.getElementById('export-pre').textContent = lines.join('\n');
+  document.getElementById('export-box').style.display = 'block';
+  document.getElementById('export-box').scrollIntoView({ behavior:'smooth' });
+  log('Constantes exportees', 'eok');
+}
+
+function copyExport() {
+  var txt = document.getElementById('export-pre').textContent;
+  navigator.clipboard.writeText(txt).then(function() { log('Copie dans le presse-papiers', 'eok'); });
+}
+
+// ── Log ──────────────────────────────────────────────────────
+function log(msg, cls) {
+  cls = cls || 'e';
+  var el  = document.getElementById('log');
+  var now = new Date().toLocaleTimeString('fr-FR');
+  var div = document.createElement('div');
+  div.className = cls;
+  div.textContent = '[' + now + '] ' + msg;
+  el.appendChild(div);
+  el.scrollTop = el.scrollHeight;
+  while (el.children.length > 40) el.removeChild(el.firstChild);
+}
+
+// ── Init ─────────────────────────────────────────────────────
+buildLegs();
+buildBalls();
+log('Outil pret - connectez-vous a l\'ESP32');
+</script>
+</body>
+</html>

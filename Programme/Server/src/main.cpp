@@ -42,104 +42,98 @@ const char* PASSWORD = "sgru3285";
 #define CH_FL_BALL 11
 
 // ═══════════════════════════════════════════════════════════════
-//  Limites mécaniques absolues (ne jamais dépasser)
-//  Mesurées sur le robot + 10 ticks de marge de sécurité
+//  Limites mécaniques absolues
 // ═══════════════════════════════════════════════════════════════
-#define LIM_BR_HIP_MIN  130   // ch0
+#define LIM_BR_HIP_MIN  130
 #define LIM_BR_HIP_MAX  540
-#define LIM_BL_HIP_MIN  130   // ch2
+#define LIM_BL_HIP_MIN  130
 #define LIM_BL_HIP_MAX  505
-#define LIM_FR_HIP_MIN  150   // ch4
+#define LIM_FR_HIP_MIN  150
 #define LIM_FR_HIP_MAX  510
-#define LIM_FL_HIP_MIN  125   // ch6
+#define LIM_FL_HIP_MIN  125
 #define LIM_FL_HIP_MAX  510
 
-#define LIM_BR_KNEE_MIN 210   // ch1
+#define LIM_BR_KNEE_MIN 210
 #define LIM_BR_KNEE_MAX 440
-#define LIM_BL_KNEE_MIN 210   // ch3
+#define LIM_BL_KNEE_MIN 210
 #define LIM_BL_KNEE_MAX 435
-#define LIM_FR_KNEE_MIN 195   // ch5
+#define LIM_FR_KNEE_MIN 195
 #define LIM_FR_KNEE_MAX 415
-#define LIM_FL_KNEE_MIN 135   // ch7
+#define LIM_FL_KNEE_MIN 135
 #define LIM_FL_KNEE_MAX 360
 
 // ═══════════════════════════════════════════════════════════════
-//  Positions de marche
-//
-//  HOME = milieu mécanique de chaque hanche (position debout)
-//  TENDU = genou étendu (patte au sol)
-//  PLIE  = genou fléchi pour la marche (~37° depuis tendu = 56 ticks)
-//
-//  Hanches : ±33 ticks autour du home (~22°)
-//  ch0 BR et ch4 FR sont montés inversés :
-//    delta positif → ticks augmentent (avancer)
-//  ch2 BL et ch6 FL sont normaux :
-//    delta positif → ticks diminuent (avancer)
+//  Positions calibrées — telles que vous les avez réglées
 // ═══════════════════════════════════════════════════════════════
 
-// Positions home (milieu mécanique)
-#define HOME_BR_HIP   403   // 335 + 68 ticks (+45°)
-#define HOME_BL_HIP   249   // 317 - 68 ticks (+45°)
-#define HOME_FR_HIP   398   // 330 + 68 ticks (+45°)
-#define HOME_FL_HIP   249   // 317 - 68 ticks (+45°)
+// Hanches home (position debout)
+#define HOME_BR_HIP   471   // ch0
+#define HOME_BL_HIP   181   // ch2
+#define HOME_FR_HIP   466   // ch4
+#define HOME_FL_HIP   181   // ch6
 
-// Genoux : position debout (tendu)
-#define TENDU_BR  210
-#define TENDU_BL  435
-#define TENDU_FR  195
-#define TENDU_FL  360
+// Genoux debout (tendu = patte au sol)
+#define TENDU_BR  350   // ch1
+#define TENDU_BL  285   // ch3
+#define TENDU_FR  345   // ch5
+#define TENDU_FL  210   // ch7
 
-// Genoux : position levée pour la marche (~37° = 56 ticks depuis tendu)
-// BR/FR : plie = tendu + 56  (plier = augmenter)
-// BL/FL : plie = tendu - 56  (plier = diminuer)
-#define PLIE_BR   301   // 210 + 91 (~60°)
-#define PLIE_BL   344   // 435 - 91 (~60°)
-#define PLIE_FR   286   // 195 + 91 (~60°)
-#define PLIE_FL   269   // 360 - 91 (~60°)
+// Genoux levés (plié = patte en l'air)
+#define PLIE_BR   301   // ch1
+#define PLIE_BL   344   // ch3
+#define PLIE_FR   286   // ch5
+#define PLIE_FL   269   // ch7
 
-// Amplitude hanche : 33 ticks (~22°) de chaque côté du home
-#define HIP_STEP  75  // ~49° — bien visible
-
-// Rotules
-#define BALL_BR   325
-#define BALL_BL   320
-#define BALL_FR   320
-#define BALL_FL   325
+// Rotules (contre-couple fixe)
+#define BALL_BR   280   // ch8
+#define BALL_BL   320   // ch9
+#define BALL_FR   320   // ch10
+#define BALL_FL   325   // ch11
 
 // ═══════════════════════════════════════════════════════════════
-//  Helpers hanche avec direction et limites
-//  delta > 0 = avancer la patte
-//  delta < 0 = reculer la patte
+//  Amplitude de pas hanches
+//  ch0 BR et ch4 FR : montés inversés → avancer = +ticks
+//  ch2 BL et ch6 FL : normaux         → avancer = -ticks
 // ═══════════════════════════════════════════════════════════════
+#define HIP_STEP  75
+
 static inline uint16_t hipBR(int delta) {
-  // ch0 inversé : avancer = +ticks
   return (uint16_t)constrain(HOME_BR_HIP + delta, LIM_BR_HIP_MIN, LIM_BR_HIP_MAX);
 }
 static inline uint16_t hipBL(int delta) {
-  // ch2 normal : avancer = -ticks
   return (uint16_t)constrain(HOME_BL_HIP - delta, LIM_BL_HIP_MIN, LIM_BL_HIP_MAX);
 }
 static inline uint16_t hipFR(int delta) {
-  // ch4 inversé : avancer = +ticks
   return (uint16_t)constrain(HOME_FR_HIP + delta, LIM_FR_HIP_MIN, LIM_FR_HIP_MAX);
 }
 static inline uint16_t hipFL(int delta) {
-  // ch6 normal : avancer = -ticks
   return (uint16_t)constrain(HOME_FL_HIP - delta, LIM_FL_HIP_MIN, LIM_FL_HIP_MAX);
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  sendServo — bloquant, attend la fin du mouvement
-//  wsServer.loop() appelé pendant l'attente → pas de déconnexion
+//  Objets globaux
 // ═══════════════════════════════════════════════════════════════
-#define SERVO_MOVE_MS  400
-
 Adafruit_PWMServoDriver pca = Adafruit_PWMServoDriver(0x40);
 WebServer                httpServer(80);
 WebSocketsServer         wsServer(81);
 uint16_t servoPos[16];
 
-void waitMs(unsigned long ms) {
+// ═══════════════════════════════════════════════════════════════
+//  setPWM direct — envoie immédiatement SANS attente
+//  Utilisé pour commander plusieurs servos quasi-simultanément
+//  (délai I²C naturel ~300µs entre deux setPWM)
+// ═══════════════════════════════════════════════════════════════
+void setPWM(uint8_t ch, uint16_t ticks) {
+  if (ch >= 16) return;
+  ticks = (uint16_t)constrain((int)ticks, 0, 600);
+  servoPos[ch] = ticks;
+  pca.setPWM(ch, 0, ticks);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  waitMove — attend ms tout en maintenant le WebSocket vivant
+// ═══════════════════════════════════════════════════════════════
+void waitMove(unsigned long ms) {
   unsigned long t0 = millis();
   while (millis() - t0 < ms) {
     wsServer.loop();
@@ -148,15 +142,12 @@ void waitMs(unsigned long ms) {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  sendServo — pour calibration/init : envoie + attend
+// ═══════════════════════════════════════════════════════════════
 void sendServo(uint8_t ch, uint16_t ticks) {
-  if (ch >= 16) return;
-  ticks = (uint16_t)constrain((int)ticks, 0, 600);
-  // On envoie toujours la commande (pas de skip sur position identique)
-  // pour garantir que le servo maintient sa position
-  servoPos[ch] = ticks;
-  pca.setPWM(ch, 0, ticks);
-  // Attente que le servo arrive en position
-  waitMs(SERVO_MOVE_MS);
+  setPWM(ch, ticks);
+  waitMove(300);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -171,21 +162,26 @@ uint32_t      lastSensorMs = 0;
 bool          wasMoving   = false;
 
 // ═══════════════════════════════════════════════════════════════
-//  standStill — retour home, un servo à la fois
+//  Timing de marche selon vitesse
+//  speed=0  → 800ms/phase  |  speed=100 → 300ms/phase
+// ═══════════════════════════════════════════════════════════════
+static inline unsigned long moveMs() {
+  return (unsigned long)map(speedPct, 0, 100, 800, 300);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  standStill — retour home séquentiel
 // ═══════════════════════════════════════════════════════════════
 void standStill() {
   gaitStep = 0;
-  // 1. Genoux mi-course (évite les à-coups)
   sendServo(CH_BR_KNEE, (TENDU_BR + PLIE_BR) / 2);
   sendServo(CH_BL_KNEE, (TENDU_BL + PLIE_BL) / 2);
   sendServo(CH_FR_KNEE, (TENDU_FR + PLIE_FR) / 2);
   sendServo(CH_FL_KNEE, (TENDU_FL + PLIE_FL) / 2);
-  // 2. Hanches au centre
-  sendServo(CH_BR_HIP, HOME_BR_HIP);
-  sendServo(CH_BL_HIP, HOME_BL_HIP);
-  sendServo(CH_FR_HIP, HOME_FR_HIP);
-  sendServo(CH_FL_HIP, HOME_FL_HIP);
-  // 3. Genoux tendus (debout)
+  sendServo(CH_BR_HIP,  HOME_BR_HIP);
+  sendServo(CH_BL_HIP,  HOME_BL_HIP);
+  sendServo(CH_FR_HIP,  HOME_FR_HIP);
+  sendServo(CH_FL_HIP,  HOME_FL_HIP);
   sendServo(CH_BR_KNEE, TENDU_BR);
   sendServo(CH_BL_KNEE, TENDU_BL);
   sendServo(CH_FR_KNEE, TENDU_FR);
@@ -193,140 +189,170 @@ void standStill() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  Trot diagonal — 16 étapes, un servo à la fois
+//  TROT DIAGONAL — mécanique correcte
 //
-//  Paire A = FR + BL  (diagonal)
-//  Paire B = FL + BR  (diagonal)
-//
-//  Séquence par demi-cycle (8 étapes) :
-//   0. Plier genou FR
-//   1. Plier genou BL
-//   2. Avancer hanche FR
-//   3. Avancer hanche BL
-//   4. Tendre genou FR
-//   5. Tendre genou BL
-//   6. Reculer hanche FL (propulsion, patte au sol)
-//   7. Reculer hanche BR (propulsion, patte au sol)
-//  Puis symétrique pour paire B (étapes 8-15)
-// ═══════════════════════════════════════════════════════════════
-// ═══════════════════════════════════════════════════════════════
-//  Séquence de marche à 4 temps
-//
-//  Lever un membre = 3 sous-étapes séquentielles :
-//    a) plier genou
-//    b) avancer hanche
-//    c) tendre genou
-//  Pendant ce temps, les 3 autres pattes au sol poussent.
-//
-//  Temps 1 : lever FR  → pousser BL+FL+BR
-//  Temps 2 : lever BL  → pousser FR+FL+BR
-//  Temps 3 : lever FL  → pousser BR+FR+BL
-//  Temps 4 : lever BR  → pousser FL+FR+BL
-//
-//  Total : 4 temps × 5 étapes = 20 étapes par cycle complet
-//    étapes 0-2   : lever FR  (plier, avancer, tendre)
-//    étape  3-4   : pousser pattes au sol après pose FR
-//    étapes 5-7   : lever BL
-//    étape  8-9   : pousser
-//    étapes 10-12 : lever FL
-//    étape  13-14 : pousser
-//    étapes 15-17 : lever BR
-//    étape  18-19 : pousser
-// ═══════════════════════════════════════════════════════════════
-
-// ═══════════════════════════════════════════════════════════════
-//  Trot diagonal — 2 temps, un servo à la fois
-//
-//  Paire A = FR (avant droit) + BL (arrière gauche)
+//  Paire A = FR (avant droit)  + BL (arrière gauche)
 //  Paire B = FL (avant gauche) + BR (arrière droit)
 //
-//  Séquence AVANT — 14 étapes par cycle :
+//  Les deux membres d'une même paire sont commandés ENSEMBLE
+//  (deux setPWM() consécutifs sans attente = ~600µs d'écart).
+//  L'attente waitMove() vient APRÈS pour laisser les servos
+//  atteindre leur position.
 //
-//  Phase 1 — Lever paire A (FR+BL) et avancer :
-//    0  plier genou FR
-//    1  avancer hanche FR  (+HIP_STEP vers avant)
-//    2  plier genou BL
-//    3  avancer hanche BL  (+HIP_STEP vers avant)
-//    4  tendre genou FR    (pose FR)
-//    5  tendre genou BL    (pose BL)
+//  Séquence AVANT — 6 phases :
 //
-//  Phase 2 — Paire B au sol : pousser vers l'arrière (propulsion)
-//    6  reculer hanche FL  (-HIP_STEP)
-//    7  reculer hanche BR  (-HIP_STEP)
+//  Phase 0 : lever paire A ensemble
+//    → FR genou plié + BL genou plié   (attente moveMs)
 //
-//  Phase 3 — Lever paire B (FL+BR) et avancer :
-//    8  plier genou FL
-//    9  avancer hanche FL
-//   10  plier genou BR
-//   11  avancer hanche BR
-//   12  tendre genou FL
-//   13  tendre genou BR
+//  Phase 1 : avancer paire A ensemble
+//    → FR hanche +STEP + BL hanche +STEP   (attente moveMs)
 //
-//  Phase 4 — Paire A au sol : pousser
-//   (implicite au début du cycle suivant via phases 6-7 inversées)
-//   14  reculer hanche FR
-//   15  reculer hanche BL
+//  Phase 2 : poser paire A ensemble
+//    → FR genou tendu + BL genou tendu   (attente moveMs)
 //
-//  Total : 16 étapes
+//  Phase 3 : pousser paire B ensemble (propulsion)
+//    → FL hanche -STEP + BR hanche -STEP   (attente moveMs)
+//
+//  Phase 4 : lever paire B ensemble
+//    → FL genou plié + BR genou plié   (attente moveMs)
+//
+//  Phase 5 : avancer paire B ensemble
+//    → FL hanche +STEP + BR hanche +STEP   (attente moveMs)
+//
+//  Phase 6 : poser paire B ensemble
+//    → FL genou tendu + BR genou tendu   (attente moveMs)
+//
+//  Phase 7 : pousser paire A ensemble (propulsion)
+//    → FR hanche -STEP + BL hanche -STEP   (attente moveMs)
+//
+//  Total : 8 phases par cycle
 // ═══════════════════════════════════════════════════════════════
 void walkForward() {
+  unsigned long ms = moveMs();
+
   switch (gaitStep) {
 
-    // ── Phase 1 : lever paire A (FR+BL), avancer ────────────
-    case  0: sendServo(CH_FR_KNEE, PLIE_FR);           break; // plier FR
-    case  1: sendServo(CH_FR_HIP,  hipFR(+HIP_STEP));  break; // avancer FR
-    case  2: sendServo(CH_BL_KNEE, PLIE_BL);           break; // plier BL
-    case  3: sendServo(CH_BL_HIP,  hipBL(+HIP_STEP));  break; // avancer BL
-    case  4: sendServo(CH_FR_KNEE, TENDU_FR);          break; // poser FR
-    case  5: sendServo(CH_BL_KNEE, TENDU_BL);          break; // poser BL
+    case 0:
+      // Lever paire A : plier FR + BL ensemble
+      setPWM(CH_FR_KNEE, PLIE_FR);
+      setPWM(CH_BL_KNEE, PLIE_BL);
+      waitMove(ms);
+      break;
 
-    // ── Phase 2 : paire B au sol pousse vers l'arrière ───────
-    case  6: sendServo(CH_FL_HIP,  hipFL(-HIP_STEP));  break; // FL pousse
-    case  7: sendServo(CH_BR_HIP,  hipBR(-HIP_STEP));  break; // BR pousse
+    case 1:
+      // Avancer paire A : hanches FR + BL ensemble
+      setPWM(CH_FR_HIP, hipFR(+HIP_STEP));
+      setPWM(CH_BL_HIP, hipBL(+HIP_STEP));
+      waitMove(ms);
+      break;
 
-    // ── Phase 3 : lever paire B (FL+BR), avancer ────────────
-    case  8: sendServo(CH_FL_KNEE, PLIE_FL);           break; // plier FL
-    case  9: sendServo(CH_FL_HIP,  hipFL(+HIP_STEP));  break; // avancer FL
-    case 10: sendServo(CH_BR_KNEE, PLIE_BR);           break; // plier BR
-    case 11: sendServo(CH_BR_HIP,  hipBR(+HIP_STEP));  break; // avancer BR
-    case 12: sendServo(CH_FL_KNEE, TENDU_FL);          break; // poser FL
-    case 13: sendServo(CH_BR_KNEE, TENDU_BR);          break; // poser BR
+    case 2:
+      // Poser paire A : tendre FR + BL ensemble
+      setPWM(CH_FR_KNEE, TENDU_FR);
+      setPWM(CH_BL_KNEE, TENDU_BL);
+      waitMove(ms);
+      break;
 
-    // ── Phase 4 : paire A au sol pousse vers l'arrière ───────
-    case 14: sendServo(CH_FR_HIP,  hipFR(-HIP_STEP));  break; // FR pousse
-    case 15: sendServo(CH_BL_HIP,  hipBL(-HIP_STEP));  break; // BL pousse
+    case 3:
+      // Propulsion paire B (au sol) : reculer FL + BR ensemble
+      setPWM(CH_FL_HIP, hipFL(-HIP_STEP));
+      setPWM(CH_BR_HIP, hipBR(-HIP_STEP));
+      waitMove(ms);
+      break;
+
+    case 4:
+      // Lever paire B : plier FL + BR ensemble
+      setPWM(CH_FL_KNEE, PLIE_FL);
+      setPWM(CH_BR_KNEE, PLIE_BR);
+      waitMove(ms);
+      break;
+
+    case 5:
+      // Avancer paire B : hanches FL + BR ensemble
+      setPWM(CH_FL_HIP, hipFL(+HIP_STEP));
+      setPWM(CH_BR_HIP, hipBR(+HIP_STEP));
+      waitMove(ms);
+      break;
+
+    case 6:
+      // Poser paire B : tendre FL + BR ensemble
+      setPWM(CH_FL_KNEE, TENDU_FL);
+      setPWM(CH_BR_KNEE, TENDU_BR);
+      waitMove(ms);
+      break;
+
+    case 7:
+      // Propulsion paire A (au sol) : reculer FR + BL ensemble
+      setPWM(CH_FR_HIP, hipFR(-HIP_STEP));
+      setPWM(CH_BL_HIP, hipBL(-HIP_STEP));
+      waitMove(ms);
+      break;
   }
-  gaitStep = (gaitStep + 1) % 16;
+  gaitStep = (gaitStep + 1) % 8;
 }
 
 void walkBackward() {
+  unsigned long ms = moveMs();
+
   switch (gaitStep) {
 
-    // ── Phase 1 : lever paire A (FR+BL), reculer ────────────
-    case  0: sendServo(CH_FR_KNEE, PLIE_FR);           break;
-    case  1: sendServo(CH_FR_HIP,  hipFR(-HIP_STEP));  break; // reculer FR
-    case  2: sendServo(CH_BL_KNEE, PLIE_BL);           break;
-    case  3: sendServo(CH_BL_HIP,  hipBL(-HIP_STEP));  break; // reculer BL
-    case  4: sendServo(CH_FR_KNEE, TENDU_FR);          break;
-    case  5: sendServo(CH_BL_KNEE, TENDU_BL);          break;
+    case 0:
+      // Lever paire A
+      setPWM(CH_FR_KNEE, PLIE_FR);
+      setPWM(CH_BL_KNEE, PLIE_BL);
+      waitMove(ms);
+      break;
 
-    // ── Phase 2 : paire B au sol pousse vers l'avant ─────────
-    case  6: sendServo(CH_FL_HIP,  hipFL(+HIP_STEP));  break;
-    case  7: sendServo(CH_BR_HIP,  hipBR(+HIP_STEP));  break;
+    case 1:
+      // Reculer paire A
+      setPWM(CH_FR_HIP, hipFR(-HIP_STEP));
+      setPWM(CH_BL_HIP, hipBL(-HIP_STEP));
+      waitMove(ms);
+      break;
 
-    // ── Phase 3 : lever paire B (FL+BR), reculer ────────────
-    case  8: sendServo(CH_FL_KNEE, PLIE_FL);           break;
-    case  9: sendServo(CH_FL_HIP,  hipFL(-HIP_STEP));  break; // reculer FL
-    case 10: sendServo(CH_BR_KNEE, PLIE_BR);           break;
-    case 11: sendServo(CH_BR_HIP,  hipBR(-HIP_STEP));  break; // reculer BR
-    case 12: sendServo(CH_FL_KNEE, TENDU_FL);          break;
-    case 13: sendServo(CH_BR_KNEE, TENDU_BR);          break;
+    case 2:
+      // Poser paire A
+      setPWM(CH_FR_KNEE, TENDU_FR);
+      setPWM(CH_BL_KNEE, TENDU_BL);
+      waitMove(ms);
+      break;
 
-    // ── Phase 4 : paire A au sol pousse vers l'avant ─────────
-    case 14: sendServo(CH_FR_HIP,  hipFR(+HIP_STEP));  break;
-    case 15: sendServo(CH_BL_HIP,  hipBL(+HIP_STEP));  break;
+    case 3:
+      // Propulsion paire B : avancer FL + BR
+      setPWM(CH_FL_HIP, hipFL(+HIP_STEP));
+      setPWM(CH_BR_HIP, hipBR(+HIP_STEP));
+      waitMove(ms);
+      break;
+
+    case 4:
+      // Lever paire B
+      setPWM(CH_FL_KNEE, PLIE_FL);
+      setPWM(CH_BR_KNEE, PLIE_BR);
+      waitMove(ms);
+      break;
+
+    case 5:
+      // Reculer paire B
+      setPWM(CH_FL_HIP, hipFL(-HIP_STEP));
+      setPWM(CH_BR_HIP, hipBR(-HIP_STEP));
+      waitMove(ms);
+      break;
+
+    case 6:
+      // Poser paire B
+      setPWM(CH_FL_KNEE, TENDU_FL);
+      setPWM(CH_BR_KNEE, TENDU_BR);
+      waitMove(ms);
+      break;
+
+    case 7:
+      // Propulsion paire A : avancer FR + BL
+      setPWM(CH_FR_HIP, hipFR(+HIP_STEP));
+      setPWM(CH_BL_HIP, hipBL(+HIP_STEP));
+      waitMove(ms);
+      break;
   }
-  gaitStep = (gaitStep + 1) % 16;
+  gaitStep = (gaitStep + 1) % 8;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -427,19 +453,17 @@ void setup() {
   delay(150);
   Serial.println("[PCA] OK 25MHz/50Hz");
 
-  // Résumé des positions de marche
-  Serial.println("[CFG] Positions de marche :");
-  Serial.printf("  BR hip  home=%d  avant=%d  arriere=%d\n", HOME_BR_HIP, hipBR(+HIP_STEP), hipBR(-HIP_STEP));
-  Serial.printf("  BL hip  home=%d  avant=%d  arriere=%d\n", HOME_BL_HIP, hipBL(+HIP_STEP), hipBL(-HIP_STEP));
-  Serial.printf("  FR hip  home=%d  avant=%d  arriere=%d\n", HOME_FR_HIP, hipFR(+HIP_STEP), hipFR(-HIP_STEP));
-  Serial.printf("  FL hip  home=%d  avant=%d  arriere=%d\n", HOME_FL_HIP, hipFL(+HIP_STEP), hipFL(-HIP_STEP));
-  Serial.printf("  BR knee tendu=%d plie=%d\n", TENDU_BR, PLIE_BR);
-  Serial.printf("  BL knee tendu=%d plie=%d\n", TENDU_BL, PLIE_BL);
-  Serial.printf("  FR knee tendu=%d plie=%d\n", TENDU_FR, PLIE_FR);
-  Serial.printf("  FL knee tendu=%d plie=%d\n", TENDU_FL, PLIE_FL);
-  Serial.printf("[CFG] HIP_STEP=%d  SERVO_MOVE_MS=%d\n", HIP_STEP, SERVO_MOVE_MS);
+  Serial.println("[CFG] Positions :");
+  Serial.printf("  BR hip home=%d avant=%d arriere=%d knee tendu=%d plie=%d\n",
+    HOME_BR_HIP, hipBR(+HIP_STEP), hipBR(-HIP_STEP), TENDU_BR, PLIE_BR);
+  Serial.printf("  BL hip home=%d avant=%d arriere=%d knee tendu=%d plie=%d\n",
+    HOME_BL_HIP, hipBL(+HIP_STEP), hipBL(-HIP_STEP), TENDU_BL, PLIE_BL);
+  Serial.printf("  FR hip home=%d avant=%d arriere=%d knee tendu=%d plie=%d\n",
+    HOME_FR_HIP, hipFR(+HIP_STEP), hipFR(-HIP_STEP), TENDU_FR, PLIE_FR);
+  Serial.printf("  FL hip home=%d avant=%d arriere=%d knee tendu=%d plie=%d\n",
+    HOME_FL_HIP, hipFL(+HIP_STEP), hipFL(-HIP_STEP), TENDU_FL, PLIE_FL);
 
-  // Init séquentielle un servo à la fois
+  // Init séquentielle
   Serial.println("[SERVO] Init home...");
   sendServo(CH_BR_HIP,  HOME_BR_HIP);
   sendServo(CH_BR_KNEE, TENDU_BR);
@@ -449,7 +473,6 @@ void setup() {
   sendServo(CH_FR_KNEE, TENDU_FR);
   sendServo(CH_FL_HIP,  HOME_FL_HIP);
   sendServo(CH_FL_KNEE, TENDU_FL);
-  // Rotules
   sendServo(CH_BR_BALL, BALL_BR);
   sendServo(CH_BL_BALL, BALL_BL);
   sendServo(CH_FR_BALL, BALL_FR);
