@@ -92,13 +92,13 @@ const char* PASSWORD = "sgru3285";
 // Genoux : position levée pour la marche (~37° = 56 ticks depuis tendu)
 // BR/FR : plie = tendu + 56  (plier = augmenter)
 // BL/FL : plie = tendu - 56  (plier = diminuer)
-#define PLIE_BR   266   // 210 + 56
-#define PLIE_BL   379   // 435 - 56
-#define PLIE_FR   251   // 195 + 56
-#define PLIE_FL   304   // 360 - 56
+#define PLIE_BR   301   // 210 + 91 (~60°)
+#define PLIE_BL   344   // 435 - 91 (~60°)
+#define PLIE_FR   286   // 195 + 91 (~60°)
+#define PLIE_FL   269   // 360 - 91 (~60°)
 
 // Amplitude hanche : 33 ticks (~22°) de chaque côté du home
-#define HIP_STEP  33
+#define HIP_STEP  75  // ~49° — bien visible
 
 // Rotules
 #define BALL_BR   325
@@ -209,63 +209,122 @@ void standStill() {
 //   7. Reculer hanche BR (propulsion, patte au sol)
 //  Puis symétrique pour paire B (étapes 8-15)
 // ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+//  Séquence de marche à 4 temps
+//
+//  Lever un membre = 3 sous-étapes séquentielles :
+//    a) plier genou
+//    b) avancer hanche
+//    c) tendre genou
+//  Pendant ce temps, les 3 autres pattes au sol poussent.
+//
+//  Temps 1 : lever FR  → pousser BL+FL+BR
+//  Temps 2 : lever BL  → pousser FR+FL+BR
+//  Temps 3 : lever FL  → pousser BR+FR+BL
+//  Temps 4 : lever BR  → pousser FL+FR+BL
+//
+//  Total : 4 temps × 5 étapes = 20 étapes par cycle complet
+//    étapes 0-2   : lever FR  (plier, avancer, tendre)
+//    étape  3-4   : pousser pattes au sol après pose FR
+//    étapes 5-7   : lever BL
+//    étape  8-9   : pousser
+//    étapes 10-12 : lever FL
+//    étape  13-14 : pousser
+//    étapes 15-17 : lever BR
+//    étape  18-19 : pousser
+// ═══════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════
+//  Trot diagonal — 2 temps, un servo à la fois
+//
+//  Paire A = FR (avant droit) + BL (arrière gauche)
+//  Paire B = FL (avant gauche) + BR (arrière droit)
+//
+//  Séquence AVANT — 14 étapes par cycle :
+//
+//  Phase 1 — Lever paire A (FR+BL) et avancer :
+//    0  plier genou FR
+//    1  avancer hanche FR  (+HIP_STEP vers avant)
+//    2  plier genou BL
+//    3  avancer hanche BL  (+HIP_STEP vers avant)
+//    4  tendre genou FR    (pose FR)
+//    5  tendre genou BL    (pose BL)
+//
+//  Phase 2 — Paire B au sol : pousser vers l'arrière (propulsion)
+//    6  reculer hanche FL  (-HIP_STEP)
+//    7  reculer hanche BR  (-HIP_STEP)
+//
+//  Phase 3 — Lever paire B (FL+BR) et avancer :
+//    8  plier genou FL
+//    9  avancer hanche FL
+//   10  plier genou BR
+//   11  avancer hanche BR
+//   12  tendre genou FL
+//   13  tendre genou BR
+//
+//  Phase 4 — Paire A au sol : pousser
+//   (implicite au début du cycle suivant via phases 6-7 inversées)
+//   14  reculer hanche FR
+//   15  reculer hanche BL
+//
+//  Total : 16 étapes
+// ═══════════════════════════════════════════════════════════════
 void walkForward() {
   switch (gaitStep) {
-    // Paire A (FR+BL) : lever
-    case  0: sendServo(CH_FR_KNEE, PLIE_FR);              break;
-    case  1: sendServo(CH_BL_KNEE, PLIE_BL);              break;
-    // Paire A : avancer
-    case  2: sendServo(CH_FR_HIP,  hipFR(+HIP_STEP));     break;
-    case  3: sendServo(CH_BL_HIP,  hipBL(+HIP_STEP));     break;
-    // Paire A : poser
-    case  4: sendServo(CH_FR_KNEE, TENDU_FR);             break;
-    case  5: sendServo(CH_BL_KNEE, TENDU_BL);             break;
-    // Paire B au sol : reculer (propulsion)
-    case  6: sendServo(CH_FL_HIP,  hipFL(-HIP_STEP));     break;
-    case  7: sendServo(CH_BR_HIP,  hipBR(-HIP_STEP));     break;
 
-    // Paire B (FL+BR) : lever
-    case  8: sendServo(CH_FL_KNEE, PLIE_FL);              break;
-    case  9: sendServo(CH_BR_KNEE, PLIE_BR);              break;
-    // Paire B : avancer
-    case 10: sendServo(CH_FL_HIP,  hipFL(+HIP_STEP));     break;
-    case 11: sendServo(CH_BR_HIP,  hipBR(+HIP_STEP));     break;
-    // Paire B : poser
-    case 12: sendServo(CH_FL_KNEE, TENDU_FL);             break;
-    case 13: sendServo(CH_BR_KNEE, TENDU_BR);             break;
-    // Paire A au sol : reculer (propulsion)
-    case 14: sendServo(CH_FR_HIP,  hipFR(-HIP_STEP));     break;
-    case 15: sendServo(CH_BL_HIP,  hipBL(-HIP_STEP));     break;
+    // ── Phase 1 : lever paire A (FR+BL), avancer ────────────
+    case  0: sendServo(CH_FR_KNEE, PLIE_FR);           break; // plier FR
+    case  1: sendServo(CH_FR_HIP,  hipFR(+HIP_STEP));  break; // avancer FR
+    case  2: sendServo(CH_BL_KNEE, PLIE_BL);           break; // plier BL
+    case  3: sendServo(CH_BL_HIP,  hipBL(+HIP_STEP));  break; // avancer BL
+    case  4: sendServo(CH_FR_KNEE, TENDU_FR);          break; // poser FR
+    case  5: sendServo(CH_BL_KNEE, TENDU_BL);          break; // poser BL
+
+    // ── Phase 2 : paire B au sol pousse vers l'arrière ───────
+    case  6: sendServo(CH_FL_HIP,  hipFL(-HIP_STEP));  break; // FL pousse
+    case  7: sendServo(CH_BR_HIP,  hipBR(-HIP_STEP));  break; // BR pousse
+
+    // ── Phase 3 : lever paire B (FL+BR), avancer ────────────
+    case  8: sendServo(CH_FL_KNEE, PLIE_FL);           break; // plier FL
+    case  9: sendServo(CH_FL_HIP,  hipFL(+HIP_STEP));  break; // avancer FL
+    case 10: sendServo(CH_BR_KNEE, PLIE_BR);           break; // plier BR
+    case 11: sendServo(CH_BR_HIP,  hipBR(+HIP_STEP));  break; // avancer BR
+    case 12: sendServo(CH_FL_KNEE, TENDU_FL);          break; // poser FL
+    case 13: sendServo(CH_BR_KNEE, TENDU_BR);          break; // poser BR
+
+    // ── Phase 4 : paire A au sol pousse vers l'arrière ───────
+    case 14: sendServo(CH_FR_HIP,  hipFR(-HIP_STEP));  break; // FR pousse
+    case 15: sendServo(CH_BL_HIP,  hipBL(-HIP_STEP));  break; // BL pousse
   }
   gaitStep = (gaitStep + 1) % 16;
 }
 
 void walkBackward() {
   switch (gaitStep) {
-    // Paire A (FR+BL) : lever
-    case  0: sendServo(CH_FR_KNEE, PLIE_FR);              break;
-    case  1: sendServo(CH_BL_KNEE, PLIE_BL);              break;
-    // Paire A : reculer
-    case  2: sendServo(CH_FR_HIP,  hipFR(-HIP_STEP));     break;
-    case  3: sendServo(CH_BL_HIP,  hipBL(-HIP_STEP));     break;
-    // Paire A : poser
-    case  4: sendServo(CH_FR_KNEE, TENDU_FR);             break;
-    case  5: sendServo(CH_BL_KNEE, TENDU_BL);             break;
-    // Paire B au sol : avancer (propulsion arrière)
-    case  6: sendServo(CH_FL_HIP,  hipFL(+HIP_STEP));     break;
-    case  7: sendServo(CH_BR_HIP,  hipBR(+HIP_STEP));     break;
-    // Paire B (FL+BR) : lever
-    case  8: sendServo(CH_FL_KNEE, PLIE_FL);              break;
-    case  9: sendServo(CH_BR_KNEE, PLIE_BR);              break;
-    // Paire B : reculer
-    case 10: sendServo(CH_FL_HIP,  hipFL(-HIP_STEP));     break;
-    case 11: sendServo(CH_BR_HIP,  hipBR(-HIP_STEP));     break;
-    // Paire B : poser
-    case 12: sendServo(CH_FL_KNEE, TENDU_FL);             break;
-    case 13: sendServo(CH_BR_KNEE, TENDU_BR);             break;
-    // Paire A au sol : avancer (propulsion)
-    case 14: sendServo(CH_FR_HIP,  hipFR(+HIP_STEP));     break;
-    case 15: sendServo(CH_BL_HIP,  hipBL(+HIP_STEP));     break;
+
+    // ── Phase 1 : lever paire A (FR+BL), reculer ────────────
+    case  0: sendServo(CH_FR_KNEE, PLIE_FR);           break;
+    case  1: sendServo(CH_FR_HIP,  hipFR(-HIP_STEP));  break; // reculer FR
+    case  2: sendServo(CH_BL_KNEE, PLIE_BL);           break;
+    case  3: sendServo(CH_BL_HIP,  hipBL(-HIP_STEP));  break; // reculer BL
+    case  4: sendServo(CH_FR_KNEE, TENDU_FR);          break;
+    case  5: sendServo(CH_BL_KNEE, TENDU_BL);          break;
+
+    // ── Phase 2 : paire B au sol pousse vers l'avant ─────────
+    case  6: sendServo(CH_FL_HIP,  hipFL(+HIP_STEP));  break;
+    case  7: sendServo(CH_BR_HIP,  hipBR(+HIP_STEP));  break;
+
+    // ── Phase 3 : lever paire B (FL+BR), reculer ────────────
+    case  8: sendServo(CH_FL_KNEE, PLIE_FL);           break;
+    case  9: sendServo(CH_FL_HIP,  hipFL(-HIP_STEP));  break; // reculer FL
+    case 10: sendServo(CH_BR_KNEE, PLIE_BR);           break;
+    case 11: sendServo(CH_BR_HIP,  hipBR(-HIP_STEP));  break; // reculer BR
+    case 12: sendServo(CH_FL_KNEE, TENDU_FL);          break;
+    case 13: sendServo(CH_BR_KNEE, TENDU_BR);          break;
+
+    // ── Phase 4 : paire A au sol pousse vers l'avant ─────────
+    case 14: sendServo(CH_FR_HIP,  hipFR(+HIP_STEP));  break;
+    case 15: sendServo(CH_BL_HIP,  hipBL(+HIP_STEP));  break;
   }
   gaitStep = (gaitStep + 1) % 16;
 }
