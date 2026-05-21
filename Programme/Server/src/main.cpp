@@ -5,257 +5,294 @@
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <ArduinoJson.h>
+#include "esp_system.h"
 
-// ─── WiFi ────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  WiFi
+// ═══════════════════════════════════════════════════════════════
 const char* SSID     = "A51 de Cle";
 const char* PASSWORD = "sgru3285";
 
-// ─── MQ-9 ────────────────────────────────────────────────────
-#define MQ9_ANALOG_PIN  34
-#define MQ9_DIGITAL_PIN 32
-#define RL_VALUE        10.0
-#define RO              10.0
-#define ADC_MAX         4095.0
-#define VCC             3.3
+// ═══════════════════════════════════════════════════════════════
+//  GPIO ESP32-S3
+// ═══════════════════════════════════════════════════════════════
+#define I2C_SDA         8
+#define I2C_SCL         9
+#define MQ9_ANALOG_PIN  4
+#define MQ9_DIGITAL_PIN 5
+#define RL_VALUE  10.0f
+#define RO        10.0f
+#define ADC_MAX   4095.0f
+#define VCC_V     3.3f
 
-// ─── PCA9685 — mapping servos ────────────────────────────────
-// Postérieur droit  : ch 0 (LED01) + ch 1 (LED02)
-// Postérieur gauche : ch 2 (LED03) + ch 3 (LED04)
-// Antérieur droit   : ch 4 (LED05) + ch 5 (LED06)
-// Antérieur gauche  : ch 6 (LED07) + ch 7 (LED08)
-#define SERVO_BR_HIP    0
-#define SERVO_BR_KNEE   1
-#define SERVO_BL_HIP    2
-#define SERVO_BL_KNEE   3
-#define SERVO_FR_HIP    4
-#define SERVO_FR_KNEE   5
-#define SERVO_FL_HIP    6
-#define SERVO_FL_KNEE   7
+// ═══════════════════════════════════════════════════════════════
+//  PCA9685 — canaux
+// ═══════════════════════════════════════════════════════════════
+#define CH_BR_HIP   0
+#define CH_BR_KNEE  1
+#define CH_BL_HIP   2
+#define CH_BL_KNEE  3
+#define CH_FR_HIP   4
+#define CH_FR_KNEE  5
+#define CH_FL_HIP   6
+#define CH_FL_KNEE  7
+#define CH_BR_BALL  8
+#define CH_BL_BALL  9
+#define CH_FR_BALL 10
+#define CH_FL_BALL 11
 
-#define SERVO_FREQ  50
+// ═══════════════════════════════════════════════════════════════
+//  Limites mécaniques absolues (ne jamais dépasser)
+//  Mesurées sur le robot + 10 ticks de marge de sécurité
+// ═══════════════════════════════════════════════════════════════
+#define LIM_BR_HIP_MIN  130   // ch0
+#define LIM_BR_HIP_MAX  540
+#define LIM_BL_HIP_MIN  130   // ch2
+#define LIM_BL_HIP_MAX  505
+#define LIM_FR_HIP_MIN  150   // ch4
+#define LIM_FR_HIP_MAX  510
+#define LIM_FL_HIP_MIN  125   // ch6
+#define LIM_FL_HIP_MAX  510
 
-// ─── Limites mécaniques ──────────────────────────────────────
-// 1° = 2.5 ticks   |   centre = 90° = 375 ticks
+#define LIM_BR_KNEE_MIN 210   // ch1
+#define LIM_BR_KNEE_MAX 440
+#define LIM_BL_KNEE_MIN 210   // ch3
+#define LIM_BL_KNEE_MAX 435
+#define LIM_FR_KNEE_MIN 195   // ch5
+#define LIM_FR_KNEE_MAX 415
+#define LIM_FL_KNEE_MIN 135   // ch7
+#define LIM_FL_KNEE_MAX 360
+
+// ═══════════════════════════════════════════════════════════════
+//  Positions de marche
 //
-// Hanche : ±90°  → 0°–180°   → ticks 150–600
-#define HIP_MIN   150
-#define HIP_MID   375
-#define HIP_MAX   600
+//  HOME = milieu mécanique de chaque hanche (position debout)
+//  TENDU = genou étendu (patte au sol)
+//  PLIE  = genou fléchi pour la marche (~37° depuis tendu = 56 ticks)
 //
-// Genou  : ±45°  → 45°–135°  → ticks 263–487
-#define KNEE_MIN  263
-#define KNEE_MID  375
-#define KNEE_MAX  487
+//  Hanches : ±33 ticks autour du home (~22°)
+//  ch0 BR et ch4 FR sont montés inversés :
+//    delta positif → ticks augmentent (avancer)
+//  ch2 BL et ch6 FL sont normaux :
+//    delta positif → ticks diminuent (avancer)
+// ═══════════════════════════════════════════════════════════════
 
-// ─── Timing marche ───────────────────────────────────────────
-#define STEP_DELAY  300   // ms entre chaque étape de marche
+// Positions home (milieu mécanique)
+#define HOME_BR_HIP   403   // 335 + 68 ticks (+45°)
+#define HOME_BL_HIP   249   // 317 - 68 ticks (+45°)
+#define HOME_FR_HIP   398   // 330 + 68 ticks (+45°)
+#define HOME_FL_HIP   249   // 317 - 68 ticks (+45°)
 
-// ─── Objets globaux ──────────────────────────────────────────
+// Genoux : position debout (tendu)
+#define TENDU_BR  210
+#define TENDU_BL  435
+#define TENDU_FR  195
+#define TENDU_FL  360
+
+// Genoux : position levée pour la marche (~37° = 56 ticks depuis tendu)
+// BR/FR : plie = tendu + 56  (plier = augmenter)
+// BL/FL : plie = tendu - 56  (plier = diminuer)
+#define PLIE_BR   266   // 210 + 56
+#define PLIE_BL   379   // 435 - 56
+#define PLIE_FR   251   // 195 + 56
+#define PLIE_FL   304   // 360 - 56
+
+// Amplitude hanche : 33 ticks (~22°) de chaque côté du home
+#define HIP_STEP  33
+
+// Rotules
+#define BALL_BR   325
+#define BALL_BL   320
+#define BALL_FR   320
+#define BALL_FL   325
+
+// ═══════════════════════════════════════════════════════════════
+//  Helpers hanche avec direction et limites
+//  delta > 0 = avancer la patte
+//  delta < 0 = reculer la patte
+// ═══════════════════════════════════════════════════════════════
+static inline uint16_t hipBR(int delta) {
+  // ch0 inversé : avancer = +ticks
+  return (uint16_t)constrain(HOME_BR_HIP + delta, LIM_BR_HIP_MIN, LIM_BR_HIP_MAX);
+}
+static inline uint16_t hipBL(int delta) {
+  // ch2 normal : avancer = -ticks
+  return (uint16_t)constrain(HOME_BL_HIP - delta, LIM_BL_HIP_MIN, LIM_BL_HIP_MAX);
+}
+static inline uint16_t hipFR(int delta) {
+  // ch4 inversé : avancer = +ticks
+  return (uint16_t)constrain(HOME_FR_HIP + delta, LIM_FR_HIP_MIN, LIM_FR_HIP_MAX);
+}
+static inline uint16_t hipFL(int delta) {
+  // ch6 normal : avancer = -ticks
+  return (uint16_t)constrain(HOME_FL_HIP - delta, LIM_FL_HIP_MIN, LIM_FL_HIP_MAX);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  sendServo — bloquant, attend la fin du mouvement
+//  wsServer.loop() appelé pendant l'attente → pas de déconnexion
+// ═══════════════════════════════════════════════════════════════
+#define SERVO_MOVE_MS  400
+
 Adafruit_PWMServoDriver pca = Adafruit_PWMServoDriver(0x40);
-WebServer               httpServer(80);
-WebSocketsServer        wsServer(81);
+WebServer                httpServer(80);
+WebSocketsServer         wsServer(81);
+uint16_t servoPos[16];
 
-// ─── État ────────────────────────────────────────────────────
+void waitMs(unsigned long ms) {
+  unsigned long t0 = millis();
+  while (millis() - t0 < ms) {
+    wsServer.loop();
+    httpServer.handleClient();
+    delay(5);
+  }
+}
+
+void sendServo(uint8_t ch, uint16_t ticks) {
+  if (ch >= 16) return;
+  ticks = (uint16_t)constrain((int)ticks, 0, 600);
+  // On envoie toujours la commande (pas de skip sur position identique)
+  // pour garantir que le servo maintient sa position
+  servoPos[ch] = ticks;
+  pca.setPWM(ch, 0, ticks);
+  // Attente que le servo arrive en position
+  waitMs(SERVO_MOVE_MS);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  État machine
+// ═══════════════════════════════════════════════════════════════
 enum Command { CMD_STOP, CMD_FORWARD, CMD_BACKWARD, CMD_LEFT, CMD_RIGHT };
-volatile Command currentCmd = CMD_STOP;
-volatile uint8_t speed      = 50;   // 0-100
-uint8_t          gaitStep   = 0;
-unsigned long    lastStep   = 0;
-uint32_t         lastSensorSend = 0;
+volatile Command pendingCmd = CMD_STOP;
+volatile uint8_t speedPct   = 50;
+Command       currentCmd  = CMD_STOP;
+uint8_t       gaitStep    = 0;
+uint32_t      lastSensorMs = 0;
+bool          wasMoving   = false;
 
-// ─── Servo helper ────────────────────────────────────────────
-// Envoie une position en bornant selon le type d'articulation
-void setHip(uint8_t ch, uint16_t ticks) {
-  pca.setPWM(ch, 0, constrain(ticks, HIP_MIN, HIP_MAX));
-}
-
-void setKnee(uint8_t ch, uint16_t ticks) {
-  pca.setPWM(ch, 0, constrain(ticks, KNEE_MIN, KNEE_MAX));
-}
-
-// ─── Posture neutre ──────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  standStill — retour home, un servo à la fois
+// ═══════════════════════════════════════════════════════════════
 void standStill() {
-  setHip  (SERVO_BR_HIP,  HIP_MID);
-  setKnee (SERVO_BR_KNEE, KNEE_MID);
-  setHip  (SERVO_BL_HIP,  HIP_MID);
-  setKnee (SERVO_BL_KNEE, KNEE_MID);
-  setHip  (SERVO_FR_HIP,  HIP_MID);
-  setKnee (SERVO_FR_KNEE, KNEE_MID);
-  setHip  (SERVO_FL_HIP,  HIP_MID);
-  setKnee (SERVO_FL_KNEE, KNEE_MID);
   gaitStep = 0;
+  // 1. Genoux mi-course (évite les à-coups)
+  sendServo(CH_BR_KNEE, (TENDU_BR + PLIE_BR) / 2);
+  sendServo(CH_BL_KNEE, (TENDU_BL + PLIE_BL) / 2);
+  sendServo(CH_FR_KNEE, (TENDU_FR + PLIE_FR) / 2);
+  sendServo(CH_FL_KNEE, (TENDU_FL + PLIE_FL) / 2);
+  // 2. Hanches au centre
+  sendServo(CH_BR_HIP, HOME_BR_HIP);
+  sendServo(CH_BL_HIP, HOME_BL_HIP);
+  sendServo(CH_FR_HIP, HOME_FR_HIP);
+  sendServo(CH_FL_HIP, HOME_FL_HIP);
+  // 3. Genoux tendus (debout)
+  sendServo(CH_BR_KNEE, TENDU_BR);
+  sendServo(CH_BL_KNEE, TENDU_BL);
+  sendServo(CH_FR_KNEE, TENDU_FR);
+  sendServo(CH_FL_KNEE, TENDU_FL);
 }
 
-// ─── Délai adapté à la vitesse ────────────────────────────────
-// speed=0  → 500 ms   |   speed=100 → 150 ms
-unsigned long stepDelay() {
-  return map(speed, 0, 100, 500, 150);
-}
-
-// ─── Marche AVANT ────────────────────────────────────────────
-// Trot diagonal : FR+BL puis FL+BR, hanches + genoux
-// Étape 0 : lever FR+BL (genou monte, hanche avance)
-// Étape 1 : poser FR+BL  (genou descend)
-// Étape 2 : lever FL+BR
-// Étape 3 : poser FL+BR
+// ═══════════════════════════════════════════════════════════════
+//  Trot diagonal — 16 étapes, un servo à la fois
+//
+//  Paire A = FR + BL  (diagonal)
+//  Paire B = FL + BR  (diagonal)
+//
+//  Séquence par demi-cycle (8 étapes) :
+//   0. Plier genou FR
+//   1. Plier genou BL
+//   2. Avancer hanche FR
+//   3. Avancer hanche BL
+//   4. Tendre genou FR
+//   5. Tendre genou BL
+//   6. Reculer hanche FL (propulsion, patte au sol)
+//   7. Reculer hanche BR (propulsion, patte au sol)
+//  Puis symétrique pour paire B (étapes 8-15)
+// ═══════════════════════════════════════════════════════════════
 void walkForward() {
-  if (millis() - lastStep < stepDelay()) return;
-  lastStep = millis();
-
   switch (gaitStep) {
-    case 0:
-      setKnee(SERVO_FR_KNEE, KNEE_MIN);   // FR genou lève
-      setHip (SERVO_FR_HIP,  HIP_MID - 50);
-      setKnee(SERVO_BL_KNEE, KNEE_MIN);   // BL genou lève
-      setHip (SERVO_BL_HIP,  HIP_MID + 50);
-      break;
-    case 1:
-      setKnee(SERVO_FR_KNEE, KNEE_MID);   // FR genou pose
-      setHip (SERVO_FR_HIP,  HIP_MID + 30);
-      setKnee(SERVO_BL_KNEE, KNEE_MID);   // BL genou pose
-      setHip (SERVO_BL_HIP,  HIP_MID - 30);
-      break;
-    case 2:
-      setKnee(SERVO_FL_KNEE, KNEE_MIN);   // FL genou lève
-      setHip (SERVO_FL_HIP,  HIP_MID - 50);
-      setKnee(SERVO_BR_KNEE, KNEE_MIN);   // BR genou lève
-      setHip (SERVO_BR_HIP,  HIP_MID + 50);
-      break;
-    case 3:
-      setKnee(SERVO_FL_KNEE, KNEE_MID);   // FL genou pose
-      setHip (SERVO_FL_HIP,  HIP_MID + 30);
-      setKnee(SERVO_BR_KNEE, KNEE_MID);   // BR genou pose
-      setHip (SERVO_BR_HIP,  HIP_MID - 30);
-      break;
+    // Paire A (FR+BL) : lever
+    case  0: sendServo(CH_FR_KNEE, PLIE_FR);              break;
+    case  1: sendServo(CH_BL_KNEE, PLIE_BL);              break;
+    // Paire A : avancer
+    case  2: sendServo(CH_FR_HIP,  hipFR(+HIP_STEP));     break;
+    case  3: sendServo(CH_BL_HIP,  hipBL(+HIP_STEP));     break;
+    // Paire A : poser
+    case  4: sendServo(CH_FR_KNEE, TENDU_FR);             break;
+    case  5: sendServo(CH_BL_KNEE, TENDU_BL);             break;
+    // Paire B au sol : reculer (propulsion)
+    case  6: sendServo(CH_FL_HIP,  hipFL(-HIP_STEP));     break;
+    case  7: sendServo(CH_BR_HIP,  hipBR(-HIP_STEP));     break;
+
+    // Paire B (FL+BR) : lever
+    case  8: sendServo(CH_FL_KNEE, PLIE_FL);              break;
+    case  9: sendServo(CH_BR_KNEE, PLIE_BR);              break;
+    // Paire B : avancer
+    case 10: sendServo(CH_FL_HIP,  hipFL(+HIP_STEP));     break;
+    case 11: sendServo(CH_BR_HIP,  hipBR(+HIP_STEP));     break;
+    // Paire B : poser
+    case 12: sendServo(CH_FL_KNEE, TENDU_FL);             break;
+    case 13: sendServo(CH_BR_KNEE, TENDU_BR);             break;
+    // Paire A au sol : reculer (propulsion)
+    case 14: sendServo(CH_FR_HIP,  hipFR(-HIP_STEP));     break;
+    case 15: sendServo(CH_BL_HIP,  hipBL(-HIP_STEP));     break;
   }
-  gaitStep = (gaitStep + 1) % 4;
+  gaitStep = (gaitStep + 1) % 16;
 }
 
-// ─── Marche ARRIÈRE ──────────────────────────────────────────
-// Identique à l'avant mais hanches inversées
 void walkBackward() {
-  if (millis() - lastStep < stepDelay()) return;
-  lastStep = millis();
-
   switch (gaitStep) {
-    case 0:
-      setKnee(SERVO_FR_KNEE, KNEE_MIN);
-      setHip (SERVO_FR_HIP,  HIP_MID + 50);   // hanche inversée
-      setKnee(SERVO_BL_KNEE, KNEE_MIN);
-      setHip (SERVO_BL_HIP,  HIP_MID - 50);
-      break;
-    case 1:
-      setKnee(SERVO_FR_KNEE, KNEE_MID);
-      setHip (SERVO_FR_HIP,  HIP_MID - 30);
-      setKnee(SERVO_BL_KNEE, KNEE_MID);
-      setHip (SERVO_BL_HIP,  HIP_MID + 30);
-      break;
-    case 2:
-      setKnee(SERVO_FL_KNEE, KNEE_MIN);
-      setHip (SERVO_FL_HIP,  HIP_MID + 50);
-      setKnee(SERVO_BR_KNEE, KNEE_MIN);
-      setHip (SERVO_BR_HIP,  HIP_MID - 50);
-      break;
-    case 3:
-      setKnee(SERVO_FL_KNEE, KNEE_MID);
-      setHip (SERVO_FL_HIP,  HIP_MID - 30);
-      setKnee(SERVO_BR_KNEE, KNEE_MID);
-      setHip (SERVO_BR_HIP,  HIP_MID + 30);
-      break;
+    // Paire A (FR+BL) : lever
+    case  0: sendServo(CH_FR_KNEE, PLIE_FR);              break;
+    case  1: sendServo(CH_BL_KNEE, PLIE_BL);              break;
+    // Paire A : reculer
+    case  2: sendServo(CH_FR_HIP,  hipFR(-HIP_STEP));     break;
+    case  3: sendServo(CH_BL_HIP,  hipBL(-HIP_STEP));     break;
+    // Paire A : poser
+    case  4: sendServo(CH_FR_KNEE, TENDU_FR);             break;
+    case  5: sendServo(CH_BL_KNEE, TENDU_BL);             break;
+    // Paire B au sol : avancer (propulsion arrière)
+    case  6: sendServo(CH_FL_HIP,  hipFL(+HIP_STEP));     break;
+    case  7: sendServo(CH_BR_HIP,  hipBR(+HIP_STEP));     break;
+    // Paire B (FL+BR) : lever
+    case  8: sendServo(CH_FL_KNEE, PLIE_FL);              break;
+    case  9: sendServo(CH_BR_KNEE, PLIE_BR);              break;
+    // Paire B : reculer
+    case 10: sendServo(CH_FL_HIP,  hipFL(-HIP_STEP));     break;
+    case 11: sendServo(CH_BR_HIP,  hipBR(-HIP_STEP));     break;
+    // Paire B : poser
+    case 12: sendServo(CH_FL_KNEE, TENDU_FL);             break;
+    case 13: sendServo(CH_BR_KNEE, TENDU_BR);             break;
+    // Paire A au sol : avancer (propulsion)
+    case 14: sendServo(CH_FR_HIP,  hipFR(+HIP_STEP));     break;
+    case 15: sendServo(CH_BL_HIP,  hipBL(+HIP_STEP));     break;
   }
-  gaitStep = (gaitStep + 1) % 4;
+  gaitStep = (gaitStep + 1) % 16;
 }
 
-// ─── Virage GAUCHE ───────────────────────────────────────────
-// Membres gauches reculent, membres droits avancent
-void walkLeft() {
-  if (millis() - lastStep < stepDelay()) return;
-  lastStep = millis();
-
-  switch (gaitStep) {
-    case 0:
-      setKnee(SERVO_FL_KNEE, KNEE_MIN);
-      setHip (SERVO_FL_HIP,  HIP_MID - 40);
-      setKnee(SERVO_BL_KNEE, KNEE_MIN);
-      setHip (SERVO_BL_HIP,  HIP_MID - 40);
-      break;
-    case 1:
-      setKnee(SERVO_FL_KNEE, KNEE_MID);
-      setHip (SERVO_FL_HIP,  HIP_MID + 30);
-      setKnee(SERVO_BL_KNEE, KNEE_MID);
-      setHip (SERVO_BL_HIP,  HIP_MID + 30);
-      break;
-    case 2:
-      setKnee(SERVO_FR_KNEE, KNEE_MIN);
-      setHip (SERVO_FR_HIP,  HIP_MID + 40);
-      setKnee(SERVO_BR_KNEE, KNEE_MIN);
-      setHip (SERVO_BR_HIP,  HIP_MID + 40);
-      break;
-    case 3:
-      setKnee(SERVO_FR_KNEE, KNEE_MID);
-      setHip (SERVO_FR_HIP,  HIP_MID - 30);
-      setKnee(SERVO_BR_KNEE, KNEE_MID);
-      setHip (SERVO_BR_HIP,  HIP_MID - 30);
-      break;
-  }
-  gaitStep = (gaitStep + 1) % 4;
-}
-
-// ─── Virage DROITE ───────────────────────────────────────────
-// Symétrique du virage gauche
-void walkRight() {
-  if (millis() - lastStep < stepDelay()) return;
-  lastStep = millis();
-
-  switch (gaitStep) {
-    case 0:
-      setKnee(SERVO_FR_KNEE, KNEE_MIN);
-      setHip (SERVO_FR_HIP,  HIP_MID + 40);
-      setKnee(SERVO_BR_KNEE, KNEE_MIN);
-      setHip (SERVO_BR_HIP,  HIP_MID + 40);
-      break;
-    case 1:
-      setKnee(SERVO_FR_KNEE, KNEE_MID);
-      setHip (SERVO_FR_HIP,  HIP_MID - 30);
-      setKnee(SERVO_BR_KNEE, KNEE_MID);
-      setHip (SERVO_BR_HIP,  HIP_MID - 30);
-      break;
-    case 2:
-      setKnee(SERVO_FL_KNEE, KNEE_MIN);
-      setHip (SERVO_FL_HIP,  HIP_MID - 40);
-      setKnee(SERVO_BL_KNEE, KNEE_MIN);
-      setHip (SERVO_BL_HIP,  HIP_MID - 40);
-      break;
-    case 3:
-      setKnee(SERVO_FL_KNEE, KNEE_MID);
-      setHip (SERVO_FL_HIP,  HIP_MID + 30);
-      setKnee(SERVO_BL_KNEE, KNEE_MID);
-      setHip (SERVO_BL_HIP,  HIP_MID + 30);
-      break;
-  }
-  gaitStep = (gaitStep + 1) % 4;
-}
-
-// ─── MQ-9 ────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  MQ-9
+// ═══════════════════════════════════════════════════════════════
 struct SensorData { int raw; float voltage, rs, ratio, ppm; bool alert; };
 
 SensorData readMQ9() {
   SensorData d;
   d.raw     = analogRead(MQ9_ANALOG_PIN);
-  d.alert   = digitalRead(MQ9_DIGITAL_PIN) == LOW;
-  d.voltage = (d.raw / ADC_MAX) * VCC;
-  d.rs      = (d.voltage > 0.01f) ? RL_VALUE * (VCC - d.voltage) / d.voltage : 0;
-  d.ratio   = d.rs / RO;
-  d.ppm     = (d.ratio > 0) ? 599.65f * pow(d.ratio, -2.244f) : 0;
+  d.alert   = (digitalRead(MQ9_DIGITAL_PIN) == LOW);
+  d.voltage = (d.raw / ADC_MAX) * VCC_V;
+  d.rs      = (d.voltage > 0.01f) ? RL_VALUE * (VCC_V - d.voltage) / d.voltage : 0.0f;
+  d.ratio   = (RO > 0.0f) ? d.rs / RO : 0.0f;
+  d.ppm     = (d.ratio > 0.0f) ? 599.65f * powf(d.ratio, -2.244f) : 0.0f;
   return d;
 }
 
-// ─── WebSocket handler ───────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  WebSocket
+// ═══════════════════════════════════════════════════════════════
 void onWsEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length) {
   if (type == WStype_TEXT) {
     StaticJsonDocument<128> doc;
     if (deserializeJson(doc, payload, length)) return;
-
     const char* t = doc["type"];
     if (!t) return;
 
@@ -266,85 +303,147 @@ void onWsEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length) {
 
     if (strcmp(t, "cmd") == 0) {
       const char* cmd = doc["cmd"];
-      speed = constrain((int)doc["speed"] | 50, 0, 100);
+      if (!cmd) return;
+      if (doc.containsKey("speed"))
+        speedPct = (uint8_t)constrain((int)doc["speed"], 0, 100);
+      Command next = CMD_STOP;
+      if      (strcmp(cmd, "forward")  == 0) next = CMD_FORWARD;
+      else if (strcmp(cmd, "backward") == 0) next = CMD_BACKWARD;
+      else if (strcmp(cmd, "left")     == 0) next = CMD_LEFT;
+      else if (strcmp(cmd, "right")    == 0) next = CMD_RIGHT;
+      if (next != pendingCmd) gaitStep = 0;
+      pendingCmd = next;
+      Serial.printf("[CMD] %s spd=%d\n", cmd, speedPct);
+    }
 
-      Command prev = currentCmd;
-      if      (strcmp(cmd, "forward")  == 0) currentCmd = CMD_FORWARD;
-      else if (strcmp(cmd, "backward") == 0) currentCmd = CMD_BACKWARD;
-      else if (strcmp(cmd, "left")     == 0) currentCmd = CMD_LEFT;
-      else if (strcmp(cmd, "right")    == 0) currentCmd = CMD_RIGHT;
-      else                                    currentCmd = CMD_STOP;
-
-      // Repart de l'étape 0 si la direction change
-      if (currentCmd != prev) gaitStep = 0;
-
-      Serial.printf("CMD=%d speed=%d\n", (int)currentCmd, speed);
+    if (strcmp(t, "cal") == 0) {
+      uint8_t  ch    = (uint8_t)(int)doc["ch"];
+      uint16_t ticks = (uint16_t)constrain((int)doc["ticks"], 0, 600);
+      if (ch >= 16) return;
+      pca.setPWM(ch, 0, ticks);
+      servoPos[ch] = ticks;
+      Serial.printf("[CAL] ch=%d ticks=%d\n", ch, ticks);
     }
   }
 
   if (type == WStype_DISCONNECTED) {
-    currentCmd = CMD_STOP;
-    standStill();
+    Serial.printf("[WS] #%d deconnecte\n", num);
+    pendingCmd = CMD_STOP;
+  }
+  if (type == WStype_CONNECTED) {
+    Serial.printf("[WS] #%d connecte\n", num);
   }
 }
 
-// ─── HTTP ────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  HTTP
+// ═══════════════════════════════════════════════════════════════
 void handleRoot() {
-  httpServer.send(200, "text/plain",
-    "ESP32 QuadBot OK\n"
-    "WebSocket : ws://IP:81/ws\n"
-    "Commandes : {\"type\":\"cmd\",\"cmd\":\"forward|backward|left|right|stop\",\"speed\":0-100}");
+  httpServer.send(200, "text/plain", "QuadBot S3 OK\nws://IP:81");
 }
 
-// ─── Setup ───────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  Setup
+// ═══════════════════════════════════════════════════════════════
 void setup() {
   Serial.begin(115200);
+  delay(300);
+
+  esp_reset_reason_t r = esp_reset_reason();
+  Serial.printf("\n[BOOT] ESP32-S3 reset=%d", (int)r);
+  if (r == ESP_RST_BROWNOUT) Serial.print(" *** BROWNOUT ***");
+  if (r == ESP_RST_PANIC)    Serial.print(" *** PANIC ***");
+  Serial.println();
+
   pinMode(MQ9_ANALOG_PIN,  INPUT);
   pinMode(MQ9_DIGITAL_PIN, INPUT);
+  memset(servoPos, 0xFF, sizeof(servoPos));
 
-  // ── Fix I2C : pins explicites ──
-  Wire.begin(21, 22);
+  Wire.begin(I2C_SDA, I2C_SCL);
+  Wire.setClock(100000);
+
   pca.begin();
-  pca.setPWMFreq(50);   // sans setOscillatorFrequency — plus stable
-  delay(500);
+  pca.setOscillatorFrequency(25000000);
+  pca.setPWMFreq(50);
+  delay(150);
+  Serial.println("[PCA] OK 25MHz/50Hz");
 
-  standStill();
-  Serial.println("PCA9685 OK — servos position neutre");
+  // Résumé des positions de marche
+  Serial.println("[CFG] Positions de marche :");
+  Serial.printf("  BR hip  home=%d  avant=%d  arriere=%d\n", HOME_BR_HIP, hipBR(+HIP_STEP), hipBR(-HIP_STEP));
+  Serial.printf("  BL hip  home=%d  avant=%d  arriere=%d\n", HOME_BL_HIP, hipBL(+HIP_STEP), hipBL(-HIP_STEP));
+  Serial.printf("  FR hip  home=%d  avant=%d  arriere=%d\n", HOME_FR_HIP, hipFR(+HIP_STEP), hipFR(-HIP_STEP));
+  Serial.printf("  FL hip  home=%d  avant=%d  arriere=%d\n", HOME_FL_HIP, hipFL(+HIP_STEP), hipFL(-HIP_STEP));
+  Serial.printf("  BR knee tendu=%d plie=%d\n", TENDU_BR, PLIE_BR);
+  Serial.printf("  BL knee tendu=%d plie=%d\n", TENDU_BL, PLIE_BL);
+  Serial.printf("  FR knee tendu=%d plie=%d\n", TENDU_FR, PLIE_FR);
+  Serial.printf("  FL knee tendu=%d plie=%d\n", TENDU_FL, PLIE_FL);
+  Serial.printf("[CFG] HIP_STEP=%d  SERVO_MOVE_MS=%d\n", HIP_STEP, SERVO_MOVE_MS);
 
-  Serial.printf("Connexion WiFi à %s", SSID);
+  // Init séquentielle un servo à la fois
+  Serial.println("[SERVO] Init home...");
+  sendServo(CH_BR_HIP,  HOME_BR_HIP);
+  sendServo(CH_BR_KNEE, TENDU_BR);
+  sendServo(CH_BL_HIP,  HOME_BL_HIP);
+  sendServo(CH_BL_KNEE, TENDU_BL);
+  sendServo(CH_FR_HIP,  HOME_FR_HIP);
+  sendServo(CH_FR_KNEE, TENDU_FR);
+  sendServo(CH_FL_HIP,  HOME_FL_HIP);
+  sendServo(CH_FL_KNEE, TENDU_FL);
+  // Rotules
+  sendServo(CH_BR_BALL, BALL_BR);
+  sendServo(CH_BL_BALL, BALL_BL);
+  sendServo(CH_FR_BALL, BALL_FR);
+  sendServo(CH_FL_BALL, BALL_FL);
+  Serial.println("[SERVO] Home OK");
+
+  Serial.printf("[WiFi] Connexion a %s", SSID);
   WiFi.begin(SSID, PASSWORD);
-  while (WiFi.status() != WL_CONNECTED) { delay(500); Serial.print("."); }
-  Serial.printf("\nConnecté — IP : http://%s\n", WiFi.localIP().toString().c_str());
-  Serial.printf("WebSocket  : ws://%s:81/ws\n", WiFi.localIP().toString().c_str());
+  uint8_t att = 0;
+  while (WiFi.status() != WL_CONNECTED && att < 40) {
+    delay(500); Serial.print("."); att++;
+  }
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.printf("\n[WiFi] IP : %s\n",       WiFi.localIP().toString().c_str());
+    Serial.printf("[WiFi] WS : ws://%s:81\n",  WiFi.localIP().toString().c_str());
+  } else {
+    Serial.println("\n[WiFi] ECHEC");
+  }
 
   httpServer.on("/", handleRoot);
   httpServer.begin();
   wsServer.begin();
   wsServer.onEvent(onWsEvent);
-  Serial.println("Serveurs démarrés");
+  Serial.println("[SERVER] OK");
 }
 
-// ─── Loop ────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  Loop
+// ═══════════════════════════════════════════════════════════════
 void loop() {
   httpServer.handleClient();
   wsServer.loop();
 
-  switch (currentCmd) {
-    case CMD_FORWARD:  walkForward();  break;
-    case CMD_BACKWARD: walkBackward(); break;
-    case CMD_LEFT:     walkLeft();     break;
-    case CMD_RIGHT:    walkRight();    break;
-    case CMD_STOP:
-    default:
+  Command cmd = pendingCmd;
+  if (cmd != currentCmd) {
+    if (cmd == CMD_STOP && wasMoving) {
       standStill();
-      break;
+      wasMoving = false;
+    }
+    currentCmd = cmd;
+    gaitStep = 0;
   }
 
-  // ── Envoi MQ-9 toutes les 2 s ──
-  if (millis() - lastSensorSend > 2000) {
-    lastSensorSend = millis();
-    SensorData d = readMQ9();
+  switch (currentCmd) {
+    case CMD_FORWARD:  wasMoving = true; walkForward();  break;
+    case CMD_BACKWARD: wasMoving = true; walkBackward(); break;
+    case CMD_STOP:
+    default: break;
+  }
 
+  if (millis() - lastSensorMs > 2000) {
+    lastSensorMs = millis();
+    SensorData d = readMQ9();
     StaticJsonDocument<160> doc;
     doc["type"]    = "sensor";
     doc["raw"]     = d.raw;
@@ -353,12 +452,9 @@ void loop() {
     doc["ratio"]   = serialized(String(d.ratio,   3));
     doc["ppm"]     = serialized(String(d.ppm,     1));
     doc["alert"]   = d.alert;
-
-    String out;
-    serializeJson(doc, out);
+    String out; serializeJson(doc, out);
     wsServer.broadcastTXT(out);
-
-    Serial.printf("[MQ-9] %.1f ppm | alert=%s | CMD=%d speed=%d\n",
-      d.ppm, d.alert ? "OUI" : "non", (int)currentCmd, speed);
+    Serial.printf("[MQ9] %.1fppm step=%d cmd=%d\n",
+      d.ppm, gaitStep, (int)currentCmd);
   }
 }
