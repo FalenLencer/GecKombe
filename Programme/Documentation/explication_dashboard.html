@@ -37,8 +37,29 @@
     line-height: 1.75;
   }
 
-  /* Layout */
   .layout { display: flex; min-height: 100vh; }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .7rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: var(--topbar-h);
+  }
+  .brand { font-weight: 700; text-decoration: none; color: var(--text); }
+  .nav-links a {
+    margin-left: 1rem;
+    text-decoration: none;
+    font-size: .85rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .nav-links a:hover { color: var(--accent); }
 
   nav {
     width: 268px;
@@ -47,10 +68,10 @@
     border-right: 1px solid var(--border);
     padding: 2rem 0;
     position: sticky;
-    top: var(--topbar-h); /* 🔥 synchro parfaite */
+    top: var(--topbar-h);
     height: calc(100vh - var(--topbar-h));
     overflow-y: auto;
-}
+  }
 
   .nav-brand {
     padding: 0 1.5rem 1.5rem;
@@ -100,28 +121,17 @@
   .esp { background: var(--tag-esp); color: var(--tag-esp-t); }
   .ui  { background: var(--tag-ui);  color: var(--tag-ui-t);  }
 
-  main {
-    flex: 1;
-    padding: 3rem 4rem;
-    max-width: 900px;
-  }
+  main { flex: 1; padding: 3rem 4rem; max-width: 900px; }
 
-  /* Hero */
   .hero {
     border-bottom: 1px solid var(--border);
     padding-bottom: 2.5rem;
     margin-bottom: 3rem;
   }
-  .hero h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: .75rem;
-  }
+  .hero h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: .75rem; }
   .hero h1 span { color: var(--accent); }
   .hero p { color: var(--muted); max-width: 60ch; }
 
-  /* Schema flow */
   .flow {
     display: flex;
     align-items: center;
@@ -138,11 +148,7 @@
   }
   .flow-arrow { color: var(--muted); font-size: 1.1rem; }
 
-  /* Sections */
-  .fn-section {
-    margin-bottom: 4rem;
-    scroll-margin-top: 2rem;
-  }
+  .fn-section { margin-bottom: 4rem; scroll-margin-top: 2rem; }
 
   .fn-header {
     display: flex;
@@ -153,16 +159,13 @@
     border-bottom: 2px solid var(--border);
   }
   .fn-number {
-    width: 36px;
-    height: 36px;
+    width: 36px; height: 36px;
     border-radius: 8px;
     background: var(--accent);
     color: #fff;
     font-weight: 700;
     font-size: .85rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
     margin-top: 3px;
   }
@@ -171,11 +174,7 @@
   .fn-number.purple { background: var(--purple); }
 
   .fn-title { flex: 1; }
-  .fn-title h2 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: .3rem;
-  }
+  .fn-title h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: .3rem; }
   .fn-title .fn-name {
     font-family: 'Fira Code', monospace;
     font-size: .85rem;
@@ -198,7 +197,6 @@
 
   p { margin-bottom: .9rem; color: #374151; }
   p:last-child { margin-bottom: 0; }
-
   strong { color: var(--text); font-weight: 600; }
 
   code {
@@ -210,7 +208,6 @@
     color: #1e293b;
   }
 
-  /* Code blocks */
   .code-block {
     background: var(--code-bg);
     border-radius: 10px;
@@ -226,41 +223,28 @@
     background: #1a2233;
     border-bottom: 1px solid #1e293b;
   }
-  .code-lang {
-    font-family: 'Fira Code', monospace;
-    font-size: .7rem;
-    color: #64748b;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-  }
+  .code-lang { font-family: 'Fira Code', monospace; font-size: .7rem; color: #64748b; letter-spacing: .1em; text-transform: uppercase; }
   .code-desc { font-size: .72rem; color: #475569; }
-  pre {
-    padding: 1.2rem 1.4rem;
-    overflow-x: auto;
-    margin: 0;
-  }
+  pre { padding: 1.2rem 1.4rem; overflow-x: auto; margin: 0; }
   pre code {
     font-family: 'Fira Code', monospace;
     font-size: .82rem;
-    background: none;
-    padding: 0;
+    background: none; padding: 0;
     color: var(--code-text);
     line-height: 1.7;
     white-space: pre;
   }
 
-  /* Syntax highlighting classes */
-  .kw  { color: #f472b6; }   /* keywords */
-  .fn  { color: #60a5fa; }   /* function names */
-  .str { color: #86efac; }   /* strings */
-  .num { color: #fb923c; }   /* numbers */
-  .cmt { color: #4b5563; font-style: italic; } /* comments */
+  .kw  { color: #f472b6; }
+  .fn  { color: #60a5fa; }
+  .str { color: #86efac; }
+  .num { color: #fb923c; }
+  .cmt { color: #4b5563; font-style: italic; }
   .var { color: #e2e8f0; }
   .op  { color: #94a3b8; }
-  .typ { color: #f9a8d4; }   /* types/objects */
-  .key { color: #fde68a; }   /* JSON keys */
+  .typ { color: #f9a8d4; }
+  .key { color: #fde68a; }
 
-  /* Callout boxes */
   .callout {
     border-left: 3px solid;
     padding: .9rem 1.1rem;
@@ -268,729 +252,341 @@
     margin: 1.2rem 0;
     font-size: .88rem;
   }
-  .callout.info  { border-color: var(--accent);  background: #eff6ff; }
+  .callout.info  { border-color: var(--accent); background: #eff6ff; }
   .callout.warn  { border-color: #f59e0b; background: #fffbeb; }
-  .callout.tip   { border-color: var(--green);   background: #f0fdf4; }
+  .callout.tip   { border-color: var(--green);  background: #f0fdf4; }
   .callout-title { font-weight: 700; margin-bottom: .3rem; font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; }
   .callout.info  .callout-title { color: var(--accent); }
   .callout.warn  .callout-title { color: #d97706; }
   .callout.tip   .callout-title { color: var(--green); }
 
-  /* Step list */
-  .steps { list-style: none; padding: 0; }
-  .steps li {
-    display: flex;
-    gap: .9rem;
-    margin-bottom: .9rem;
-    font-size: .88rem;
-    color: #374151;
-  }
-  .step-n {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: #fff;
-    font-size: .7rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .85rem; }
+  th { background: #f1f5f9; padding: .5rem .8rem; text-align: left; font-weight: 600; font-size: .78rem; letter-spacing: .05em; border-bottom: 2px solid var(--border); }
+  td { padding: .5rem .8rem; border-bottom: 1px solid var(--border); color: #374151; }
+  td code { font-size: .78rem; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f8fafc; }
 
-  /* JSON schema */
-  .json-schema {
-    display: grid;
-    gap: .5rem;
-    margin: 1rem 0;
-  }
-  .json-row {
-    display: flex;
-    align-items: baseline;
-    gap: .6rem;
-    font-family: 'Fira Code', monospace;
-    font-size: .8rem;
-    padding: .4rem .7rem;
-    background: #f8fafc;
-    border-radius: 5px;
-    border: 1px solid var(--border);
-  }
-  .json-key   { color: #1e40af; font-weight: 500; }
-  .json-type  { color: var(--muted); font-size: .72rem; }
-  .json-desc  { color: #374151; font-size: .78rem; font-family: 'Sora', sans-serif; margin-left: auto; }
-
-  /* Separator */
   .sep { border: none; border-top: 1px solid var(--border); margin: 3rem 0; }
 
   @media (max-width: 900px) {
     nav { display: none; }
     main { padding: 2rem 1.5rem; }
   }
-
-  .topbar {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: .7rem 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.brand {
-  font-weight: 700;
-  text-decoration: none;
-  color: var(--text);
-}
-
-.nav-links a {
-  margin-left: 1rem;
-  text-decoration: none;
-  font-size: .85rem;
-  color: var(--muted);
-  font-weight: 600;
-}
-
-.nav-links a:hover {
-  color: var(--accent);
-}
 </style>
 </head>
 <body>
-  <div class="topbar">
-    <div class="nav-left">
-      <a href="index.html" class="brand">QuadBot</a>
-    </div>
-    <div class="nav-links">
-      <a href="explication_dashboard.html">Dashboard</a>
-      <a href="explication_esp32.html">ESP32</a>
-    </div>
+
+<div class="topbar">
+  <a href="index.html" class="brand">QuadBot</a>
+  <div class="nav-links">
+    <a href="explication_dashboard.html">Dashboard</a>
+    <a href="explication_esp32.html">ESP32</a>
   </div>
+</div>
 
 <div class="layout">
 
-<!-- Navigation -->
 <nav>
   <div class="nav-brand">
-    <h2>QuadBot Dashboard</h2>
-    <p>Documentation des fonctions JS</p>
-  </div>
-  <div class="nav-section">
-    <div class="nav-section-title">Architecture</div>
-    <a href="#architecture" class="nav-link">Vue d'ensemble</a>
+    <h2>QuadBot — Dashboard</h2>
+    <p>Documentation du code JavaScript</p>
   </div>
   <div class="nav-section">
     <div class="nav-section-title">Connexion</div>
-    <a href="#connect" class="nav-link">
-      <span class="badge ws">WS</span> connect()
-    </a>
-    <a href="#setStatus" class="nav-link">
-      <span class="badge ui">UI</span> setStatus()
-    </a>
+    <a href="#connect" class="nav-link"><span class="badge ws">WS</span> connect()</a>
+    <a href="#sendping" class="nav-link"><span class="badge ws">WS</span> sendPing()</a>
+    <a href="#setstatus" class="nav-link"><span class="badge ui">UI</span> setStatus()</a>
   </div>
   <div class="nav-section">
     <div class="nav-section-title">Commandes moteur</div>
-    <a href="#sendCmd" class="nav-link">
-      <span class="badge ws">WS</span> sendCmd()
-    </a>
-    <a href="#startCmd" class="nav-link">
-      <span class="badge ui">UI</span> startCmd()
-    </a>
-    <a href="#stopCmd" class="nav-link">
-      <span class="badge ui">UI</span> stopCmd()
-    </a>
-    <a href="#activateLegs" class="nav-link">
-      <span class="badge ui">UI</span> activateLegs()
-    </a>
+    <a href="#sendcmd" class="nav-link"><span class="badge ws">WS</span> sendCmd()</a>
+    <a href="#startcmd" class="nav-link"><span class="badge ws">WS</span> startCmd() / stopCmd()</a>
+    <a href="#keyboard" class="nav-link"><span class="badge ui">UI</span> Clavier</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Caméra ESP32-CAM</div>
+    <a href="#connectcam" class="nav-link"><span class="badge ui">UI</span> connectCam()</a>
+    <a href="#stopcam" class="nav-link"><span class="badge ui">UI</span> stopCam()</a>
+    <a href="#camcontrol" class="nav-link"><span class="badge ws">WS</span> camControl()</a>
+    <a href="#fps" class="nav-link"><span class="badge ui">UI</span> FPS counter</a>
   </div>
   <div class="nav-section">
     <div class="nav-section-title">Capteur MQ-9</div>
-    <a href="#updateSensors" class="nav-link">
-      <span class="badge esp">ESP</span> updateSensors()
-    </a>
+    <a href="#updatesensors" class="nav-link"><span class="badge esp">ESP</span> updateSensors()</a>
   </div>
   <div class="nav-section">
-    <div class="nav-section-title">Utilitaires</div>
-    <a href="#sendPing" class="nav-link">
-      <span class="badge ws">WS</span> sendPing()
-    </a>
-    <a href="#log" class="nav-link">
-      <span class="badge ui">UI</span> log()
-    </a>
-    <a href="#keyboard" class="nav-link">
-      <span class="badge ui">UI</span> Clavier</a>
+    <div class="nav-section-title">Interface</div>
+    <a href="#osd" class="nav-link"><span class="badge ui">UI</span> setOsdCmd()</a>
+    <a href="#log" class="nav-link"><span class="badge ui">UI</span> log()</a>
+    <a href="#resume" class="nav-link">Résumé flux</a>
   </div>
 </nav>
 
-<!-- Content -->
 <main>
 
   <!-- Hero -->
   <div class="hero">
     <h1>Documentation<br><span>Dashboard QuadBot</span></h1>
-    <p>Explication détaillée de chaque fonction JavaScript du dashboard — connexion WebSocket, envoi des commandes de mouvement, réception des données MQ-9, et gestion de l'interface.</p>
+    <p>Explication détaillée du code JavaScript — connexion WebSocket au robot, commandes de mouvement, flux vidéo MJPEG de la caméra ESP32-CAM, réception des données MQ-9 et gestion de l'interface.</p>
 
     <div class="flow">
       <div class="flow-box ws" style="background:#dbeafe;color:#1e40af;border-color:#bfdbfe">Navigateur</div>
       <span class="flow-arrow">⟷</span>
       <div class="flow-box ws" style="background:#dbeafe;color:#1e40af;border-color:#bfdbfe">WebSocket :81</div>
       <span class="flow-arrow">⟷</span>
-      <div class="flow-box esp" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">ESP32</div>
+      <div class="flow-box esp" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">ESP32-S3</div>
       <span class="flow-arrow">→</span>
       <div class="flow-box" style="background:#fef3c7;color:#92400e;border-color:#fde68a">PCA9685</div>
       <span class="flow-arrow">→</span>
-      <div class="flow-box" style="background:#f3e8ff;color:#6b21a8;border-color:#e9d5ff">8 servos</div>
+      <div class="flow-box" style="background:#f3e8ff;color:#6b21a8;border-color:#e9d5ff">12 servos</div>
+    </div>
+    <div class="flow" style="margin-top:.5rem">
+      <div class="flow-box" style="background:#fff7ed;color:#9a3412;border-color:#fed7aa">Navigateur</div>
+      <span class="flow-arrow">⟵</span>
+      <div class="flow-box" style="background:#fff7ed;color:#9a3412;border-color:#fed7aa">MJPEG stream</div>
+      <span class="flow-arrow">⟵</span>
+      <div class="flow-box" style="background:#fff7ed;color:#9a3412;border-color:#fed7aa">ESP32-CAM :81</div>
     </div>
 
-    <div class="tags">
-      <span class="tag ws">WS = échange WebSocket avec l'ESP</span>
-      <span class="tag esp">ESP = donnée reçue de l'ESP</span>
+    <div class="tags" style="margin-top:1rem">
+      <span class="tag ws">WS = échange WebSocket avec l'ESP32</span>
+      <span class="tag esp">ESP = donnée reçue de l'ESP32</span>
       <span class="tag ui">UI = mise à jour visuelle</span>
     </div>
   </div>
 
-
-  <!-- ── connect() ── -->
+  <!-- connect() -->
   <div class="fn-section" id="connect">
     <div class="fn-header">
       <div class="fn-number">1</div>
       <div class="fn-title">
-        <h2>Connexion à l'ESP32</h2>
+        <h2>Connexion au robot</h2>
         <span class="fn-name">connect()</span>
-        <div class="tags">
-          <span class="tag ws">WebSocket</span>
-          <span class="tag ui">UI</span>
-        </div>
+        <div class="tags"><span class="tag ws">WebSocket</span><span class="tag ui">UI</span></div>
       </div>
     </div>
 
-    <p>C'est la <strong>fonction centrale</strong> du dashboard. Elle lit l'adresse IP saisie par l'utilisateur, ouvre une connexion WebSocket persistante vers l'ESP32, et attache tous les handlers d'événements réseau.</p>
-
-    <p>Un WebSocket est différent d'une requête HTTP classique : la connexion reste <strong>ouverte en permanence</strong> dans les deux sens. L'ESP peut envoyer des données à tout moment sans que le navigateur les ait demandées, et inversement.</p>
+    <p>Ouvre une connexion WebSocket persistante vers l'ESP32-S3. L'IP est saisie dans le champ texte du dashboard. La connexion reste ouverte en permanence dans les deux sens : l'ESP peut envoyer les données MQ-9 à tout moment sans que le navigateur les ait demandées.</p>
 
     <div class="code-block">
-      <div class="code-header">
-        <span class="code-lang">JavaScript</span>
-        <span class="code-desc">connect() — ouverture de la connexion WebSocket</span>
-      </div>
+      <div class="code-header"><span class="code-lang">JavaScript</span><span class="code-desc">connect() — ouverture WebSocket et handlers</span></div>
       <pre><code><span class="kw">function</span> <span class="fn">connect</span>() {
-  <span class="cmt">// 1. Lit l'IP saisie dans le champ texte (ex: "192.168.1.100")</span>
   <span class="kw">const</span> ip = document.<span class="fn">getElementById</span>(<span class="str">'ip-input'</span>).value.<span class="fn">trim</span>();
+  <span class="kw">if</span> (ws) ws.<span class="fn">close</span>();   <span class="cmt">// Ferme l'ancienne connexion si elle existe</span>
 
-  <span class="cmt">// 2. Si une connexion existe déjà, on la ferme proprement avant d'en ouvrir une nouvelle</span>
-  <span class="kw">if</span> (ws) ws.<span class="fn">close</span>();
+  <span class="cmt">// Port 81 = WebSocket ESP32 (séparé du port 80 HTTP)
+  // Pas de /ws dans le chemin — l'ESP32-S3 écoute directement sur :81</span>
+  ws = <span class="kw">new</span> <span class="typ">WebSocket</span>(<span class="str">`ws://<span class="var">${ip}</span>/ws`</span>);
 
-  <span class="fn">log</span>(<span class="str">`Connexion à ws://<span class="var">${ip}</span>/ws ...`</span>, <span class="str">'entry'</span>);
-
-  <span class="cmt">// 3. Ouverture du WebSocket
-  //    Le protocole ws:// est le WebSocket non-chiffré (comme http:// vs https://)
-  //    Le port 81 est celui sur lequel l'ESP32 écoute (séparé du port 80 HTTP)
-  //    /ws est le chemin du endpoint WebSocket sur l'ESP</span>
-  ws = <span class="kw">new</span> <span class="typ">WebSocket</span>(<span class="str">`ws://<span class="var">${ip}</span>:81/ws`</span>);
-
-  <span class="cmt">// 4. Événement : connexion établie avec succès</span>
   ws.onopen = () => {
     <span class="fn">setStatus</span>(<span class="kw">true</span>);
-    <span class="fn">log</span>(<span class="str">'WebSocket connecté'</span>, <span class="str">'entry'</span>);
-    <span class="cmt">// Lance un ping toutes les 2 secondes pour mesurer la latence</span>
+    <span class="cmt">// Lance un ping toutes les 2 s pour mesurer la latence</span>
     pingInterval = <span class="fn">setInterval</span>(sendPing, <span class="num">2000</span>);
   };
 
-  <span class="cmt">// 5. Événement : connexion perdue (WiFi coupé, ESP redémarré, etc.)</span>
   ws.onclose = () => {
     <span class="fn">setStatus</span>(<span class="kw">false</span>);
-    <span class="fn">clearInterval</span>(pingInterval);   <span class="cmt">// Arrête les pings</span>
-    <span class="fn">clearInterval</span>(sendInterval);   <span class="cmt">// Arrête l'envoi des commandes moteur</span>
-    <span class="fn">log</span>(<span class="str">'WebSocket déconnecté'</span>, <span class="str">'err'</span>);
+    <span class="fn">clearInterval</span>(pingInterval);
+    <span class="fn">clearInterval</span>(sendInterval);   <span class="cmt">// Arrête l'envoi répété des commandes</span>
   };
 
-  ws.onerror = () => <span class="fn">log</span>(<span class="str">'Erreur WebSocket'</span>, <span class="str">'err'</span>);
-
-  <span class="cmt">// 6. Événement : message reçu de l'ESP32
-  //    C'est ici que l'on trie les messages entrants selon leur type</span>
   ws.onmessage = (e) => {
     <span class="kw">try</span> {
-      <span class="kw">const</span> d = <span class="typ">JSON</span>.<span class="fn">parse</span>(e.data); <span class="cmt">// Décode le JSON reçu</span>
+      <span class="kw">const</span> d = <span class="typ">JSON</span>.<span class="fn">parse</span>(e.data);
 
+      <span class="cmt">// Réponse au ping → calcul latence aller-retour</span>
       <span class="kw">if</span> (d.type === <span class="str">'pong'</span>) {
-        <span class="cmt">// Réponse à notre ping → calcul de la latence en ms</span>
         document.<span class="fn">getElementById</span>(<span class="str">'latency'</span>).textContent =
           (<span class="typ">Date</span>.<span class="fn">now</span>() - pingTime) + <span class="str">' ms'</span>;
         <span class="kw">return</span>;
       }
-
-      <span class="kw">if</span> (d.type === <span class="str">'sensor'</span>) <span class="fn">updateSensors</span>(d); <span class="cmt">// Données MQ-9</span>
-
-    } <span class="kw">catch</span>(_) {} <span class="cmt">// Ignore les messages non-JSON</span>
+      <span class="cmt">// Données MQ-9 → mise à jour de l'affichage capteur</span>
+      <span class="kw">if</span> (d.type === <span class="str">'sensor'</span>) <span class="fn">updateSensors</span>(d);
+    } <span class="kw">catch</span>(_) {}
   };
 }</code></pre>
     </div>
 
     <div class="callout info">
-      <div class="callout-title">Pourquoi le port 81 ?</div>
-      L'ESP32 fait tourner deux serveurs en parallèle : un serveur HTTP sur le port <strong>80</strong> (pour une éventuelle page de statut), et le serveur WebSocket sur le port <strong>81</strong>. Séparer les ports évite les conflits et simplifie le code côté ESP.
-    </div>
-
-    <div class="callout warn">
-      <div class="callout-title">Cas d'échec fréquents</div>
-      Si la connexion échoue immédiatement, vérifier : l'IP est-elle correcte ? L'ESP est-il sur le même réseau WiFi ? Le pare-feu Windows bloque-t-il le port 81 ?
+      <div class="callout-title">Deux connexions indépendantes</div>
+      Le dashboard v2 gère <strong>deux connexions séparées</strong> : le WebSocket <code>:81</code> vers l'ESP32-S3 pour les commandes et les données MQ-9, et un flux MJPEG HTTP vers l'ESP32-CAM pour la vidéo. Les deux peuvent être connectées ou déconnectées indépendamment.
     </div>
   </div>
 
   <hr class="sep">
 
-  <!-- ── sendCmd() ── -->
-  <div class="fn-section" id="sendCmd">
+  <!-- sendPing() -->
+  <div class="fn-section" id="sendping">
     <div class="fn-header">
-      <div class="fn-number orange">2</div>
+      <div class="fn-number">2</div>
       <div class="fn-title">
-        <h2>Envoi d'une commande moteur</h2>
-        <span class="fn-name">sendCmd(cmd)</span>
-        <div class="tags">
-          <span class="tag ws">WebSocket → ESP32 → PCA9685</span>
-        </div>
+        <h2>Mesure de latence</h2>
+        <span class="fn-name">sendPing()</span>
+        <div class="tags"><span class="tag ws">WebSocket</span></div>
       </div>
     </div>
 
-    <p>C'est la fonction qui traduit un appui sur une flèche en <strong>mouvement réel des servos</strong>. Elle construit un message JSON et l'envoie via WebSocket à l'ESP32, qui l'interprète pour piloter le PCA9685.</p>
+    <p>Envoie un <code>{"type":"ping"}</code> toutes les 2 secondes. L'ESP32 répond immédiatement avec <code>{"type":"pong"}</code>. La différence entre l'horodatage d'envoi et de réception donne la latence aller-retour en millisecondes, affichée dans la barre de statut.</p>
 
     <div class="code-block">
-      <div class="code-header">
-        <span class="code-lang">JavaScript</span>
-        <span class="code-desc">sendCmd() — envoi JSON vers l'ESP32</span>
-      </div>
-      <pre><code><span class="kw">function</span> <span class="fn">sendCmd</span>(cmd) {
-  <span class="cmt">// Vérifie que le WebSocket est ouvert (état 1 = OPEN)
-  // États possibles : 0=CONNECTING, 1=OPEN, 2=CLOSING, 3=CLOSED</span>
-  <span class="kw">if</span> (ws?.readyState !== <span class="num">1</span>) {
-    <span class="fn">log</span>(<span class="str">'Non connecté'</span>, <span class="str">'warn'</span>);
-    <span class="kw">return</span>;
+      <div class="code-header"><span class="code-lang">JavaScript</span><span class="code-desc">sendPing() — mesure aller-retour</span></div>
+      <pre><code><span class="kw">function</span> <span class="fn">sendPing</span>() {
+  <span class="kw">if</span> (ws?.readyState === <span class="num">1</span>) {   <span class="cmt">// 1 = OPEN</span>
+    pingTime = <span class="typ">Date</span>.<span class="fn">now</span>();
+    ws.<span class="fn">send</span>(<span class="typ">JSON</span>.<span class="fn">stringify</span>({ type: <span class="str">'ping'</span> }));
   }
+}
+<span class="cmt">// La réponse est traitée dans ws.onmessage :
+// if (d.type === 'pong') → latency = Date.now() - pingTime</span></code></pre>
+    </div>
+  </div>
 
-  <span class="cmt">// Lit la valeur du slider de vitesse (0 à 100)</span>
+  <hr class="sep">
+
+  <!-- setStatus() -->
+  <div class="fn-section" id="setstatus">
+    <div class="fn-header">
+      <div class="fn-number">3</div>
+      <div class="fn-title">
+        <h2>Indicateur de connexion</h2>
+        <span class="fn-name">setStatus(ok)</span>
+        <div class="tags"><span class="tag ui">UI</span></div>
+      </div>
+    </div>
+
+    <p>Met à jour la pastille de statut dans le header : vert pulsant si connecté, rouge si déconnecté. Remet aussi la latence à "— ms" à la déconnexion.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">JavaScript</span><span class="code-desc">setStatus() — pastille verte/rouge</span></div>
+      <pre><code><span class="kw">function</span> <span class="fn">setStatus</span>(ok) {
+  document.<span class="fn">getElementById</span>(<span class="str">'dot'</span>).className         = <span class="str">'dot'</span> + (ok ? <span class="str">' connected'</span> : <span class="str">''</span>);
+  document.<span class="fn">getElementById</span>(<span class="str">'ws-status'</span>).textContent = ok ? <span class="str">'CONNECTÉ'</span> : <span class="str">'DÉCONNECTÉ'</span>;
+  document.<span class="fn">getElementById</span>(<span class="str">'ws-status'</span>).className   = ok ? <span class="str">'connected'</span> : <span class="str">''</span>;
+  <span class="kw">if</span> (!ok) document.<span class="fn">getElementById</span>(<span class="str">'latency'</span>).textContent = <span class="str">'— ms'</span>;
+}</code></pre>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- sendCmd() -->
+  <div class="fn-section" id="sendcmd">
+    <div class="fn-header">
+      <div class="fn-number orange">4</div>
+      <div class="fn-title">
+        <h2>Envoi d'une commande moteur</h2>
+        <span class="fn-name">sendCmd(cmd)</span>
+        <div class="tags"><span class="tag ws">WebSocket</span></div>
+      </div>
+    </div>
+
+    <p>Sérialise et envoie une commande JSON à l'ESP32. La vitesse est lue depuis le slider du dashboard et incluse dans chaque message. L'ESP32 utilise cette valeur pour calculer la durée de chaque phase de marche via <code>moveMs()</code>.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">JavaScript</span><span class="code-desc">sendCmd() — message JSON vers l'ESP32</span></div>
+      <pre><code><span class="kw">function</span> <span class="fn">sendCmd</span>(cmd) {
+  <span class="kw">if</span> (ws?.readyState !== <span class="num">1</span>) { <span class="fn">log</span>(<span class="str">'Non connecté'</span>, <span class="str">'warn'</span>); <span class="kw">return</span>; }
+
   <span class="kw">const</span> speed = <span class="fn">parseInt</span>(document.<span class="fn">getElementById</span>(<span class="str">'speed'</span>).value);
 
-  <span class="cmt">// Construit et envoie le message JSON
-  //   type  → identifie le type de message (l'ESP le filtre sur ce champ)
-  //   cmd   → la direction : "forward", "backward", "left", "right", "stop"
-  //   speed → entier 0-100, l'ESP l'utilise pour calculer l'amplitude des mouvements</span>
+  <span class="cmt">// Message envoyé : {"type":"cmd","cmd":"forward","speed":50}
+  // L'ESP32 décode ce JSON dans onWsEvent() et met à jour pendingCmd + speedPct</span>
   ws.<span class="fn">send</span>(<span class="typ">JSON</span>.<span class="fn">stringify</span>({ type: <span class="str">'cmd'</span>, cmd, speed }));
-
   <span class="fn">log</span>(<span class="str">`> CMD <span class="var">${cmd.toUpperCase()}</span> speed=<span class="var">${speed}</span>`</span>, <span class="str">'cmd'</span>);
 }</code></pre>
     </div>
 
-    <p>Le message JSON envoyé à l'ESP ressemble à ceci :</p>
-
-    <div class="json-schema">
-      <div class="json-row">
-        <span class="json-key">"type"</span>
-        <span class="json-type">string</span>
-        <span class="json-desc">Toujours <code>"cmd"</code> pour une commande moteur</span>
-      </div>
-      <div class="json-row">
-        <span class="json-key">"cmd"</span>
-        <span class="json-type">string</span>
-        <span class="json-desc"><code>"forward"</code> | <code>"backward"</code> | <code>"left"</code> | <code>"right"</code> | <code>"stop"</code></span>
-      </div>
-      <div class="json-row">
-        <span class="json-key">"speed"</span>
-        <span class="json-type">int 0–100</span>
-        <span class="json-desc">Vitesse — mappé côté ESP sur le délai entre les frames de marche</span>
-      </div>
-    </div>
-
-    <div class="callout tip">
-      <div class="callout-title">Pourquoi envoyer en boucle ?</div>
-      <code>sendCmd</code> est appelée une première fois dès l'appui, puis répétée toutes les <strong>150 ms</strong> par <code>startCmd()</code> tant que le bouton est maintenu. Sans cette répétition, un seul paquet perdu sur le WiFi suffirait à bloquer le robot en pleine marche.
-    </div>
+    <table>
+      <thead><tr><th>Commande</th><th>Effet sur l'ESP32</th></tr></thead>
+      <tbody>
+        <tr><td><code>forward</code></td><td>walkForward() — trot diagonal vers l'avant</td></tr>
+        <tr><td><code>backward</code></td><td>walkBackward() — trot diagonal vers l'arrière</td></tr>
+        <tr><td><code>left</code></td><td>CMD_LEFT — réservé (non implémenté dans ce firmware)</td></tr>
+        <tr><td><code>right</code></td><td>CMD_RIGHT — réservé</td></tr>
+        <tr><td><code>stop</code></td><td>standStill() — retour home</td></tr>
+      </tbody>
+    </table>
   </div>
 
   <hr class="sep">
 
-  <!-- ── startCmd / stopCmd ── -->
-  <div class="fn-section" id="startCmd">
+  <!-- startCmd / stopCmd -->
+  <div class="fn-section" id="startcmd">
     <div class="fn-header">
-      <div class="fn-number orange">3</div>
+      <div class="fn-number orange">5</div>
       <div class="fn-title">
-        <h2>Gestion de l'appui sur les boutons</h2>
+        <h2>Gestion des boutons D-pad</h2>
         <span class="fn-name">startCmd(cmd, el) &amp; stopCmd()</span>
-        <div class="tags">
-          <span class="tag ui">UI</span>
-          <span class="tag ws">WebSocket</span>
-        </div>
+        <div class="tags"><span class="tag ws">WS</span><span class="tag ui">UI</span></div>
       </div>
     </div>
 
-    <p>Ces deux fonctions forment une paire. <code>startCmd</code> démarre le mouvement quand on <em>appuie</em>, <code>stopCmd</code> l'arrête quand on <em>relâche</em>. Ce comportement "maintenu = en mouvement" imite une télécommande physique.</p>
+    <p><code>startCmd()</code> est déclenché au <code>mousedown</code> ou <code>touchstart</code> sur un bouton. Elle lance un <code>setInterval</code> qui renvoie la commande toutes les 150 ms — nécessaire car l'ESP32 est bloqué dans <code>waitMove()</code> pendant une phase et peut manquer un message unique. <code>stopCmd()</code> est déclenché au <code>mouseup</code> et envoie <code>stop</code>.</p>
 
     <div class="code-block">
-      <div class="code-header">
-        <span class="code-lang">JavaScript</span>
-        <span class="code-desc">startCmd() — déclenché au mousedown / touchstart</span>
-      </div>
+      <div class="code-header"><span class="code-lang">JavaScript</span><span class="code-desc">startCmd() / stopCmd() — maintien de la commande</span></div>
       <pre><code><span class="kw">function</span> <span class="fn">startCmd</span>(cmd, el) {
-  <span class="cmt">// Évite de relancer si la même commande est déjà active</span>
-  <span class="kw">if</span> (currentCmd === cmd) <span class="kw">return</span>;
-
-  <span class="fn">stopCmd</span>(); <span class="cmt">// Nettoie toute commande précédente</span>
-
+  <span class="kw">if</span> (currentCmd === cmd) <span class="kw">return</span>;   <span class="cmt">// Déjà en cours → ignore</span>
+  <span class="fn">stopCmd</span>();
   currentCmd = cmd;
-  el.classList.<span class="fn">add</span>(<span class="str">'pressed'</span>);   <span class="cmt">// Effet visuel sur le bouton</span>
-  <span class="fn">activateLegs</span>(cmd);             <span class="cmt">// Anime les membres sur la silhouette SVG</span>
+  el.classList.<span class="fn">add</span>(<span class="str">'pressed'</span>);    <span class="cmt">// Effet visuel bouton enfoncé</span>
+  <span class="fn">setOsdCmd</span>(cmd);                  <span class="cmt">// Affiche la commande en OSD sur la vidéo</span>
+  <span class="fn">sendCmd</span>(cmd);                    <span class="cmt">// Premier envoi immédiat</span>
 
-  <span class="fn">sendCmd</span>(cmd);  <span class="cmt">// 1er envoi immédiat</span>
-
-  <span class="cmt">// Puis on continue d'envoyer toutes les 150 ms tant que le bouton est maintenu
-  // Ainsi l'ESP reçoit un flux continu et peut continuer la séquence de marche</span>
-  <span class="kw">if</span> (cmd !== <span class="str">'stop'</span>) {
+  <span class="cmt">// Ré-envoie toutes les 150 ms tant que le bouton est tenu
+  // Permet à l'ESP32 de recevoir la commande même s'il était occupé</span>
+  <span class="kw">if</span> (cmd !== <span class="str">'stop'</span>)
     sendInterval = <span class="fn">setInterval</span>(() => <span class="fn">sendCmd</span>(cmd), <span class="num">150</span>);
-  }
-}</code></pre>
-    </div>
-
-    <div class="code-block">
-      <div class="code-header">
-        <span class="code-lang">JavaScript</span>
-        <span class="code-desc">stopCmd() — déclenché au mouseup / mouseleave / touchend</span>
-      </div>
-      <pre><code><span class="kw">function</span> <span class="fn">stopCmd</span>() {
-  <span class="kw">if</span> (!currentCmd || currentCmd === <span class="str">'stop'</span>) <span class="kw">return</span>;
-
-  <span class="fn">clearInterval</span>(sendInterval); <span class="cmt">// Arrête la répétition des commandes</span>
-
-  <span class="cmt">// Retire l'effet visuel de tous les boutons</span>
-  document.<span class="fn">querySelectorAll</span>(<span class="str">'.btn'</span>).<span class="fn">forEach</span>(b => b.classList.<span class="fn">remove</span>(<span class="str">'pressed'</span>));
-
-  <span class="cmt">// Remet tous les membres en position passive sur la silhouette</span>
-  document.<span class="fn">querySelectorAll</span>(<span class="str">'.leg'</span>).<span class="fn">forEach</span>(l => {
-    l.classList.<span class="fn">remove</span>(<span class="str">'active'</span>);
-    l.classList.<span class="fn">add</span>(<span class="str">'leg-idle'</span>);
-  });
-
-  document.<span class="fn">getElementById</span>(<span class="str">'current-cmd'</span>).textContent = <span class="str">'EN ATTENTE'</span>;
-  currentCmd = <span class="kw">null</span>;
-
-  <span class="fn">sendCmd</span>(<span class="str">'stop'</span>); <span class="cmt">// Envoie "stop" à l'ESP pour qu'il immobilise les servos</span>
 }
 
-<span class="cmt">// Branchement des événements sur chaque bouton du D-pad</span>
-document.<span class="fn">querySelectorAll</span>(<span class="str">'.btn[data-cmd]'</span>).<span class="fn">forEach</span>(btn => {
-  <span class="kw">const</span> cmd = btn.dataset.cmd;
-
-  <span class="cmt">// mousedown = appui souris | touchstart = appui tactile</span>
-  btn.<span class="fn">addEventListener</span>(<span class="str">'mousedown'</span>,  e => { e.<span class="fn">preventDefault</span>(); <span class="fn">startCmd</span>(cmd, btn); });
-  btn.<span class="fn">addEventListener</span>(<span class="str">'touchstart'</span>, e => { e.<span class="fn">preventDefault</span>(); <span class="fn">startCmd</span>(cmd, btn); }, { passive: <span class="kw">false</span> });
-
-  <span class="cmt">// Sauf STOP : celui-là on veut qu'il reste actif même après le relâchement</span>
-  <span class="kw">if</span> (cmd !== <span class="str">'stop'</span>) {
-    btn.<span class="fn">addEventListener</span>(<span class="str">'mouseup'</span>,    () => <span class="fn">stopCmd</span>());
-    btn.<span class="fn">addEventListener</span>(<span class="str">'mouseleave'</span>, () => <span class="fn">stopCmd</span>()); <span class="cmt">// Si la souris glisse hors du bouton</span>
-    btn.<span class="fn">addEventListener</span>(<span class="str">'touchend'</span>,   () => <span class="fn">stopCmd</span>());
-  }
-});</code></pre>
-    </div>
-
-    <div class="callout info">
-      <div class="callout-title">Pourquoi mouseleave ?</div>
-      Si l'utilisateur appuie sur une flèche puis fait glisser sa souris hors du bouton sans relâcher le clic, <code>mouseup</code> ne se déclenche jamais. <code>mouseleave</code> attrape ce cas et envoie quand même <code>stop</code> à l'ESP — sinon le robot continuerait indéfiniment.
-    </div>
-  </div>
-
-  <hr class="sep">
-
-  <!-- ── updateSensors() ── -->
-  <div class="fn-section" id="updateSensors">
-    <div class="fn-header">
-      <div class="fn-number green">4</div>
-      <div class="fn-title">
-        <h2>Réception des données MQ-9</h2>
-        <span class="fn-name">updateSensors(d)</span>
-        <div class="tags">
-          <span class="tag esp">Données reçues de l'ESP32</span>
-          <span class="tag ui">Mise à jour UI</span>
-        </div>
-      </div>
-    </div>
-
-    <p>Cette fonction est appelée automatiquement à chaque fois que l'ESP envoie un paquet de type <code>"sensor"</code> via WebSocket, soit environ <strong>toutes les 2 secondes</strong>. Elle met à jour tous les éléments visuels du panneau capteur.</p>
-
-    <p>Le JSON reçu de l'ESP a cette structure :</p>
-
-    <div class="json-schema">
-      <div class="json-row">
-        <span class="json-key">"type"</span>
-        <span class="json-type">string</span>
-        <span class="json-desc">Toujours <code>"sensor"</code> pour ce type de paquet</span>
-      </div>
-      <div class="json-row">
-        <span class="json-key">"raw"</span>
-        <span class="json-type">int 0–4095</span>
-        <span class="json-desc">Valeur brute ADC lue sur GPIO34 (résolution 12 bits)</span>
-      </div>
-      <div class="json-row">
-        <span class="json-key">"voltage"</span>
-        <span class="json-type">float</span>
-        <span class="json-desc">Tension en volts calculée depuis raw (0–3.3V)</span>
-      </div>
-      <div class="json-row">
-        <span class="json-key">"rs"</span>
-        <span class="json-type">float</span>
-        <span class="json-desc">Résistance interne du capteur RS en kΩ</span>
-      </div>
-      <div class="json-row">
-        <span class="json-key">"ratio"</span>
-        <span class="json-type">float</span>
-        <span class="json-desc">Rapport RS/RO — utilisé dans la courbe datasheet</span>
-      </div>
-      <div class="json-row">
-        <span class="json-key">"ppm"</span>
-        <span class="json-type">float</span>
-        <span class="json-desc">Estimation CO en ppm calculée par l'ESP</span>
-      </div>
-      <div class="json-row">
-        <span class="json-key">"alert"</span>
-        <span class="json-type">bool</span>
-        <span class="json-desc"><code>true</code> si le seuil digital (GPIO32) est dépassé</span>
-      </div>
-    </div>
-
-    <div class="code-block">
-      <div class="code-header">
-        <span class="code-lang">JavaScript</span>
-        <span class="code-desc">updateSensors() — traitement complet des données capteur</span>
-      </div>
-      <pre><code><span class="kw">function</span> <span class="fn">updateSensors</span>(d) {
-  <span class="kw">const</span> ppmEl = document.<span class="fn">getElementById</span>(<span class="str">'ppm'</span>);
-  <span class="kw">const</span> ppm   = <span class="fn">parseFloat</span>(d.ppm) || <span class="num">0</span>;
-
-  <span class="cmt">// ── Mise à jour des valeurs textuelles ──────────────────</span>
-  document.<span class="fn">getElementById</span>(<span class="str">'raw'</span>).textContent =
-    d.raw ?? <span class="str">'—'</span>;                            <span class="cmt">// Valeur brute ADC</span>
-
-  document.<span class="fn">getElementById</span>(<span class="str">'voltage'</span>).textContent =
-    d.voltage ? <span class="fn">parseFloat</span>(d.voltage).<span class="fn">toFixed</span>(<span class="num">2</span>) : <span class="str">'—'</span>;  <span class="cmt">// 2 décimales</span>
-
-  ppmEl.textContent = ppm.<span class="fn">toFixed</span>(<span class="num">1</span>);        <span class="cmt">// 1 décimale pour les PPM</span>
-
-  <span class="cmt">// ── Barre de progression PPM ─────────────────────────────
-  // MAX_PPM = 1000 : au-delà de 1000 ppm, la barre est pleine
-  // La barre utilise un dégradé CSS vert→bleu→orange→rouge
-  // La couleur affichée dépend donc de la largeur (position dans le dégradé)</span>
-  <span class="kw">const</span> pct = <span class="typ">Math</span>.<span class="fn">min</span>(ppm / MAX_PPM * <span class="num">100</span>, <span class="num">100</span>);
-  document.<span class="fn">getElementById</span>(<span class="str">'ppm-bar'</span>).style.width = pct + <span class="str">'%'</span>;
-
-  <span class="cmt">// ── Couleur de la valeur PPM selon le niveau de danger ───
-  // Seuils : WARN_PPM = 200 ppm, DANGER_PPM = 500 ppm</span>
-  <span class="kw">if</span> (ppm >= DANGER_PPM)
-    ppmEl.className = <span class="str">'metric-val danger'</span>;  <span class="cmt">// Rouge + animation clignotante</span>
-  <span class="kw">else if</span> (ppm >= WARN_PPM)
-    ppmEl.className = <span class="str">'metric-val warn'</span>;    <span class="cmt">// Orange</span>
-  <span class="kw">else</span>
-    ppmEl.className = <span class="str">'metric-val'</span>;         <span class="cmt">// Bleu normal</span>
-
-  <span class="cmt">// ── Badge d'alerte digital ───────────────────────────────
-  // d.alert = true quand GPIO32 passe LOW
-  // (le comparateur interne du module MQ-9 a détecté un dépassement de seuil)</span>
-  <span class="kw">const</span> badge = document.<span class="fn">getElementById</span>(<span class="str">'alert-badge'</span>);
-  <span class="kw">const</span> txt   = document.<span class="fn">getElementById</span>(<span class="str">'alert-text'</span>);
-  <span class="kw">if</span> (d.alert) {
-    badge.className = <span class="str">'alert-badge danger'</span>;  <span class="cmt">// Rouge clignotant</span>
-    txt.textContent = <span class="str">'ALERTE GAZ'</span>;
-  } <span class="kw">else</span> {
-    badge.className = <span class="str">'alert-badge'</span>;         <span class="cmt">// Vert normal</span>
-    txt.textContent = <span class="str">'NORMAL'</span>;
-  }
-
-  <span class="cmt">// ── Indicateur sur la silhouette SVG ─────────────────────
-  // Le petit cercle sur le corps du robot change de couleur
-  // vert = normal, rouge = alerte</span>
-  <span class="kw">const</span> mq9dot = document.<span class="fn">getElementById</span>(<span class="str">'mq9-dot'</span>);
-  mq9dot.<span class="fn">setAttribute</span>(<span class="str">'stroke'</span>, d.alert ? <span class="str">'#ff3366'</span> : <span class="str">'#00ff88'</span>);
+<span class="kw">function</span> <span class="fn">stopCmd</span>() {
+  <span class="kw">if</span> (!currentCmd || currentCmd === <span class="str">'stop'</span>) <span class="kw">return</span>;
+  <span class="fn">clearInterval</span>(sendInterval);
+  document.<span class="fn">querySelectorAll</span>(<span class="str">'.btn'</span>).<span class="fn">forEach</span>(b => b.classList.<span class="fn">remove</span>(<span class="str">'pressed'</span>));
+  <span class="fn">setOsdCmd</span>(<span class="kw">null</span>);
+  currentCmd = <span class="kw">null</span>;
+  <span class="fn">sendCmd</span>(<span class="str">'stop'</span>);
 }</code></pre>
     </div>
 
-    <div class="callout info">
-      <div class="callout-title">Comment ce JSON arrive-t-il ici ?</div>
-      Dans <code>connect()</code>, le handler <code>ws.onmessage</code> reçoit <em>tous</em> les messages de l'ESP. Il parse le JSON et regarde le champ <code>type</code> : si c'est <code>"sensor"</code>, il appelle <code>updateSensors(d)</code>. Si c'est <code>"pong"</code>, il calcule la latence. C'est un système de routage de messages simple mais efficace.
+    <div class="callout warn">
+      <div class="callout-title">Pourquoi réémettre toutes les 150 ms ?</div>
+      L'ESP32-S3 est bloqué dans <code>waitMove()</code> pendant 300–800 ms par phase. Si le dashboard envoie un seul message <code>forward</code>, l'ESP peut le recevoir pendant une phase et le traiter, mais au cycle suivant il revient à <code>CMD_STOP</code>. Le réenvoi toutes les 150 ms garantit que <code>pendingCmd</code> reste à jour à chaque cycle.
     </div>
   </div>
 
   <hr class="sep">
 
-  <!-- ── activateLegs() ── -->
-  <div class="fn-section" id="activateLegs">
-    <div class="fn-header">
-      <div class="fn-number purple">5</div>
-      <div class="fn-title">
-        <h2>Animation de la silhouette robot</h2>
-        <span class="fn-name">activateLegs(cmd)</span>
-        <div class="tags">
-          <span class="tag ui">UI uniquement — purement visuel</span>
-        </div>
-      </div>
-    </div>
-
-    <p>Cette fonction ne communique pas avec l'ESP — elle est <strong>purement visuelle</strong>. Elle met en évidence les membres du robot sur le SVG pour refléter le mouvement en cours. La correspondance commande → membres actifs suit le pattern de trot diagonal utilisé dans le code C++.</p>
-
-    <div class="code-block">
-      <div class="code-header">
-        <span class="code-lang">JavaScript</span>
-        <span class="code-desc">activateLegs() — mise en évidence visuelle des membres actifs</span>
-      </div>
-      <pre><code><span class="cmt">// Table de correspondance : commande → IDs des éléments SVG à activer
-// Trot diagonal : FR+BL ou FL+BR travaillent ensemble
-// (comme un vrai quadrupède — diagonalement opposés)</span>
-<span class="kw">const</span> LEG_MAP = {
-  forward:  [<span class="str">'leg-fr'</span>, <span class="str">'leg-bl'</span>], <span class="cmt">// Antérieur droit + Postérieur gauche</span>
-  backward: [<span class="str">'leg-br'</span>, <span class="str">'leg-fl'</span>], <span class="cmt">// Postérieur droit + Antérieur gauche</span>
-  left:     [<span class="str">'leg-fl'</span>, <span class="str">'leg-bl'</span>], <span class="cmt">// Les deux membres gauches</span>
-  right:    [<span class="str">'leg-fr'</span>, <span class="str">'leg-br'</span>], <span class="cmt">// Les deux membres droits</span>
-  stop:     []                       <span class="cmt">// Aucun</span>
-};
-
-<span class="kw">function</span> <span class="fn">activateLegs</span>(cmd) {
-  <span class="cmt">// Remet tous les membres en état "passif" (opacity 35%)</span>
-  document.<span class="fn">querySelectorAll</span>(<span class="str">'.leg'</span>).<span class="fn">forEach</span>(l => {
-    l.classList.<span class="fn">remove</span>(<span class="str">'active'</span>);
-    l.classList.<span class="fn">add</span>(<span class="str">'leg-idle'</span>);
-  });
-
-  <span class="cmt">// Active les membres correspondants (opacity 100%)</span>
-  <span class="kw">const</span> active = LEG_MAP[cmd] || [];
-  active.<span class="fn">forEach</span>(id => {
-    <span class="kw">const</span> el = document.<span class="fn">getElementById</span>(id);
-    <span class="kw">if</span> (el) {
-      el.classList.<span class="fn">add</span>(<span class="str">'active'</span>);
-      el.classList.<span class="fn">remove</span>(<span class="str">'leg-idle'</span>);
-    }
-  });
-
-  <span class="cmt">// Met à jour le texte de commande en cours en bas de la vue robot</span>
-  document.<span class="fn">getElementById</span>(<span class="str">'current-cmd'</span>).textContent =
-    cmd === <span class="str">'stop'</span> ? <span class="str">'ARRÊT'</span> : cmd.<span class="fn">toUpperCase</span>();
-}</code></pre>
-    </div>
-  </div>
-
-  <hr class="sep">
-
-  <!-- ── sendPing() ── -->
-  <div class="fn-section" id="sendPing">
+  <!-- keyboard -->
+  <div class="fn-section" id="keyboard">
     <div class="fn-header">
       <div class="fn-number">6</div>
       <div class="fn-title">
-        <h2>Mesure de la latence réseau</h2>
-        <span class="fn-name">sendPing()</span>
-        <div class="tags">
-          <span class="tag ws">WebSocket aller-retour</span>
-        </div>
-      </div>
-    </div>
-
-    <p>Toutes les 2 secondes, le dashboard envoie un ping à l'ESP. L'ESP répond immédiatement par un pong. La différence de temps entre l'envoi et la réception donne la <strong>latence aller-retour</strong> (RTT) en millisecondes — une bonne indication de la qualité de la liaison WiFi.</p>
-
-    <div class="code-block">
-      <div class="code-header">
-        <span class="code-lang">JavaScript</span>
-        <span class="code-desc">sendPing() — mesure de latence aller-retour</span>
-      </div>
-      <pre><code><span class="kw">function</span> <span class="fn">sendPing</span>() {
-  <span class="kw">if</span> (ws?.readyState !== <span class="num">1</span>) <span class="kw">return</span>;
-
-  pingTime = <span class="typ">Date</span>.<span class="fn">now</span>();  <span class="cmt">// Mémorise l'heure d'envoi en ms</span>
-  ws.<span class="fn">send</span>(<span class="typ">JSON</span>.<span class="fn">stringify</span>({ type: <span class="str">'ping'</span> }));
-  <span class="cmt">// L'ESP répond {"type":"pong"} → ws.onmessage calcule Date.now() - pingTime</span>
-}
-
-<span class="cmt">// Côté ESP (pour référence) :</span>
-<span class="cmt">// if (strcmp(t, "ping") == 0) {</span>
-<span class="cmt">//   wsServer.sendTXT(num, "{\"type\":\"pong\"}");</span>
-<span class="cmt">// }</span></code></pre>
-    </div>
-
-    <div class="callout tip">
-      <div class="callout-title">Valeurs de référence</div>
-      En WiFi local, une latence inférieure à <strong>20 ms</strong> est excellente. Entre 20 et 80 ms, le contrôle reste fluide. Au-delà de 100 ms, on commence à percevoir un décalage entre l'appui et le mouvement.
-    </div>
-  </div>
-
-  <hr class="sep">
-
-  <!-- ── log() + keyboard ── -->
-  <div class="fn-section" id="log">
-    <div class="fn-header">
-      <div class="fn-number">7</div>
-      <div class="fn-title">
-        <h2>Journal des événements</h2>
-        <span class="fn-name">log(msg, cls)</span>
-        <div class="tags"><span class="tag ui">UI</span></div>
-      </div>
-    </div>
-
-    <p>Affiche un message horodaté dans la zone de log en bas du dashboard. Le paramètre <code>cls</code> détermine la couleur de la ligne.</p>
-
-    <div class="code-block">
-      <div class="code-header">
-        <span class="code-lang">JavaScript</span>
-        <span class="code-desc">log() — journalisation horodatée</span>
-      </div>
-      <pre><code><span class="kw">function</span> <span class="fn">log</span>(msg, cls = <span class="str">'entry'</span>) {
-  <span class="kw">const</span> el  = document.<span class="fn">getElementById</span>(<span class="str">'log'</span>);
-  <span class="kw">const</span> now = <span class="kw">new</span> <span class="typ">Date</span>().<span class="fn">toLocaleTimeString</span>(<span class="str">'fr-FR'</span>); <span class="cmt">// ex: "14:32:05"</span>
-
-  <span class="cmt">// Classes CSS disponibles :
-  //   'entry' → texte blanc (événements généraux)
-  //   'cmd'   → texte bleu cyan (commandes envoyées)
-  //   'warn'  → texte orange (avertissements)
-  //   'err'   → texte rouge (erreurs)</span>
-  el.innerHTML += <span class="str">`&lt;div class="entry <span class="var">${cls}</span>"&gt;[<span class="var">${now}</span>] <span class="var">${msg}</span>&lt;/div&gt;`</span>;
-
-  el.scrollTop = el.scrollHeight; <span class="cmt">// Auto-scroll vers le bas</span>
-
-  <span class="cmt">// Limite à 40 lignes pour ne pas surcharger le DOM</span>
-  <span class="kw">while</span> (el.children.length > <span class="num">40</span>) el.<span class="fn">removeChild</span>(el.firstChild);
-}</code></pre>
-    </div>
-  </div>
-
-  <hr class="sep">
-
-  <div class="fn-section" id="keyboard">
-    <div class="fn-header">
-      <div class="fn-number">8</div>
-      <div class="fn-title">
         <h2>Contrôle au clavier</h2>
-        <span class="fn-name">Événements keydown / keyup</span>
-        <div class="tags"><span class="tag ui">UI</span></div>
+        <span class="fn-name">keydown / keyup</span>
+        <div class="tags"><span class="tag ui">UI</span><span class="tag ws">WS</span></div>
       </div>
     </div>
 
-    <p>En plus des boutons à l'écran, le dashboard écoute les touches du clavier. La logique est identique : <code>keydown</code> démarre la commande, <code>keyup</code> l'arrête — exactement comme <code>mousedown</code> / <code>mouseup</code>.</p>
+    <p>Les flèches du clavier déclenchent les mêmes fonctions <code>startCmd()</code>/<code>stopCmd()</code> que les boutons D-pad. La barre espace envoie <code>stop</code>.</p>
 
     <div class="code-block">
-      <div class="code-header">
-        <span class="code-lang">JavaScript</span>
-        <span class="code-desc">Mapping clavier → commandes</span>
-      </div>
+      <div class="code-header"><span class="code-lang">JavaScript</span><span class="code-desc">Mapping clavier → commandes</span></div>
       <pre><code><span class="kw">const</span> KEY_CMD = {
-  <span class="str">ArrowUp'</span>:    <span class="str">'forward'</span>,
-  <span class="str">'ArrowDown'</span>:  <span class="str">'backward'</span>,
-  <span class="str">'ArrowLeft'</span>:  <span class="str">'left'</span>,
-  <span class="str">'ArrowRight'</span>: <span class="str">'right'</span>,
-  <span class="str">' '</span>:          <span class="str">'stop'</span>     <span class="cmt">// Barre espace</span>
+  ArrowUp:    <span class="str">'forward'</span>,
+  ArrowDown:  <span class="str">'backward'</span>,
+  ArrowLeft:  <span class="str">'left'</span>,
+  ArrowRight: <span class="str">'right'</span>,
+  <span class="str">' '</span>:        <span class="str">'stop'</span>
 };
 
 document.<span class="fn">addEventListener</span>(<span class="str">'keydown'</span>, e => {
   <span class="kw">const</span> cmd = KEY_CMD[e.key];
   <span class="kw">if</span> (!cmd) <span class="kw">return</span>;
-  e.<span class="fn">preventDefault</span>(); <span class="cmt">// Empêche le scroll de la page avec les flèches</span>
+  e.<span class="fn">preventDefault</span>();   <span class="cmt">// Empêche le scroll de la page</span>
   <span class="kw">const</span> btn = document.<span class="fn">querySelector</span>(<span class="str">`.btn[data-cmd="<span class="var">${cmd}</span>"]`</span>);
-  <span class="kw">if</span> (btn) <span class="fn">startCmd</span>(cmd, btn); <span class="cmt">// Réutilise exactement la même logique que les boutons</span>
+  <span class="kw">if</span> (btn) <span class="fn">startCmd</span>(cmd, btn);
 });
 
 document.<span class="fn">addEventListener</span>(<span class="str">'keyup'</span>, e => {
@@ -1002,19 +598,259 @@ document.<span class="fn">addEventListener</span>(<span class="str">'keyup'</spa
 
   <hr class="sep">
 
-  <!-- Résumé flux -->
-  <div class="fn-section">
+  <!-- connectCam() -->
+  <div class="fn-section" id="connectcam">
+    <div class="fn-header">
+      <div class="fn-number green">7</div>
+      <div class="fn-title">
+        <h2>Flux vidéo caméra</h2>
+        <span class="fn-name">connectCam()</span>
+        <div class="tags"><span class="tag ui">UI</span></div>
+      </div>
+    </div>
+
+    <p>Lance le flux MJPEG depuis l'ESP32-CAM. Le MJPEG (Motion JPEG) est un format vidéo où chaque frame est un JPEG indépendant envoyé en continu sur une connexion HTTP — le navigateur l'affiche nativement dans une balise <code>&lt;img&gt;</code>. La connexion de contrôle (pour changer résolution, qualité, flash) utilise des requêtes HTTP vers <code>/control?var=...&amp;val=...</code> sur le port 80.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">JavaScript</span><span class="code-desc">connectCam() — stream MJPEG + fetch status</span></div>
+      <pre><code><span class="kw">function</span> <span class="fn">connectCam</span>() {
+  <span class="kw">const</span> raw = document.<span class="fn">getElementById</span>(<span class="str">'cam-ip'</span>).value.<span class="fn">trim</span>();
+
+  <span class="cmt">// Sépare host:port si fourni, sinon port 81 par défaut pour le stream</span>
+  <span class="kw">const</span> [host, streamPort] = raw.<span class="fn">includes</span>(<span class="str">':'</span>)
+    ? raw.<span class="fn">split</span>(<span class="str">':'</span>)
+    : [raw, <span class="str">'81'</span>];
+
+  camBaseUrl = <span class="str">`http://<span class="var">${host}</span>`</span>;                         <span class="cmt">// port 80 : /control, /status</span>
+  <span class="kw">const</span> streamUrl = <span class="str">`http://<span class="var">${host}</span>:<span class="var">${streamPort}</span>/stream`</span>;  <span class="cmt">// flux MJPEG</span>
+
+  <span class="fn">fetchCamStatus</span>(camBaseUrl);   <span class="cmt">// Récupère résolution, qualité…</span>
+
+  <span class="kw">const</span> img = document.<span class="fn">getElementById</span>(<span class="str">'cam-img'</span>);
+  <span class="kw">let</span> firstFrame = <span class="kw">true</span>;
+
+  img.onload = () => {
+    <span class="kw">if</span> (firstFrame) {
+      firstFrame = <span class="kw">false</span>;
+      <span class="fn">setCamState</span>(<span class="str">'streaming'</span>);   <span class="cmt">// Premier frame reçu → état "EN DIRECT"</span>
+      <span class="fn">startFpsCounter</span>();
+    }
+    fpsCount++;   <span class="cmt">// Chaque onload = 1 frame → compteur FPS</span>
+  };
+
+  img.onerror = () => <span class="fn">setCamState</span>(<span class="str">'error'</span>);
+  img.src = streamUrl;   <span class="cmt">// Déclenche le stream MJPEG</span>
+  camStreaming = <span class="kw">true</span>;
+}</code></pre>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-title">MJPEG dans une balise img</div>
+      Assigner une URL MJPEG à <code>img.src</code> suffit : le navigateur maintient la connexion HTTP ouverte et décode chaque JPEG entrant comme une nouvelle frame. L'événement <code>onload</code> se déclenche à chaque frame, ce qui permet de compter les FPS. Aucune librairie vidéo n'est nécessaire.
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- stopCam + camControl -->
+  <div class="fn-section" id="stopcam">
+    <div class="fn-header">
+      <div class="fn-number green">8</div>
+      <div class="fn-title">
+        <h2>Contrôle de la caméra</h2>
+        <span class="fn-name">stopCam() &amp; camControl(variable, value)</span>
+        <div class="tags"><span class="tag ui">UI</span></div>
+      </div>
+    </div>
+
+    <p><code>stopCam()</code> coupe le flux en vidant <code>img.src</code>. <code>camControl()</code> envoie des commandes HTTP GET à l'endpoint <code>/control</code> de l'ESP32-CAM pour modifier résolution, qualité JPEG, flip vertical, miroir horizontal, et flash LED.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">JavaScript</span><span class="code-desc">camControl() — requête HTTP /control</span></div>
+      <pre><code><span class="kw">function</span> <span class="fn">camControl</span>(variable, value) {
+  <span class="kw">if</span> (!camBaseUrl) { <span class="fn">log</span>(<span class="str">'CAM non connectée'</span>, <span class="str">'warn'</span>); <span class="kw">return</span>; }
+
+  <span class="cmt">// Ex: http://192.168.1.50/control?var=framesize&val=8
+  // Variables disponibles : framesize, quality, vflip, hmirror, flash…</span>
+  <span class="kw">const</span> url = <span class="str">`<span class="var">${camBaseUrl}</span>/control?var=<span class="var">${variable}</span>&val=<span class="var">${value}</span>`</span>;
+  <span class="fn">fetch</span>(url).<span class="fn">catch</span>(() => <span class="fn">log</span>(<span class="str">`CAM contrôle échoué : <span class="var">${variable}</span>`</span>, <span class="str">'err'</span>));
+}
+
+<span class="cmt">// Toggle flash LED</span>
+<span class="kw">function</span> <span class="fn">toggleFlash</span>() {
+  camFlashOn = !camFlashOn;
+  <span class="fn">camControl</span>(<span class="str">'flash'</span>, camFlashOn ? <span class="num">1</span> : <span class="num">0</span>);
+}</code></pre>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- FPS counter -->
+  <div class="fn-section" id="fps">
+    <div class="fn-header">
+      <div class="fn-number green">9</div>
+      <div class="fn-title">
+        <h2>Compteur FPS</h2>
+        <span class="fn-name">startFpsCounter() / stopFpsCounter()</span>
+        <div class="tags"><span class="tag ui">UI</span></div>
+      </div>
+    </div>
+
+    <p>Compte le nombre de frames reçues par seconde. Chaque <code>onload</code> de l'image MJPEG incrémente <code>fpsCount</code>. Un <code>setInterval</code> toutes les secondes affiche et remet à zéro ce compteur.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">JavaScript</span><span class="code-desc">startFpsCounter() — comptage frames MJPEG</span></div>
+      <pre><code><span class="kw">function</span> <span class="fn">startFpsCounter</span>() {
+  <span class="fn">stopFpsCounter</span>();
+  fpsCount = <span class="num">0</span>;
+  fpsTimer = <span class="fn">setInterval</span>(() => {
+    document.<span class="fn">getElementById</span>(<span class="str">'info-fps'</span>).textContent = fpsCount;
+    fpsCount = <span class="num">0</span>;   <span class="cmt">// Remet à zéro pour la prochaine seconde</span>
+  }, <span class="num">1000</span>);
+}
+<span class="cmt">// fpsCount++ à chaque img.onload dans connectCam()</span></code></pre>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- updateSensors() -->
+  <div class="fn-section" id="updatesensors">
+    <div class="fn-header">
+      <div class="fn-number purple">10</div>
+      <div class="fn-title">
+        <h2>Réception des données MQ-9</h2>
+        <span class="fn-name">updateSensors(d)</span>
+        <div class="tags"><span class="tag esp">ESP32 → navigateur</span><span class="tag ui">UI</span></div>
+      </div>
+    </div>
+
+    <p>Appelée depuis <code>ws.onmessage</code> quand l'ESP32 envoie un message <code>{"type":"sensor",...}</code> toutes les 2 secondes. Met à jour l'affichage ppm, la barre de progression, et le badge d'alerte avec code couleur (normal / warn / danger).</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">JavaScript</span><span class="code-desc">updateSensors() — affichage MQ-9 avec seuils</span></div>
+      <pre><code><span class="kw">function</span> <span class="fn">updateSensors</span>(d) {
+  <span class="kw">const</span> ppmEl = document.<span class="fn">getElementById</span>(<span class="str">'ppm'</span>);
+  <span class="kw">const</span> ppm   = <span class="fn">parseFloat</span>(d.ppm) || <span class="num">0</span>;
+
+  document.<span class="fn">getElementById</span>(<span class="str">'raw'</span>).textContent     = d.raw ?? <span class="str">'—'</span>;
+  document.<span class="fn">getElementById</span>(<span class="str">'voltage'</span>).textContent =
+    d.voltage ? <span class="fn">parseFloat</span>(d.voltage).<span class="fn">toFixed</span>(<span class="num">2</span>) : <span class="str">'—'</span>;
+  ppmEl.textContent = ppm.<span class="fn">toFixed</span>(<span class="num">1</span>);
+
+  <span class="cmt">// Barre de progression — MAX_PPM = 1000 ppm</span>
+  <span class="kw">const</span> pct = <span class="typ">Math</span>.<span class="fn">min</span>(ppm / MAX_PPM * <span class="num">100</span>, <span class="num">100</span>);
+  document.<span class="fn">getElementById</span>(<span class="str">'ppm-bar'</span>).style.width = pct + <span class="str">'%'</span>;
+
+  <span class="cmt">// Couleur selon seuils : normal → warn (200 ppm) → danger (500 ppm)</span>
+  <span class="kw">if</span>      (ppm >= DANGER_PPM) ppmEl.className = <span class="str">'metric-val danger'</span>; <span class="cmt">// rouge clignotant</span>
+  <span class="kw">else if</span> (ppm >= WARN_PPM)   ppmEl.className = <span class="str">'metric-val warn'</span>;   <span class="cmt">// orange</span>
+  <span class="kw">else</span>                        ppmEl.className = <span class="str">'metric-val'</span>;          <span class="cmt">// cyan normal</span>
+
+  <span class="cmt">// Badge d'alerte digitale (sortie comparateur du module MQ-9)</span>
+  <span class="kw">const</span> badge = document.<span class="fn">getElementById</span>(<span class="str">'alert-badge'</span>);
+  <span class="kw">if</span> (d.alert) {
+    badge.className = <span class="str">'alert-badge danger'</span>;
+    document.<span class="fn">getElementById</span>(<span class="str">'alert-text'</span>).textContent = <span class="str">'ALERTE GAZ'</span>;
+  } <span class="kw">else</span> {
+    badge.className = <span class="str">'alert-badge'</span>;
+    document.<span class="fn">getElementById</span>(<span class="str">'alert-text'</span>).textContent = <span class="str">'NORMAL'</span>;
+  }
+}</code></pre>
+    </div>
+
+    <table>
+      <thead><tr><th>Champ JSON</th><th>Contenu</th><th>Affichage</th></tr></thead>
+      <tbody>
+        <tr><td><code>raw</code></td><td>0–4095 (ADC brut)</td><td>Valeur brute ADC</td></tr>
+        <tr><td><code>voltage</code></td><td>0.0–3.3 V</td><td>Tension capteur</td></tr>
+        <tr><td><code>ppm</code></td><td>ppm CO estimé</td><td>Valeur principale + barre</td></tr>
+        <tr><td><code>alert</code></td><td>true/false</td><td>Badge ALERTE GAZ / NORMAL</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="sep">
+
+  <!-- setOsdCmd -->
+  <div class="fn-section" id="osd">
+    <div class="fn-header">
+      <div class="fn-number">11</div>
+      <div class="fn-title">
+        <h2>OSD sur la vidéo</h2>
+        <span class="fn-name">setOsdCmd(cmd)</span>
+        <div class="tags"><span class="tag ui">UI</span></div>
+      </div>
+    </div>
+
+    <p>Affiche la commande en cours (FORWARD, BACKWARD…) en surimpression sur le flux vidéo. L'OSD (On-Screen Display) est superposé au flux MJPEG via CSS <code>position:absolute</code> dans le viewport caméra.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">JavaScript</span><span class="code-desc">setOsdCmd() — surimpression sur la vidéo</span></div>
+      <pre><code><span class="kw">function</span> <span class="fn">setOsdCmd</span>(cmd) {
+  <span class="kw">const</span> el = document.<span class="fn">getElementById</span>(<span class="str">'osd-cmd'</span>);
+  <span class="kw">if</span> (!cmd || cmd === <span class="str">'stop'</span>) {
+    el.textContent = <span class="str">'EN ATTENTE'</span>;
+  } <span class="kw">else</span> {
+    el.textContent = cmd.<span class="fn">toUpperCase</span>();
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- log() -->
+  <div class="fn-section" id="log">
+    <div class="fn-header">
+      <div class="fn-number">12</div>
+      <div class="fn-title">
+        <h2>Journal des événements</h2>
+        <span class="fn-name">log(msg, cls)</span>
+        <div class="tags"><span class="tag ui">UI</span></div>
+      </div>
+    </div>
+
+    <p>Ajoute une ligne horodatée dans le panneau journal. Les classes CSS <code>cmd</code>, <code>err</code>, <code>warn</code>, <code>cam</code> colorent les entrées selon leur type. Le journal est limité à 40 entrées : les plus anciennes sont supprimées automatiquement.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">JavaScript</span><span class="code-desc">log() — journal horodaté, 40 entrées max</span></div>
+      <pre><code><span class="kw">function</span> <span class="fn">log</span>(msg, cls = <span class="str">'entry'</span>) {
+  <span class="kw">const</span> el  = document.<span class="fn">getElementById</span>(<span class="str">'log'</span>);
+  <span class="kw">const</span> now = <span class="kw">new</span> <span class="typ">Date</span>().<span class="fn">toLocaleTimeString</span>(<span class="str">'fr-FR'</span>);
+  el.innerHTML += <span class="str">`&lt;div class="entry <span class="var">${cls}</span>"&gt;[<span class="var">${now}</span>] <span class="var">${msg}</span>&lt;/div&gt;`</span>;
+  el.scrollTop  = el.scrollHeight;
+  <span class="kw">while</span> (el.children.length > <span class="num">40</span>) el.<span class="fn">removeChild</span>(el.firstChild);
+}
+<span class="cmt">// Classes : 'entry' (blanc), 'cmd' (cyan), 'err' (rouge), 'warn' (orange), 'cam' (orange2)</span></code></pre>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- Résumé -->
+  <div class="fn-section" id="resume">
     <h2 style="font-size:1.3rem;margin-bottom:1.5rem">Résumé — flux complet d'un mouvement</h2>
-    <ol class="steps">
-      <li><div class="step-n">1</div><div>L'utilisateur appuie sur la flèche <strong>avant</strong> (souris, tactile ou touche ↑)</div></li>
-      <li><div class="step-n">2</div><div><code>startCmd('forward', btn)</code> est appelée → le bouton devient bleu, la silhouette SVG allume FR+BL</div></li>
-      <li><div class="step-n">3</div><div><code>sendCmd('forward')</code> envoie <code>{"type":"cmd","cmd":"forward","speed":50}</code> via WebSocket</div></li>
-      <li><div class="step-n">4</div><div>Un <code>setInterval</code> répète <code>sendCmd</code> toutes les 150 ms tant que le bouton est maintenu</div></li>
-      <li><div class="step-n">5</div><div>L'ESP reçoit chaque paquet → <code>onWsEvent()</code> → met à jour <code>currentCmd = CMD_FORWARD</code></div></li>
-      <li><div class="step-n">6</div><div>Dans le <code>loop()</code> de l'ESP, <code>tickGait()</code> avance d'une frame de marche toutes les X ms (dépend de la vitesse)</div></li>
-      <li><div class="step-n">7</div><div>Le PCA9685 reçoit les nouvelles positions via I2C → les 8 servos bougent</div></li>
-      <li><div class="step-n">8</div><div>L'utilisateur relâche → <code>stopCmd()</code> → envoie <code>{"type":"cmd","cmd":"stop"}</code> → l'ESP appelle <code>standStill()</code></div></li>
-    </ol>
+
+    <table>
+      <thead><tr><th>Fonction</th><th>Tag</th><th>Rôle</th></tr></thead>
+      <tbody>
+        <tr><td><code>connect()</code></td><td><span class="tag ws">WS</span></td><td>Ouvre WebSocket :81, attache handlers onopen/onclose/onmessage</td></tr>
+        <tr><td><code>sendPing()</code></td><td><span class="tag ws">WS</span></td><td>Envoie ping toutes les 2 s, calcule latence sur réponse pong</td></tr>
+        <tr><td><code>setStatus()</code></td><td><span class="tag ui">UI</span></td><td>Pastille verte/rouge + latency "— ms" à la déconnexion</td></tr>
+        <tr><td><code>sendCmd()</code></td><td><span class="tag ws">WS</span></td><td>Sérialise et envoie {type:cmd, cmd, speed} à l'ESP32</td></tr>
+        <tr><td><code>startCmd()</code></td><td><span class="tag ws">WS</span> <span class="tag ui">UI</span></td><td>Démarre la commande + réémission toutes les 150 ms</td></tr>
+        <tr><td><code>stopCmd()</code></td><td><span class="tag ws">WS</span> <span class="tag ui">UI</span></td><td>Arrête la réémission, envoie stop, nettoie les boutons</td></tr>
+        <tr><td><code>connectCam()</code></td><td><span class="tag ui">UI</span></td><td>Lance le stream MJPEG sur img.src, fetch /status, compte FPS</td></tr>
+        <tr><td><code>stopCam()</code></td><td><span class="tag ui">UI</span></td><td>Vide img.src, passe en état offline, arrête FPS counter</td></tr>
+        <tr><td><code>camControl()</code></td><td><span class="tag ui">UI</span></td><td>GET /control?var=...&val=... pour régler résolution/qualité/flash</td></tr>
+        <tr><td><code>startFpsCounter()</code></td><td><span class="tag ui">UI</span></td><td>setInterval 1 s, affiche fpsCount, reset chaque seconde</td></tr>
+        <tr><td><code>updateSensors()</code></td><td><span class="tag esp">ESP</span> <span class="tag ui">UI</span></td><td>Met à jour ppm, barre, badge alerte depuis JSON MQ-9</td></tr>
+        <tr><td><code>setOsdCmd()</code></td><td><span class="tag ui">UI</span></td><td>Affiche la commande en OSD sur le viewport caméra</td></tr>
+        <tr><td><code>log()</code></td><td><span class="tag ui">UI</span></td><td>Journal horodaté, 40 entrées max, 5 classes de couleur</td></tr>
+      </tbody>
+    </table>
   </div>
 
 </main>

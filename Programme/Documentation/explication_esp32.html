@@ -42,7 +42,6 @@
 
   .layout { display: flex; min-height: 100vh; }
 
-  /* ── Topbar ── */
   .topbar {
     position: sticky;
     top: 0;
@@ -65,7 +64,6 @@
   }
   .nav-links a:hover { color: var(--accent); }
 
-  /* ── Sidebar ── */
   nav {
     width: 268px;
     flex-shrink: 0;
@@ -126,10 +124,8 @@
   .mq  { background: var(--tag-mq);  color: var(--tag-mq-t);  }
   .net { background: var(--tag-net); color: var(--tag-net-t); }
 
-  /* ── Main ── */
   main { flex: 1; padding: 3rem 4rem; max-width: 920px; }
 
-  /* ── Hero ── */
   .hero {
     border-bottom: 1px solid var(--border);
     padding-bottom: 2.5rem;
@@ -165,7 +161,6 @@
     border-radius: 4px;
   }
 
-  /* ── Sections ── */
   .fn-section { margin-bottom: 4rem; scroll-margin-top: 2rem; }
 
   .fn-header {
@@ -219,7 +214,6 @@
     color: #1e293b;
   }
 
-  /* ── Code blocks ── */
   .code-block {
     background: var(--code-bg);
     border-radius: 10px;
@@ -247,7 +241,6 @@
     white-space: pre;
   }
 
-  /* Syntax */
   .kw  { color: #f472b6; }
   .fn  { color: #60a5fa; }
   .str { color: #86efac; }
@@ -257,7 +250,6 @@
   .pp  { color: #c084fc; }
   .cn  { color: #fde68a; }
 
-  /* ── Callouts ── */
   .callout {
     border-left: 3px solid;
     padding: .9rem 1.1rem;
@@ -265,17 +257,16 @@
     margin: 1.2rem 0;
     font-size: .88rem;
   }
-  .callout.info  { border-color: var(--blue);   background: #eff6ff; }
-  .callout.warn  { border-color: #f59e0b; background: #fffbeb; }
-  .callout.tip   { border-color: var(--accent);  background: #ecfdf5; }
-  .callout.danger{ border-color: var(--red);    background: #fef2f2; }
+  .callout.info   { border-color: var(--blue);   background: #eff6ff; }
+  .callout.warn   { border-color: #f59e0b; background: #fffbeb; }
+  .callout.tip    { border-color: var(--accent);  background: #ecfdf5; }
+  .callout.danger { border-color: var(--red);    background: #fef2f2; }
   .callout-title { font-weight: 700; margin-bottom: .3rem; font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; }
   .callout.info   .callout-title { color: var(--blue); }
   .callout.warn   .callout-title { color: #d97706; }
   .callout.tip    .callout-title { color: var(--accent); }
   .callout.danger .callout-title { color: var(--red); }
 
-  /* ── Tables ── */
   table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .85rem; }
   th {
     background: #f1f5f9;
@@ -291,7 +282,6 @@
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: #f8fafc; }
 
-  /* ── Steps ── */
   .steps { list-style: none; padding: 0; }
   .steps li {
     display: flex;
@@ -312,7 +302,6 @@
     margin-top: 1px;
   }
 
-  /* ── ASCII diagram ── */
   .ascii {
     background: #0f1117;
     border: 1px solid #1e293b;
@@ -352,16 +341,15 @@
 
 <div class="layout">
 
-<!-- ── Navigation ── -->
 <nav>
   <div class="nav-brand">
-    <h2>QuadBot — ESP32</h2>
+    <h2>QuadBot — ESP32-S3</h2>
     <p>Documentation du firmware C++</p>
   </div>
   <div class="nav-section">
     <div class="nav-section-title">Vue d'ensemble</div>
     <a href="#architecture" class="nav-link">Architecture</a>
-    <a href="#constantes" class="nav-link">Constantes & état</a>
+    <a href="#constantes" class="nav-link">Constantes & calibration</a>
     <a href="#setup" class="nav-link">setup()</a>
     <a href="#loop" class="nav-link">loop()</a>
   </div>
@@ -373,17 +361,14 @@
   </div>
   <div class="nav-section">
     <div class="nav-section-title">Pilotage servos</div>
-    <a href="#rawpwm" class="nav-link">
-      <span class="badge pca">PCA</span> rawPWM()
+    <a href="#setpwm" class="nav-link">
+      <span class="badge pca">PCA</span> setPWM()
     </a>
-    <a href="#moveservo" class="nav-link">
-      <span class="badge pca">PCA</span> moveServo()
+    <a href="#waitmove" class="nav-link">
+      <span class="badge pca">PCA</span> waitMove()
     </a>
-    <a href="#liftmember" class="nav-link">
-      <span class="badge pca">PCA</span> liftMember()
-    </a>
-    <a href="#centerhips" class="nav-link">
-      <span class="badge pca">PCA</span> centerAllHips()
+    <a href="#sendservo" class="nav-link">
+      <span class="badge pca">PCA</span> sendServo()
     </a>
     <a href="#standstill" class="nav-link">
       <span class="badge pca">PCA</span> standStill()
@@ -396,12 +381,6 @@
     </a>
     <a href="#walkbackward" class="nav-link">
       <span class="badge pca">PCA</span> walkBackward()
-    </a>
-    <a href="#walkleft" class="nav-link">
-      <span class="badge pca">PCA</span> walkLeft()
-    </a>
-    <a href="#walkright" class="nav-link">
-      <span class="badge pca">PCA</span> walkRight()
     </a>
   </div>
   <div class="nav-section">
@@ -416,13 +395,12 @@
   </div>
 </nav>
 
-<!-- ── Contenu ── -->
 <main>
 
   <!-- Hero -->
   <div class="hero">
-    <h1>Documentation<br><span>Firmware ESP32</span></h1>
-    <p>Explication détaillée du code C++ embarqué — réception des commandes WebSocket, pilotage du PCA9685 avec interpolation fluide, séquences de marche quadrupède, lecture du MQ-9 et envoi des données capteur.</p>
+    <h1>Documentation<br><span>Firmware ESP32-S3</span></h1>
+    <p>Explication détaillée du firmware C++ — pilotage de 12 servos via PCA9685, trot diagonal quadrupède, calibration individuelle par canal, réception des commandes WebSocket et lecture du capteur MQ-9.</p>
 
     <div class="flow">
       <div class="flow-box net" style="background:#dbeafe;color:#1e40af;border-color:#bfdbfe">Dashboard</div>
@@ -431,13 +409,11 @@
       <span class="flow-arrow">→</span>
       <div class="flow-box ws" style="background:#d1fae5;color:#065f46;border-color:#a7f3d0">onWsEvent()</div>
       <span class="flow-arrow">→</span>
-      <div class="flow-box pca" style="background:#fef3c7;color:#92400e;border-color:#fde68a">walkXxx()</div>
+      <div class="flow-box pca" style="background:#fef3c7;color:#92400e;border-color:#fde68a">walkForward/Backward()</div>
       <span class="flow-arrow">→</span>
-      <div class="flow-box pca" style="background:#fef3c7;color:#92400e;border-color:#fde68a">moveServo()</div>
+      <div class="flow-box pca" style="background:#fef3c7;color:#92400e;border-color:#fde68a">setPWM() × 4</div>
       <span class="flow-arrow">→</span>
-      <div class="flow-box pca" style="background:#fef3c7;color:#92400e;border-color:#fde68a">PCA9685</div>
-      <span class="flow-arrow">→</span>
-      <div class="flow-box" style="background:#f3e8ff;color:#6b21a8;border-color:#e9d5ff">8 servos</div>
+      <div class="flow-box" style="background:#f3e8ff;color:#6b21a8;border-color:#e9d5ff">12 servos</div>
     </div>
 
     <div class="tags">
@@ -448,7 +424,7 @@
     </div>
   </div>
 
-  <!-- ── Architecture ── -->
+  <!-- Architecture -->
   <div class="fn-section" id="architecture">
     <div class="fn-header">
       <div class="fn-number">0</div>
@@ -458,7 +434,9 @@
       </div>
     </div>
 
-    <p>Le firmware tourne sur un seul cœur de l'ESP32. La boucle principale gère le réseau en permanence, mais <strong>les fonctions de marche sont bloquantes</strong> : pendant qu'un membre se déplace (via <code>moveServo()</code>), le CPU est occupé à calculer et envoyer les positions interpolées. Chaque appel à <code>moveServo()</code> appelle <code>wsServer.loop()</code> et <code>httpServer.handleClient()</code> entre chaque micro-pas pour garder la connexion WebSocket vivante.</p>
+    <p>Le firmware tourne sur l'ESP32-S3 en USB natif (CDC). La boucle principale gère le réseau en permanence. Les fonctions de marche utilisent <code>setPWM()</code> — envoi immédiat sans interpolation — suivi d'un <code>waitMove()</code> non-bloquant qui maintient le WebSocket vivant pendant l'attente. <strong>Deux setPWM() consécutifs</strong> sur la même paire diagonale sont envoyés en ~600 µs d'écart naturel I²C, ce qui les rend quasi-simultanés.</p>
+
+    <p>Le robot pilote <strong>12 servos</strong> : 8 servos de mouvement (hanches + genoux, ch0–ch7) et 4 rotules de hanche (ch8–ch11) maintenues en position fixe de contre-couple.</p>
 
     <div class="ascii">
 <span class="hl">┌──────────────────── loop() ─────────────────────────────────────────────┐</span>
@@ -466,18 +444,22 @@
 │  httpServer.handleClient()   ←── requêtes HTTP port 80                  │
 │  wsServer.loop()             ←── messages WebSocket → onWsEvent()        │
 │                                      │                                   │
-│                              met à jour currentCmd / speed               │
+│                              met à jour pendingCmd / speedPct            │
+│                                                                          │
+│  Détection transition de commande                                        │
+│    CMD_STOP + wasMoving → <span class="hl2">standStill()</span>                               │
 │                                                                          │
 │  switch(currentCmd)                                                      │
-│    CMD_FORWARD  → <span class="hl2">walkForward()</span>   ←── bloquant : plusieurs delay()     │
+│    CMD_FORWARD  → <span class="hl2">walkForward()</span>   ←── 4 phases, setPWM + waitMove()   │
 │    CMD_BACKWARD → <span class="hl2">walkBackward()</span>                                        │
-│    CMD_LEFT     → <span class="hl2">walkLeft()</span>                                            │
-│    CMD_RIGHT    → <span class="hl2">walkRight()</span>                                           │
-│    CMD_STOP     → <span class="hl3">standStill()</span>  (une seule fois via wasMoving)           │
+│    CMD_STOP     → rien (standStill déjà appelé à la transition)         │
 │                                                                          │
-│  chaque walkXxx() appelle <span class="hl2">liftMember()</span> x4                               │
-│    └─► <span class="hl2">moveServo()</span>  ──► ease-in-out ──► PCA9685 (I2C) ──► servo         │
-│           └── delay(MS_PER_STEP) + wsServer.loop() à chaque micro-pas   │
+│  Chaque phase de walkXxx() :                                             │
+│    <span class="hl3">setPWM(knee_A1)</span>  ← quasi-simultané (~600µs)                         │
+│    <span class="hl3">setPWM(hip_A1)</span>                                                     │
+│    <span class="hl3">setPWM(knee_A2)</span>                                                    │
+│    <span class="hl3">setPWM(hip_A2)</span>                                                     │
+│    <span class="hl2">waitMove(ms)</span>  ←── attend ms tout en pompant wsServer.loop()         │
 │                                                                          │
 │  toutes les 2 s : <span class="hl4">readMQ9()</span>  ──► JSON ──► broadcastTXT()             │
 └──────────────────────────────────────────────────────────────────────────┘</div>
@@ -485,97 +467,139 @@
 
   <hr class="sep">
 
-  <!-- ── Constantes & état ── -->
+  <!-- Constantes & calibration -->
   <div class="fn-section" id="constantes">
     <div class="fn-header">
       <div class="fn-number">1</div>
       <div class="fn-title">
-        <h2>Constantes &amp; variables d'état</h2>
-        <div class="tags"><span class="tag pca">PCA</span><span class="tag mq">MQ9</span></div>
+        <h2>Constantes &amp; calibration</h2>
+        <div class="tags"><span class="tag pca">PCA</span></div>
       </div>
     </div>
 
-    <p>Toutes les constantes de calibration sont regroupées en tête de fichier pour faciliter le réglage sans toucher à la logique.</p>
+    <p>Toutes les positions sont calibrées individuellement par canal, car les servos sont montés à des angles différents selon la patte. Les valeurs en ticks correspondent à des impulsions PWM à 50 Hz sur un PCA9685 à 25 MHz d'oscillateur.</p>
 
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">Constantes de mouvement et limites mécaniques</span></div>
-      <pre><code><span class="cmt">// ── Canaux PCA9685 ────────────────────────────────────────────────────────
-// Chaque membre a 2 servos : hanche (hip) et genou (knee)
-// Les indices correspondent aux sorties LED00 à LED07 du PCA9685</span>
-<span class="pp">#define</span> <span class="cn">SERVO_BR_HIP</span>    <span class="num">0</span>   <span class="cmt">// Postérieur Droit  — hanche</span>
-<span class="pp">#define</span> <span class="cn">SERVO_BR_KNEE</span>   <span class="num">1</span>   <span class="cmt">// Postérieur Droit  — genou</span>
-<span class="pp">#define</span> <span class="cn">SERVO_BL_HIP</span>    <span class="num">2</span>   <span class="cmt">// Postérieur Gauche — hanche</span>
-<span class="pp">#define</span> <span class="cn">SERVO_BL_KNEE</span>   <span class="num">3</span>   <span class="cmt">// Postérieur Gauche — genou</span>
-<span class="pp">#define</span> <span class="cn">SERVO_FR_HIP</span>    <span class="num">4</span>   <span class="cmt">// Antérieur Droit   — hanche</span>
-<span class="pp">#define</span> <span class="cn">SERVO_FR_KNEE</span>   <span class="num">5</span>   <span class="cmt">// Antérieur Droit   — genou</span>
-<span class="pp">#define</span> <span class="cn">SERVO_FL_HIP</span>    <span class="num">6</span>   <span class="cmt">// Antérieur Gauche  — hanche</span>
-<span class="pp">#define</span> <span class="cn">SERVO_FL_KNEE</span>   <span class="num">7</span>   <span class="cmt">// Antérieur Gauche  — genou</span>
-
-<span class="cmt">// ── Limites mécaniques (ticks PCA9685 à 50 Hz) ───────────────────────────
-// Les hanches et les genoux ont des plages différentes pour protéger
-// la mécanique : un genou ne va pas jusqu'à 0° ni jusqu'à 180°</span>
-<span class="pp">#define</span> <span class="cn">HIP_MIN</span>   <span class="num">150</span>   <span class="cmt">// Hanche → ~0°</span>
-<span class="pp">#define</span> <span class="cn">HIP_MID</span>   <span class="num">375</span>   <span class="cmt">// Hanche → ~90° (position neutre)</span>
-<span class="pp">#define</span> <span class="cn">HIP_MAX</span>   <span class="num">600</span>   <span class="cmt">// Hanche → ~180°</span>
-<span class="pp">#define</span> <span class="cn">KNEE_MIN</span>  <span class="num">263</span>   <span class="cmt">// Genou  → ~45°</span>
-<span class="pp">#define</span> <span class="cn">KNEE_MID</span>  <span class="num">375</span>   <span class="cmt">// Genou  → ~90° (position neutre)</span>
-<span class="pp">#define</span> <span class="cn">KNEE_MAX</span>  <span class="num">487</span>   <span class="cmt">// Genou  → ~135°</span>
-
-<span class="cmt">// ── Paramètres d'interpolation ────────────────────────────────────────────
-// INTERP_STEPS : nombre de micro-pas entre deux positions
-//   Plus c'est grand = plus le mouvement est fluide (mais plus lent)
-// MS_PER_STEP : durée fixe d'un micro-pas en millisecondes
-//   Minimum 30 ms pour que le servo atteigne physiquement la position cible</span>
-<span class="pp">#define</span> <span class="cn">INTERP_STEPS</span>   <span class="num">20</span>
-<span class="pp">#define</span> <span class="cn">MS_PER_STEP</span>    <span class="num">30</span>
-
-<span class="cmt">// ── Amplitudes de mouvement ───────────────────────────────────────────────
-// HIP_AMPLITUDE : débattement de la hanche de chaque côté du centre (±70 ticks)
-// KNEE_LIFT     : descente du genou pour lever le pied (KNEE_MID - 100)</span>
-<span class="pp">#define</span> <span class="cn">HIP_AMPLITUDE</span>  <span class="num">70</span>
-<span class="pp">#define</span> <span class="cn">KNEE_LIFT</span>      <span class="num">100</span></code></pre>
+    <div class="callout info">
+      <div class="callout-title">Conversion ticks ↔ degrés</div>
+      Servo GX3270BLS 270° : 102 ticks = 500 µs = 0° · 307 ticks = 1500 µs = 135° · 512 ticks = 2500 µs = 270°<br>
+      1 tick ≈ 0.659°. Les limites mécaniques mesurées sur le robot sont différentes selon chaque canal.
     </div>
 
     <div class="code-block">
-      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">Variables d'état globales</span></div>
-      <pre><code><span class="cmt">// Commande en cours — mise à jour par onWsEvent(), lue par loop()</span>
-<span class="kw">enum</span> <span class="typ">Command</span> { CMD_STOP, CMD_FORWARD, CMD_BACKWARD, CMD_LEFT, CMD_RIGHT };
-<span class="kw">volatile</span> <span class="typ">Command</span> currentCmd = CMD_STOP;
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">Canaux PCA9685 — 12 servos</span></div>
+      <pre><code><span class="cmt">// ── Servos de mouvement (ch0–ch7) ────────────────────────────────────────</span>
+<span class="pp">#define</span> <span class="cn">CH_BR_HIP</span>   <span class="num">0</span>   <span class="cmt">// Arrière Droit  — hanche  (monté inversé)</span>
+<span class="pp">#define</span> <span class="cn">CH_BR_KNEE</span>  <span class="num">1</span>   <span class="cmt">// Arrière Droit  — genou</span>
+<span class="pp">#define</span> <span class="cn">CH_BL_HIP</span>   <span class="num">2</span>   <span class="cmt">// Arrière Gauche — hanche  (sens normal)</span>
+<span class="pp">#define</span> <span class="cn">CH_BL_KNEE</span>  <span class="num">3</span>   <span class="cmt">// Arrière Gauche — genou</span>
+<span class="pp">#define</span> <span class="cn">CH_FR_HIP</span>   <span class="num">4</span>   <span class="cmt">// Avant Droit    — hanche  (monté inversé)</span>
+<span class="pp">#define</span> <span class="cn">CH_FR_KNEE</span>  <span class="num">5</span>   <span class="cmt">// Avant Droit    — genou</span>
+<span class="pp">#define</span> <span class="cn">CH_FL_HIP</span>   <span class="num">6</span>   <span class="cmt">// Avant Gauche   — hanche  (sens normal)</span>
+<span class="pp">#define</span> <span class="cn">CH_FL_KNEE</span>  <span class="num">7</span>   <span class="cmt">// Avant Gauche   — genou</span>
 
-<span class="cmt">// Vitesse 0–100 reçue du dashboard (non utilisée pour varier la vitesse
-// dans cette version : la vitesse est fixée par MS_PER_STEP et INTERP_STEPS)</span>
-<span class="kw">volatile</span> <span class="typ">uint8_t</span> speed = <span class="num">50</span>;
+<span class="cmt">// ── Rotules de hanche (ch8–ch11) — contre-couple fixe ───────────────────</span>
+<span class="pp">#define</span> <span class="cn">CH_BR_BALL</span>  <span class="num">8</span>
+<span class="pp">#define</span> <span class="cn">CH_BL_BALL</span>  <span class="num">9</span>
+<span class="pp">#define</span> <span class="cn">CH_FR_BALL</span> <span class="num">10</span>
+<span class="pp">#define</span> <span class="cn">CH_FL_BALL</span> <span class="num">11</span></code></pre>
+    </div>
 
-<span class="cmt">// Permet d'appeler standStill() UNE SEULE FOIS à l'arrêt,
-// et non à chaque tour de loop() quand le robot est immobile</span>
-<span class="kw">bool</span> wasMoving = <span class="kw">false</span>;
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">Limites mécaniques et positions calibrées</span></div>
+      <pre><code><span class="cmt">// ── Limites mécaniques absolues — mesurées sur le robot ──────────────────
+// Ces valeurs NE SONT JAMAIS dépassées, même en calibration.
+// Chaque canal a ses propres limites car les montages sont asymétriques.</span>
+<span class="pp">#define</span> <span class="cn">LIM_BR_HIP_MIN</span>  <span class="num">130</span>  <span class="cmt">// ch0 : 18° → 288° (270° de plage)</span>
+<span class="pp">#define</span> <span class="cn">LIM_BR_HIP_MAX</span>  <span class="num">540</span>
+<span class="pp">#define</span> <span class="cn">LIM_BL_HIP_MIN</span>  <span class="num">130</span>  <span class="cmt">// ch2 : 18° → 265° (247° de plage)</span>
+<span class="pp">#define</span> <span class="cn">LIM_BL_HIP_MAX</span>  <span class="num">505</span>
+<span class="pp">#define</span> <span class="cn">LIM_FR_HIP_MIN</span>  <span class="num">150</span>  <span class="cmt">// ch4 : 32° → 269° (237° de plage)</span>
+<span class="pp">#define</span> <span class="cn">LIM_FR_HIP_MAX</span>  <span class="num">510</span>
+<span class="pp">#define</span> <span class="cn">LIM_FL_HIP_MIN</span>  <span class="num">125</span>  <span class="cmt">// ch6 : 15° → 269° (254° de plage)</span>
+<span class="pp">#define</span> <span class="cn">LIM_FL_HIP_MAX</span>  <span class="num">510</span>
 
-<span class="cmt">// Horodatage du dernier envoi MQ-9 (pour le timer toutes les 2 s)</span>
-<span class="typ">uint32_t</span> lastSensorSend = <span class="num">0</span>;
+<span class="pp">#define</span> <span class="cn">LIM_BR_KNEE_MIN</span> <span class="num">210</span>  <span class="cmt">// ch1 : 71° → 223° (152° de plage)</span>
+<span class="pp">#define</span> <span class="cn">LIM_BR_KNEE_MAX</span> <span class="num">440</span>
+<span class="pp">#define</span> <span class="cn">LIM_BL_KNEE_MIN</span> <span class="num">210</span>  <span class="cmt">// ch3 : 71° → 219° (148° de plage)</span>
+<span class="pp">#define</span> <span class="cn">LIM_BL_KNEE_MAX</span> <span class="num">435</span>
+<span class="pp">#define</span> <span class="cn">LIM_FR_KNEE_MIN</span> <span class="num">195</span>  <span class="cmt">// ch5 : 61° → 206° (145° de plage)</span>
+<span class="pp">#define</span> <span class="cn">LIM_FR_KNEE_MAX</span> <span class="num">415</span>
+<span class="pp">#define</span> <span class="cn">LIM_FL_KNEE_MIN</span> <span class="num">135</span>  <span class="cmt">// ch7 : 22° → 170° (148° de plage)</span>
+<span class="pp">#define</span> <span class="cn">LIM_FL_KNEE_MAX</span> <span class="num">360</span>
 
-<span class="cmt">// Positions courantes de chaque servo — mémorisées pour que moveServo()
-// puisse interpoler depuis la vraie position actuelle et non depuis zéro</span>
-<span class="typ">uint16_t</span> curPos[<span class="num">8</span>];</code></pre>
+<span class="cmt">// ── Positions home — debout, calibrées individuellement ──────────────────
+// Hanches : BR et FR montés inversés (avancer = +ticks)
+//           BL et FL sens normal     (avancer = −ticks)</span>
+<span class="pp">#define</span> <span class="cn">HOME_BR_HIP</span>   <span class="num">471</span>   <span class="cmt">// ch0 — 243°</span>
+<span class="pp">#define</span> <span class="cn">HOME_BL_HIP</span>   <span class="num">181</span>   <span class="cmt">// ch2 —  52°</span>
+<span class="pp">#define</span> <span class="cn">HOME_FR_HIP</span>   <span class="num">466</span>   <span class="cmt">// ch4 — 240°</span>
+<span class="pp">#define</span> <span class="cn">HOME_FL_HIP</span>   <span class="num">181</span>   <span class="cmt">// ch6 —  52°</span>
+
+<span class="cmt">// Genoux — position tendue (patte au sol)</span>
+<span class="pp">#define</span> <span class="cn">TENDU_BR</span>  <span class="num">350</span>   <span class="cmt">// ch1 — 163°</span>
+<span class="pp">#define</span> <span class="cn">TENDU_BL</span>  <span class="num">285</span>   <span class="cmt">// ch3 — 121°</span>
+<span class="pp">#define</span> <span class="cn">TENDU_FR</span>  <span class="num">345</span>   <span class="cmt">// ch5 — 160°</span>
+<span class="pp">#define</span> <span class="cn">TENDU_FL</span>  <span class="num">210</span>   <span class="cmt">// ch7 —  71°</span>
+
+<span class="cmt">// Genoux — position pliée (patte en l'air, ~35° de flexion)</span>
+<span class="pp">#define</span> <span class="cn">PLIE_BR</span>   <span class="num">301</span>   <span class="cmt">// ch1 — 131° (flexion 32°)</span>
+<span class="pp">#define</span> <span class="cn">PLIE_BL</span>   <span class="num">344</span>   <span class="cmt">// ch3 — 159° (flexion 39°)</span>
+<span class="pp">#define</span> <span class="cn">PLIE_FR</span>   <span class="num">286</span>   <span class="cmt">// ch5 — 121° (flexion 39°)</span>
+<span class="pp">#define</span> <span class="cn">PLIE_FL</span>   <span class="num">269</span>   <span class="cmt">// ch7 — 110° (flexion 39°)</span>
+
+<span class="cmt">// Rotules — contre-couple fixe</span>
+<span class="pp">#define</span> <span class="cn">BALL_BR</span>   <span class="num">280</span>   <span class="cmt">// ch8  — 117°</span>
+<span class="pp">#define</span> <span class="cn">BALL_BL</span>   <span class="num">320</span>   <span class="cmt">// ch9  — 144°</span>
+<span class="pp">#define</span> <span class="cn">BALL_FR</span>   <span class="num">320</span>   <span class="cmt">// ch10 — 144°</span>
+<span class="pp">#define</span> <span class="cn">BALL_FL</span>   <span class="num">325</span>   <span class="cmt">// ch11 — 147°</span>
+
+<span class="cmt">// ── Amplitude de pas hanches ──────────────────────────────────────────────
+// HIP_STEP = 75 ticks ≈ 49° de balancement total (±24° autour du home)
+// La direction est gérée par les fonctions hipBR/BL/FR/FL()</span>
+<span class="pp">#define</span> <span class="cn">HIP_STEP</span>  <span class="num">75</span></code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">Helpers hanche — direction mécanique intégrée</span></div>
+      <pre><code><span class="cmt">// ch0 BR et ch4 FR : montés inversés → avancer = +delta</span>
+<span class="kw">static inline</span> <span class="typ">uint16_t</span> <span class="fn">hipBR</span>(<span class="kw">int</span> delta) {
+  <span class="kw">return</span> (<span class="typ">uint16_t</span>)<span class="fn">constrain</span>(<span class="cn">HOME_BR_HIP</span> + delta, <span class="cn">LIM_BR_HIP_MIN</span>, <span class="cn">LIM_BR_HIP_MAX</span>);
+}
+<span class="cmt">// ch2 BL et ch6 FL : sens normal → avancer = −delta</span>
+<span class="kw">static inline</span> <span class="typ">uint16_t</span> <span class="fn">hipBL</span>(<span class="kw">int</span> delta) {
+  <span class="kw">return</span> (<span class="typ">uint16_t</span>)<span class="fn">constrain</span>(<span class="cn">HOME_BL_HIP</span> - delta, <span class="cn">LIM_BL_HIP_MIN</span>, <span class="cn">LIM_BL_HIP_MAX</span>);
+}
+<span class="kw">static inline</span> <span class="typ">uint16_t</span> <span class="fn">hipFR</span>(<span class="kw">int</span> delta) {
+  <span class="kw">return</span> (<span class="typ">uint16_t</span>)<span class="fn">constrain</span>(<span class="cn">HOME_FR_HIP</span> + delta, <span class="cn">LIM_FR_HIP_MIN</span>, <span class="cn">LIM_FR_HIP_MAX</span>);
+}
+<span class="kw">static inline</span> <span class="typ">uint16_t</span> <span class="fn">hipFL</span>(<span class="kw">int</span> delta) {
+  <span class="kw">return</span> (<span class="typ">uint16_t</span>)<span class="fn">constrain</span>(<span class="cn">HOME_FL_HIP</span> - delta, <span class="cn">LIM_FL_HIP_MIN</span>, <span class="cn">LIM_FL_HIP_MAX</span>);
+}</code></pre>
     </div>
 
     <div class="callout info">
-      <div class="callout-title">Pourquoi volatile ?</div>
-      <code>currentCmd</code> et <code>speed</code> sont déclarées <code>volatile</code> car elles sont modifiées depuis le handler WebSocket (<code>onWsEvent()</code>) et lues depuis la boucle principale — le compilateur ne doit pas les mettre en cache dans un registre.
+      <div class="callout-title">Pourquoi BR et FR sont "inversés" ?</div>
+      Les servos de droite sont montés en miroir des servos de gauche pour des raisons mécaniques. Pour que toutes les pattes avancent dans la même direction, les hanches droites (ch0, ch4) augmentent leurs ticks quand elles avancent, tandis que les hanches gauches (ch2, ch6) les diminuent. Les helpers <code>hipBR/BL/FR/FL()</code> absorbent cette asymétrie — le reste du code utilise simplement <code>+HIP_STEP</code> pour avancer et <code>-HIP_STEP</code> pour reculer.
     </div>
 
     <table>
-      <thead><tr><th>Ticks</th><th>Durée impulsion</th><th>Angle approx.</th></tr></thead>
+      <thead><tr><th>Canal</th><th>Home (ticks/°)</th><th>Sens avancer</th><th>Plage mécanique</th></tr></thead>
       <tbody>
-        <tr><td><code>150</code> (HIP_MIN / KNEE_MIN)</td><td>~0.73 ms</td><td>~0° / ~45°</td></tr>
-        <tr><td><code>375</code> (HIP_MID / KNEE_MID)</td><td>~1.83 ms</td><td>~90° (neutre)</td></tr>
-        <tr><td><code>600</code> (HIP_MAX / KNEE_MAX)</td><td>~2.93 ms</td><td>~180° / ~135°</td></tr>
+        <tr><td><code>BR hip ch0</code></td><td>471 / 243°</td><td>+ticks (inversé)</td><td>130→540 / 270°</td></tr>
+        <tr><td><code>BL hip ch2</code></td><td>181 / 52°</td><td>−ticks (normal)</td><td>130→505 / 247°</td></tr>
+        <tr><td><code>FR hip ch4</code></td><td>466 / 240°</td><td>+ticks (inversé)</td><td>150→510 / 237°</td></tr>
+        <tr><td><code>FL hip ch6</code></td><td>181 / 52°</td><td>−ticks (normal)</td><td>125→510 / 254°</td></tr>
+        <tr><td><code>BR knee ch1</code></td><td>350 / 163°</td><td>tendu→plié : −49t</td><td>210→440 / 152°</td></tr>
+        <tr><td><code>BL knee ch3</code></td><td>285 / 121°</td><td>tendu→plié : +59t</td><td>210→435 / 148°</td></tr>
+        <tr><td><code>FR knee ch5</code></td><td>345 / 160°</td><td>tendu→plié : −59t</td><td>195→415 / 145°</td></tr>
+        <tr><td><code>FL knee ch7</code></td><td>210 / 71°</td><td>tendu→plié : +59t</td><td>135→360 / 148°</td></tr>
       </tbody>
     </table>
   </div>
 
   <hr class="sep">
 
-  <!-- ── setup() ── -->
+  <!-- setup() -->
   <div class="fn-section" id="setup">
     <div class="fn-header">
       <div class="fn-number">2</div>
@@ -585,62 +609,66 @@
       </div>
     </div>
 
-    <p>Exécutée <strong>une seule fois</strong> au démarrage. Elle initialise dans l'ordre : les pins GPIO, le bus I2C et le PCA9685, les positions courantes de tous les servos, la connexion WiFi, puis les deux serveurs réseau.</p>
+    <p>Exécutée une seule fois au boot. Elle affiche la raison du reset (brownout, panic, watchdog), initialise le PCA9685 avec les bons paramètres d'oscillateur, puis envoie les 12 servos en position home un par un avec 300 ms d'écart pour éviter les pics de courant.</p>
 
     <div class="code-block">
-      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">setup() — séquence d'initialisation complète</span></div>
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">setup() — séquence d'initialisation</span></div>
       <pre><code><span class="kw">void</span> <span class="fn">setup</span>() {
   Serial.<span class="fn">begin</span>(<span class="num">115200</span>);
+  <span class="fn">delay</span>(<span class="num">300</span>);
 
-  <span class="cmt">// ── 1. Pins MQ-9 ─────────────────────────────────────────────────────
-  // GPIO34 = entrée analogique ADC (ADC1 — compatible WiFi actif)
-  // GPIO32 = entrée digitale (seuil réglable via potentiomètre du module)</span>
-  <span class="fn">pinMode</span>(<span class="cn">MQ9_ANALOG_PIN</span>,  INPUT);   <span class="cmt">// GPIO34</span>
-  <span class="fn">pinMode</span>(<span class="cn">MQ9_DIGITAL_PIN</span>, INPUT);   <span class="cmt">// GPIO32</span>
+  <span class="cmt">// Affiche la raison du dernier reset — utile pour diagnostiquer les brownouts</span>
+  <span class="typ">esp_reset_reason_t</span> r = <span class="fn">esp_reset_reason</span>();
+  <span class="kw">if</span> (r == ESP_RST_BROWNOUT) Serial.<span class="fn">print</span>(<span class="str">" *** BROWNOUT ***"</span>);
 
-  <span class="cmt">// ── 2. PCA9685 via I2C (SDA=GPIO21, SCL=GPIO22) ─────────────────────
-  // Adresse I2C 0x40 = adresse par défaut (toutes cavalières ouvertes)
-  // setPWMFreq(50) = fréquence standard des servos (période 20 ms)</span>
-  Wire.<span class="fn">begin</span>(<span class="num">21</span>, <span class="num">22</span>);
+  <span class="cmt">// ── GPIO MQ-9 ─────────────────────────────────────────────────────────
+  // GPIO4 = ADC (compatible WiFi sur ESP32-S3, pas de restriction ADC2)
+  // GPIO5 = seuil digital du comparateur interne du module</span>
+  <span class="fn">pinMode</span>(<span class="cn">MQ9_ANALOG_PIN</span>,  INPUT);
+  <span class="fn">pinMode</span>(<span class="cn">MQ9_DIGITAL_PIN</span>, INPUT);
+  <span class="fn">memset</span>(servoPos, <span class="num">0xFF</span>, <span class="kw">sizeof</span>(servoPos));
+
+  <span class="cmt">// ── I²C + PCA9685 ────────────────────────────────────────────────────
+  // SDA=GPIO8, SCL=GPIO9 (PCB custom)
+  // Oscillateur 25 MHz = valeur correcte datasheet NXP PCA9685
+  // IMPORTANT : 27 MHz (valeur incorrecte souvent utilisée) faussait
+  // tous les timings PWM et causait les tremblements initiaux</span>
+  Wire.<span class="fn">begin</span>(<span class="cn">I2C_SDA</span>, <span class="cn">I2C_SCL</span>);
+  Wire.<span class="fn">setClock</span>(<span class="num">100000</span>);
   pca.<span class="fn">begin</span>();
+  pca.<span class="fn">setOscillatorFrequency</span>(<span class="num">25000000</span>);
   pca.<span class="fn">setPWMFreq</span>(<span class="num">50</span>);
-  <span class="fn">delay</span>(<span class="num">500</span>);  <span class="cmt">// Laisse le temps aux servos de s'initialiser</span>
+  <span class="fn">delay</span>(<span class="num">150</span>);
 
-  <span class="cmt">// ── 3. Initialisation de curPos[] ────────────────────────────────────
-  // Les hanches (index pairs) partent au centre (HIP_MID = 375)
-  // Les genoux  (index impairs) partent au centre (KNEE_MID = 375)
-  // Cela permet à moveServo() d'interpoler correctement dès le premier appel</span>
-  <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">8</span>; i++)
-    curPos[i] = (i % <span class="num">2</span> == <span class="num">0</span>) ? <span class="cn">HIP_MID</span> : <span class="cn">KNEE_MID</span>;
+  <span class="cmt">// ── Init servos séquentielle — un par un, 300 ms d'écart ─────────────
+  // Évite les pics de courant qui causaient les brownouts de l'ESP32 original.
+  // sendServo() = setPWM() + waitMove(300)</span>
+  <span class="fn">sendServo</span>(<span class="cn">CH_BR_HIP</span>,  <span class="cn">HOME_BR_HIP</span>);  <span class="fn">sendServo</span>(<span class="cn">CH_BR_KNEE</span>, <span class="cn">TENDU_BR</span>);
+  <span class="fn">sendServo</span>(<span class="cn">CH_BL_HIP</span>,  <span class="cn">HOME_BL_HIP</span>);  <span class="fn">sendServo</span>(<span class="cn">CH_BL_KNEE</span>, <span class="cn">TENDU_BL</span>);
+  <span class="fn">sendServo</span>(<span class="cn">CH_FR_HIP</span>,  <span class="cn">HOME_FR_HIP</span>);  <span class="fn">sendServo</span>(<span class="cn">CH_FR_KNEE</span>, <span class="cn">TENDU_FR</span>);
+  <span class="fn">sendServo</span>(<span class="cn">CH_FL_HIP</span>,  <span class="cn">HOME_FL_HIP</span>);  <span class="fn">sendServo</span>(<span class="cn">CH_FL_KNEE</span>, <span class="cn">TENDU_FL</span>);
+  <span class="cmt">// Rotules : contre-couple fixe</span>
+  <span class="fn">sendServo</span>(<span class="cn">CH_BR_BALL</span>, <span class="cn">BALL_BR</span>);  <span class="fn">sendServo</span>(<span class="cn">CH_BL_BALL</span>, <span class="cn">BALL_BL</span>);
+  <span class="fn">sendServo</span>(<span class="cn">CH_FR_BALL</span>, <span class="cn">BALL_FR</span>);  <span class="fn">sendServo</span>(<span class="cn">CH_FL_BALL</span>, <span class="cn">BALL_FL</span>);
 
-  <span class="cmt">// Envoie directement les positions neutres au PCA9685 (sans interpolation)</span>
-  <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">8</span>; i++)
-    pca.<span class="fn">setPWM</span>(i, <span class="num">0</span>, curPos[i]);
-  <span class="fn">delay</span>(<span class="num">500</span>);
-
-  <span class="cmt">// ── 4. Connexion WiFi ─────────────────────────────────────────────────</span>
+  <span class="cmt">// ── WiFi + serveurs ───────────────────────────────────────────────────</span>
   WiFi.<span class="fn">begin</span>(SSID, PASSWORD);
-  <span class="kw">while</span> (WiFi.<span class="fn">status</span>() != WL_CONNECTED) { <span class="fn">delay</span>(<span class="num">500</span>); Serial.<span class="fn">print</span>(<span class="str">"."</span>); }
-  Serial.<span class="fn">printf</span>(<span class="str">"\nConnecté — IP : http://%s\n"</span>, WiFi.<span class="fn">localIP</span>().<span class="fn">toString</span>().c_str());
-  Serial.<span class="fn">printf</span>(<span class="str">"WebSocket  : ws://%s:81/ws\n"</span>, WiFi.<span class="fn">localIP</span>().<span class="fn">toString</span>().c_str());
-
-  <span class="cmt">// ── 5. Serveur HTTP port 80 et WebSocket port 81 ─────────────────────</span>
-  httpServer.<span class="fn">on</span>(<span class="str">"/"</span>, handleRoot);
+  <span class="cmt">// HTTP port 80 + WebSocket port 81</span>
   httpServer.<span class="fn">begin</span>();
   wsServer.<span class="fn">begin</span>();
   wsServer.<span class="fn">onEvent</span>(onWsEvent);
 }</code></pre>
     </div>
 
-    <div class="callout info">
-      <div class="callout-title">Pourquoi initialiser curPos[] avant d'envoyer les servos ?</div>
-      <code>moveServo()</code> part de <code>curPos[ch]</code> pour calculer l'interpolation. Si ce tableau contient des valeurs arbitraires (zéro ou aléatoires), le premier mouvement partirait d'une position fausse et pourrait forcer mécaniquement le servo. L'initialisation à <code>HIP_MID</code>/<code>KNEE_MID</code> garantit que la première interpolation est cohérente avec la position physique réelle.
+    <div class="callout danger">
+      <div class="callout-title">Oscillateur PCA9685 — erreur critique corrigée</div>
+      L'oscillateur interne du PCA9685 est de <strong>25 MHz</strong> (datasheet NXP). Utiliser 27 MHz — comme dans les versions précédentes — faussait tous les timings PWM : le PCA générait ~54 Hz au lieu de 50 Hz, les impulsions étaient ~8% trop longues, les servos partaient en butée et consommaient 2–3 A en permanence même à l'arrêt.
     </div>
   </div>
 
   <hr class="sep">
 
-  <!-- ── loop() ── -->
+  <!-- loop() -->
   <div class="fn-section" id="loop">
     <div class="fn-header">
       <div class="fn-number">3</div>
@@ -650,84 +678,52 @@
       </div>
     </div>
 
-    <p>Tourne en permanence après <code>setup()</code>. Elle commence par pomper le réseau (<code>handleClient</code> + <code>wsServer.loop()</code>), puis exécute la marche via un <code>switch</code> sur <code>currentCmd</code>. Les fonctions de marche sont <strong>bloquantes</strong> : elles s'exécutent entièrement avant que <code>loop()</code> reprenne. L'envoi MQ-9 toutes les 2 secondes est géré par un timer <code>millis()</code> non-bloquant, mais il n'est atteint que quand le robot est à l'arrêt (en CMD_STOP).</p>
+    <p>Pompe le réseau à chaque tour, détecte les transitions de commande, et appelle la fonction de marche correspondante. La détection de transition permet d'appeler <code>standStill()</code> exactement une fois au passage à CMD_STOP, sans l'appeler en boucle à chaque tour de <code>loop()</code>.</p>
 
     <div class="code-block">
-      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">loop() — switch sur currentCmd</span></div>
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">loop() — gestion des transitions et démarche</span></div>
       <pre><code><span class="kw">void</span> <span class="fn">loop</span>() {
-  <span class="cmt">// Pompage réseau — traite les paquets HTTP et WebSocket en attente</span>
   httpServer.<span class="fn">handleClient</span>();
   wsServer.<span class="fn">loop</span>();
 
-  <span class="kw">switch</span> (currentCmd) {
+  <span class="cmt">// Copie atomique de la commande volatile</span>
+  <span class="typ">Command</span> cmd = pendingCmd;
 
-    <span class="kw">case</span> CMD_FORWARD:
-      wasMoving = <span class="kw">true</span>;
-      <span class="fn">walkForward</span>();   <span class="cmt">// bloquant — dure plusieurs secondes</span>
-      <span class="kw">break</span>;
-
-    <span class="kw">case</span> CMD_BACKWARD:
-      wasMoving = <span class="kw">true</span>;
-      <span class="fn">walkBackward</span>();
-      <span class="kw">break</span>;
-
-    <span class="kw">case</span> CMD_LEFT:
-      wasMoving = <span class="kw">true</span>;
-      <span class="fn">walkLeft</span>();
-      <span class="kw">break</span>;
-
-    <span class="kw">case</span> CMD_RIGHT:
-      wasMoving = <span class="kw">true</span>;
-      <span class="fn">walkRight</span>();
-      <span class="kw">break</span>;
-
-    <span class="kw">case</span> CMD_STOP:
-    <span class="kw">default</span>:
-      <span class="cmt">// standStill() une seule fois à l'arrêt grâce à wasMoving
-      // Sans ce garde-fou, standStill() serait appelée à chaque tour
-      // de loop() et enverrait inutilement 8 commandes I2C en boucle</span>
-      <span class="kw">if</span> (wasMoving) {
-        wasMoving = <span class="kw">false</span>;
-        <span class="fn">standStill</span>();
-      }
-      <span class="cmt">// Pendant l'arrêt : pompe le réseau et envoie les données capteur</span>
-      httpServer.<span class="fn">handleClient</span>();
-      wsServer.<span class="fn">loop</span>();
-      <span class="kw">break</span>;
+  <span class="cmt">// Détection de transition — agit UNE SEULE FOIS au changement de commande</span>
+  <span class="kw">if</span> (cmd != currentCmd) {
+    <span class="kw">if</span> (cmd == CMD_STOP && wasMoving) {
+      <span class="fn">standStill</span>();
+      wasMoving = <span class="kw">false</span>;
+    }
+    currentCmd = cmd;
+    gaitStep = <span class="num">0</span>;   <span class="cmt">// Repart du début du cycle à chaque nouvelle commande</span>
   }
 
-  <span class="cmt">// ── Envoi MQ-9 toutes les 2 secondes ─────────────────────────────────
-  // Ce bloc n'est atteint régulièrement qu'à l'arrêt (CMD_STOP),
-  // car pendant la marche loop() est bloqué dans walkXxx()</span>
-  <span class="kw">if</span> (<span class="fn">millis</span>() - lastSensorSend > <span class="num">2000</span>) {
-    lastSensorSend = <span class="fn">millis</span>();
+  <span class="kw">switch</span> (currentCmd) {
+    <span class="kw">case</span> CMD_FORWARD:  wasMoving = <span class="kw">true</span>; <span class="fn">walkForward</span>();  <span class="kw">break</span>;
+    <span class="kw">case</span> CMD_BACKWARD: wasMoving = <span class="kw">true</span>; <span class="fn">walkBackward</span>(); <span class="kw">break</span>;
+    <span class="kw">case</span> CMD_STOP:
+    <span class="kw">default</span>: <span class="kw">break</span>;
+  }
+
+  <span class="cmt">// MQ-9 toutes les 2 s — diffusé à tous les clients connectés</span>
+  <span class="kw">if</span> (<span class="fn">millis</span>() - lastSensorMs > <span class="num">2000</span>) {
+    lastSensorMs = <span class="fn">millis</span>();
     <span class="typ">SensorData</span> d = <span class="fn">readMQ9</span>();
-
-    <span class="typ">StaticJsonDocument</span>&lt;<span class="num">160</span>&gt; doc;
-    doc[<span class="str">"type"</span>]    = <span class="str">"sensor"</span>;
-    doc[<span class="str">"raw"</span>]     = d.raw;
-    doc[<span class="str">"voltage"</span>] = <span class="fn">serialized</span>(<span class="typ">String</span>(d.voltage, <span class="num">3</span>));
-    doc[<span class="str">"rs"</span>]      = <span class="fn">serialized</span>(<span class="typ">String</span>(d.rs,      <span class="num">3</span>));
-    doc[<span class="str">"ratio"</span>]   = <span class="fn">serialized</span>(<span class="typ">String</span>(d.ratio,   <span class="num">3</span>));
-    doc[<span class="str">"ppm"</span>]     = <span class="fn">serialized</span>(<span class="typ">String</span>(d.ppm,     <span class="num">1</span>));
-    doc[<span class="str">"alert"</span>]   = d.alert;
-
-    <span class="typ">String</span> out;
-    <span class="fn">serializeJson</span>(doc, out);
-    wsServer.<span class="fn">broadcastTXT</span>(out);
+    <span class="cmt">// ... sérialisation JSON + broadcastTXT()</span>
   }
 }</code></pre>
     </div>
 
     <div class="callout warn">
-      <div class="callout-title">Les fonctions de marche sont bloquantes</div>
-      Contrairement à une architecture non-bloquante basée sur <code>millis()</code>, les fonctions <code>walkXxx()</code> contiennent des <code>delay()</code> à l'intérieur de <code>moveServo()</code>. Pendant ces délais, <code>loop()</code> ne reprend pas. C'est pourquoi <code>moveServo()</code> appelle manuellement <code>wsServer.loop()</code> et <code>httpServer.handleClient()</code> à chaque micro-pas pour éviter que la connexion WebSocket ne timeout.
+      <div class="callout-title">Fonctions de marche semi-bloquantes</div>
+      Chaque phase de marche contient un <code>waitMove(ms)</code> qui bloque pendant <code>ms</code> millisecondes. Pendant cette attente, <code>wsServer.loop()</code> et <code>httpServer.handleClient()</code> sont appelés toutes les 5 ms pour garder la connexion WebSocket vivante. Le MQ-9 est donc lu régulièrement seulement quand le robot est à l'arrêt.
     </div>
   </div>
 
   <hr class="sep">
 
-  <!-- ── onWsEvent() ── -->
+  <!-- onWsEvent() -->
   <div class="fn-section" id="onwsevent">
     <div class="fn-header">
       <div class="fn-number orange">4</div>
@@ -737,543 +733,389 @@
       </div>
     </div>
 
-    <p>Callback appelé automatiquement par la librairie <code>WebSocketsServer</code> à chaque événement réseau. Elle décode le JSON entrant et met à jour <code>currentCmd</code> et <code>speed</code>. À la déconnexion d'un client, elle force <code>currentCmd = CMD_STOP</code> par sécurité.</p>
+    <p>Callback déclenché par la librairie WebSocketsServer à chaque message. Gère trois types de messages : <code>ping</code> (latence), <code>cmd</code> (déplacement), et <code>cal</code> (calibration manuelle). À la déconnexion, force CMD_STOP par sécurité.</p>
 
     <div class="code-block">
-      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">onWsEvent() — parsing JSON et routage des commandes</span></div>
-      <pre><code><span class="kw">void</span> <span class="fn">onWsEvent</span>(<span class="typ">uint8_t</span> num, <span class="typ">WStype_t</span> type,
-               <span class="typ">uint8_t</span>* payload, <span class="typ">size_t</span> length) {
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">onWsEvent() — trois types de messages</span></div>
+      <pre><code><span class="cmt">// ── Ping de latence ────────────────────────────────────────────────────
+// {&quot;type&quot;:&quot;ping&quot;} → réponse immédiate {&quot;type&quot;:&quot;pong&quot;}
+// Le dashboard mesure l'aller-retour pour afficher la latence en ms</span>
+<span class="kw">if</span> (<span class="fn">strcmp</span>(t, <span class="str">"ping"</span>) == <span class="num">0</span>) {
+  wsServer.<span class="fn">sendTXT</span>(num, <span class="str">"{\"type\":\"pong\"}"</span>);
+  <span class="kw">return</span>;
+}
 
-  <span class="kw">if</span> (type == <span class="cn">WStype_TEXT</span>) {
-    <span class="typ">StaticJsonDocument</span>&lt;<span class="num">128</span>&gt; doc;
-    <span class="kw">if</span> (<span class="fn">deserializeJson</span>(doc, payload, length)) <span class="kw">return</span>;
+<span class="cmt">// ── Commande de déplacement ────────────────────────────────────────────
+// {&quot;type&quot;:&quot;cmd&quot;, &quot;cmd&quot;:&quot;forward&quot;, &quot;speed&quot;:50}
+// La vitesse (0–100) contrôle moveMs() → durée de chaque phase de marche</span>
+<span class="kw">if</span> (<span class="fn">strcmp</span>(t, <span class="str">"cmd"</span>) == <span class="num">0</span>) {
+  <span class="kw">if</span> (doc.<span class="fn">containsKey</span>(<span class="str">"speed"</span>))
+    speedPct = (<span class="typ">uint8_t</span>)<span class="fn">constrain</span>((<span class="kw">int</span>)doc[<span class="str">"speed"</span>], <span class="num">0</span>, <span class="num">100</span>);
+  <span class="cmt">// Mise à jour de pendingCmd — lu par loop() à son prochain tour</span>
+  <span class="kw">if</span> (next != pendingCmd) gaitStep = <span class="num">0</span>;
+  pendingCmd = next;
+}
 
-    <span class="kw">const char</span>* t = doc[<span class="str">"type"</span>];
-    <span class="kw">if</span> (!t) <span class="kw">return</span>;
-
-    <span class="cmt">// ── Ping de latence ───────────────────────────────────────────────────
-    // Le dashboard envoie {"type":"ping"} toutes les 2 s pour mesurer la latence
-    // L'ESP répond immédiatement {"type":"pong"} sans rien d'autre</span>
-    <span class="kw">if</span> (<span class="fn">strcmp</span>(t, <span class="str">"ping"</span>) == <span class="num">0</span>) {
-      wsServer.<span class="fn">sendTXT</span>(num, <span class="str">"{\"type\":\"pong\"}"</span>);
-      <span class="kw">return</span>;
-    }
-
-    <span class="cmt">// ── Commande de déplacement ───────────────────────────────────────────
-    // Le dashboard envoie {"type":"cmd","cmd":"forward","speed":50}</span>
-    <span class="kw">if</span> (<span class="fn">strcmp</span>(t, <span class="str">"cmd"</span>) == <span class="num">0</span>) {
-      <span class="kw">const char</span>* cmd = doc[<span class="str">"cmd"</span>];
-
-      <span class="cmt">// Extrait la vitesse, défaut 50 si absente (opérateur | = valeur par défaut)</span>
-      speed = <span class="fn">constrain</span>((<span class="kw">int</span>)doc[<span class="str">"speed"</span>] | <span class="num">50</span>, <span class="num">0</span>, <span class="num">100</span>);
-
-      <span class="kw">if</span>      (<span class="fn">strcmp</span>(cmd, <span class="str">"forward"</span>)  == <span class="num">0</span>) currentCmd = CMD_FORWARD;
-      <span class="kw">else if</span> (<span class="fn">strcmp</span>(cmd, <span class="str">"backward"</span>) == <span class="num">0</span>) currentCmd = CMD_BACKWARD;
-      <span class="kw">else if</span> (<span class="fn">strcmp</span>(cmd, <span class="str">"left"</span>)     == <span class="num">0</span>) currentCmd = CMD_LEFT;
-      <span class="kw">else if</span> (<span class="fn">strcmp</span>(cmd, <span class="str">"right"</span>)    == <span class="num">0</span>) currentCmd = CMD_RIGHT;
-      <span class="kw">else</span>                                    currentCmd = CMD_STOP;
-    }
-  }
-
-  <span class="cmt">// ── Déconnexion ───────────────────────────────────────────────────────
-  // Immobilise le robot si le navigateur est fermé ou si le WiFi coupe
-  // Note : standStill() n'est PAS appelée ici — wasMoving déclenchera
-  // l'arrêt propre au prochain tour de loop()</span>
-  <span class="kw">if</span> (type == <span class="cn">WStype_DISCONNECTED</span>) {
-    currentCmd = CMD_STOP;
-  }
-}</code></pre>
-    </div>
-
-    <div class="callout warn">
-      <div class="callout-title">Sécurité — déconnexion</div>
-      Si le WiFi coupe ou si le navigateur est fermé, <code>WStype_DISCONNECTED</code> est déclenché et <code>currentCmd</code> passe à <code>CMD_STOP</code>. La fonction de marche en cours détecte ce changement (via <code>if (currentCmd != CMD_FORWARD) return;</code>) et s'interrompt, puis <code>loop()</code> appellera <code>standStill()</code> via <code>wasMoving</code>.
-    </div>
-  </div>
-
-  <hr class="sep">
-
-  <!-- ── rawPWM() ── -->
-  <div class="fn-section" id="rawpwm">
-    <div class="fn-header">
-      <div class="fn-number blue">5</div>
-      <div class="fn-title">
-        <h2>Envoi direct — <span class="fn-name">rawPWM()</span></h2>
-        <div class="tags"><span class="tag pca">PCA9685 PWM</span></div>
-      </div>
-    </div>
-
-    <p>Envoie une commande PWM <strong>immédiatement</strong> au PCA9685, sans interpolation. Utilisée quand la fluidité n'est pas requise : repositionnement rapide des hanches au centre, initialisation au démarrage.</p>
-
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">rawPWM() — envoi direct, borne selon le type de servo</span></div>
-      <pre><code><span class="kw">void</span> <span class="fn">rawPWM</span>(<span class="typ">uint8_t</span> ch, <span class="typ">uint16_t</span> t, <span class="kw">bool</span> isKnee) {
-  <span class="cmt">// Borne la valeur selon les limites de la hanche ou du genou
-  // Protège mécaniquement le servo contre les dépassements</span>
-  t = isKnee ? <span class="fn">constrain</span>(t, <span class="cn">KNEE_MIN</span>, <span class="cn">KNEE_MAX</span>)
-             : <span class="fn">constrain</span>(t, <span class="cn">HIP_MIN</span>,  <span class="cn">HIP_MAX</span>);
-
-  <span class="cmt">// Met à jour curPos pour que moveServo() parte du bon point lors
-  // du prochain mouvement interpolé</span>
-  curPos[ch] = t;
-  pca.<span class="fn">setPWM</span>(ch, <span class="num">0</span>, t);
-}</code></pre>
-    </div>
-  </div>
-
-  <hr class="sep">
-
-  <!-- ── moveServo() ── -->
-  <div class="fn-section" id="moveservo">
-    <div class="fn-header">
-      <div class="fn-number blue">6</div>
-      <div class="fn-title">
-        <h2>Interpolation fluide — <span class="fn-name">moveServo()</span></h2>
-        <div class="tags"><span class="tag pca">PCA9685 PWM</span></div>
-      </div>
-    </div>
-
-    <p>C'est le moteur de fluidité du firmware. Elle déplace un servo de sa position actuelle vers une cible en <code>INTERP_STEPS</code> micro-pas, avec une <strong>courbe ease-in-out cubique</strong> : le mouvement commence lentement, accélère au milieu, puis ralentit à l'arrivée — exactement comme un mouvement naturel.</p>
-
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">moveServo() — interpolation ease-in-out cubique</span></div>
-      <pre><code><span class="kw">void</span> <span class="fn">moveServo</span>(<span class="typ">uint8_t</span> ch, <span class="typ">uint16_t</span> target, <span class="kw">bool</span> isKnee) {
-  <span class="cmt">// Borne la cible dans les limites mécaniques</span>
-  target = isKnee ? <span class="fn">constrain</span>(target, <span class="cn">KNEE_MIN</span>, <span class="cn">KNEE_MAX</span>)
-                  : <span class="fn">constrain</span>(target, <span class="cn">HIP_MIN</span>,  <span class="cn">HIP_MAX</span>);
-
-  <span class="typ">int32_t</span> start = curPos[ch];          <span class="cmt">// Position de départ = position courante mémorisée</span>
-  <span class="typ">int32_t</span> delta = (<span class="typ">int32_t</span>)target - start;
-  <span class="kw">if</span> (delta == <span class="num">0</span>) <span class="kw">return</span>;             <span class="cmt">// Déjà en position → rien à faire</span>
-
-  <span class="kw">for</span> (<span class="kw">int</span> s = <span class="num">1</span>; s &lt;= <span class="cn">INTERP_STEPS</span>; s++) {
-
-    <span class="cmt">// ── Ease-in-out cubique ───────────────────────────────────────────────
-    // t va de 0.0 à 1.0 sur toute la durée du mouvement
-    // Formule : t &lt; 0.5 → 4t³   |   t ≥ 0.5 → 1 - (-2t+2)³/2
-    // Résultat : courbe en S — lent au départ, rapide au milieu, lent à l'arrivée</span>
-    <span class="kw">float</span> t    = (<span class="kw">float</span>)s / <span class="cn">INTERP_STEPS</span>;
-    <span class="kw">float</span> ease = t &lt; <span class="num">0.5f</span> ? <span class="num">4</span>*t*t*t : <span class="num">1</span> - <span class="fn">pow</span>(-<span class="num">2</span>*t+<span class="num">2</span>, <span class="num">3</span>)/<span class="num">2</span>;
-
-    <span class="typ">uint16_t</span> pos = (<span class="typ">uint16_t</span>)(start + delta * ease);
-    curPos[ch] = pos;
-    pca.<span class="fn">setPWM</span>(ch, <span class="num">0</span>, pos);
-
-    <span class="cmt">// Pause fixe entre chaque micro-pas
-    // 30 ms = durée minimale pour que le servo atteigne physiquement la position</span>
-    <span class="fn">delay</span>(<span class="cn">MS_PER_STEP</span>);
-
-    <span class="cmt">// Pompe le réseau pendant le délai pour garder le WebSocket vivant
-    // Sans ces appels, la connexion timeouterait pendant la marche</span>
-    wsServer.<span class="fn">loop</span>();
-    httpServer.<span class="fn">handleClient</span>();
-  }
-
-  <span class="cmt">// Force la position exacte à la fin (évite les erreurs d'arrondi float)</span>
-  curPos[ch] = target;
-  pca.<span class="fn">setPWM</span>(ch, <span class="num">0</span>, target);
+<span class="cmt">// ── Calibration individuelle par canal ────────────────────────────────
+// {&quot;type&quot;:&quot;cal&quot;, &quot;ch&quot;:4, &quot;ticks&quot;:280}
+// Plage autorisée : 0–600 (élargie pour trouver les butées mécaniques)
+// Utilisé par calibration.html — envoie immédiatement sans attente</span>
+<span class="kw">if</span> (<span class="fn">strcmp</span>(t, <span class="str">"cal"</span>) == <span class="num">0</span>) {
+  <span class="typ">uint8_t</span>  ch    = (<span class="typ">uint8_t</span>)(<span class="kw">int</span>)doc[<span class="str">"ch"</span>];
+  <span class="typ">uint16_t</span> ticks = (<span class="typ">uint16_t</span>)<span class="fn">constrain</span>((<span class="kw">int</span>)doc[<span class="str">"ticks"</span>], <span class="num">0</span>, <span class="num">600</span>);
+  pca.<span class="fn">setPWM</span>(ch, <span class="num">0</span>, ticks);
+  servoPos[ch] = ticks;
 }</code></pre>
     </div>
 
     <div class="callout tip">
-      <div class="callout-title">La courbe ease-in-out cubique</div>
-      Avec <code>INTERP_STEPS = 20</code> et <code>MS_PER_STEP = 30 ms</code>, un mouvement complet dure 20 × 30 = <strong>600 ms</strong>. Augmenter <code>INTERP_STEPS</code> rend le mouvement plus fluide mais plus lent. Augmenter <code>MS_PER_STEP</code> donne plus de temps au servo pour atteindre chaque position intermédiaire — utile si le servo est lent ou chargé.
+      <div class="callout-title">Calibration en live depuis le navigateur</div>
+      Le message <code>cal</code> permet d'ajuster n'importe lequel des 12 canaux en temps réel depuis <code>calibration.html</code>. La plage 0–600 ticks est volontairement plus large que les limites mécaniques pour permettre de trouver les vraies butées. Pendant la marche, les fonctions <code>hipBR/BL/FR/FL()</code> appliquent elles les limites mécaniques strictes via <code>constrain()</code>.
     </div>
   </div>
 
   <hr class="sep">
 
-  <!-- ── liftMember() ── -->
-  <div class="fn-section" id="liftmember">
+  <!-- setPWM() -->
+  <div class="fn-section" id="setpwm">
+    <div class="fn-header">
+      <div class="fn-number blue">5</div>
+      <div class="fn-title">
+        <h2>Envoi direct — <span class="fn-name">setPWM()</span></h2>
+        <div class="tags"><span class="tag pca">PCA9685 PWM</span></div>
+      </div>
+    </div>
+
+    <p>Envoie une commande PWM <strong>immédiatement</strong> au PCA9685, sans aucune attente. Utilisée pour commander plusieurs servos quasi-simultanément : deux appels consécutifs sont séparés de ~600 µs seulement (délai naturel I²C), ce qui est suffisamment rapide pour que les deux membres d'une paire diagonale démarrent ensemble.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">setPWM() — envoi immédiat, mémorise la position</span></div>
+      <pre><code><span class="kw">void</span> <span class="fn">setPWM</span>(<span class="typ">uint8_t</span> ch, <span class="typ">uint16_t</span> ticks) {
+  <span class="kw">if</span> (ch >= <span class="num">16</span>) <span class="kw">return</span>;
+  ticks = (<span class="typ">uint16_t</span>)<span class="fn">constrain</span>((<span class="kw">int</span>)ticks, <span class="num">0</span>, <span class="num">600</span>);
+  servoPos[ch] = ticks;      <span class="cmt">// Mémorise pour éviter les re-écritures inutiles</span>
+  pca.<span class="fn">setPWM</span>(ch, <span class="num">0</span>, ticks);   <span class="cmt">// Envoie immédiatement sur le bus I²C</span>
+}</code></pre>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- waitMove() -->
+  <div class="fn-section" id="waitmove">
+    <div class="fn-header">
+      <div class="fn-number blue">6</div>
+      <div class="fn-title">
+        <h2>Attente non-bloquante — <span class="fn-name">waitMove()</span></h2>
+        <div class="tags"><span class="tag pca">PCA9685</span><span class="tag ws">WS</span></div>
+      </div>
+    </div>
+
+    <p>Attend <code>ms</code> millisecondes tout en continuant à pomper le réseau toutes les 5 ms. C'est le mécanisme qui permet d'attendre que les servos atteignent leur cible sans déconnecter le WebSocket.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">waitMove() — boucle d'attente avec pompage réseau</span></div>
+      <pre><code><span class="kw">void</span> <span class="fn">waitMove</span>(<span class="typ">unsigned long</span> ms) {
+  <span class="typ">unsigned long</span> t0 = <span class="fn">millis</span>();
+  <span class="kw">while</span> (<span class="fn">millis</span>() - t0 < ms) {
+    wsServer.<span class="fn">loop</span>();           <span class="cmt">// Maintient le WebSocket vivant</span>
+    httpServer.<span class="fn">handleClient</span>(); <span class="cmt">// Répond aux requêtes HTTP pendant l'attente</span>
+    <span class="fn">delay</span>(<span class="num">5</span>);
+  }
+}</code></pre>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-title">Durée par phase selon la vitesse</div>
+      <code>moveMs()</code> calcule la durée en fonction de <code>speedPct</code> : speed=0 → 800 ms/phase · speed=100 → 300 ms/phase. Un cycle complet (4 phases) dure donc de 1.2 s (rapide) à 3.2 s (lent). Les GX3270BLS atteignent 60° en ~130 ms à 6.6V — 300 ms est largement suffisant pour tout déplacement utile.
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- sendServo() -->
+  <div class="fn-section" id="sendservo">
     <div class="fn-header">
       <div class="fn-number blue">7</div>
       <div class="fn-title">
-        <h2>Lever d'un membre — <span class="fn-name">liftMember()</span></h2>
+        <h2>Envoi avec attente — <span class="fn-name">sendServo()</span></h2>
         <div class="tags"><span class="tag pca">PCA9685</span></div>
       </div>
     </div>
 
-    <p>Réalise le <strong>lever complet d'un membre</strong> en 3 phases séquentielles, imitant la démarche naturelle d'un cheval : décoller, avancer, poser. Chaque phase fait appel à <code>moveServo()</code> et est suivie d'une courte pause pour laisser les servos terminer leur mouvement.</p>
+    <p>Utilisée uniquement pour l'initialisation et <code>standStill()</code> : envoie une commande et attend 300 ms que le servo arrive à sa position. Ne convient pas à la marche (trop lente pour commander plusieurs servos à la fois).</p>
 
     <div class="code-block">
-      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">liftMember() — 3 phases : lever, avancer, poser</span></div>
-      <pre><code><span class="kw">void</span> <span class="fn">liftMember</span>(<span class="typ">uint8_t</span> hipCh, <span class="typ">uint8_t</span> kneeCh, <span class="typ">uint16_t</span> hipTarget) {
-  <span class="cmt">// Position genou levé : KNEE_MID - KNEE_LIFT (= 375 - 100 = 275 ticks)
-  // constrain() s'assure que ça reste dans la plage autorisée [KNEE_MIN, KNEE_MAX]</span>
-  <span class="typ">uint16_t</span> kneeUp = <span class="fn">constrain</span>(<span class="cn">KNEE_MID</span> - <span class="cn">KNEE_LIFT</span>, <span class="cn">KNEE_MIN</span>, <span class="cn">KNEE_MAX</span>);
-
-  <span class="cmt">// Phase 1 : le genou se lève → le pied décolle du sol</span>
-  <span class="fn">moveServo</span>(kneeCh, kneeUp,    <span class="kw">true</span>);
-  <span class="fn">delay</span>(<span class="num">20</span>);
-
-  <span class="cmt">// Phase 2 : la hanche avance vers la cible → le pied avance en l'air</span>
-  <span class="fn">moveServo</span>(hipCh,  hipTarget, <span class="kw">false</span>);
-  <span class="fn">delay</span>(<span class="num">20</span>);
-
-  <span class="cmt">// Phase 3 : le genou se repose → le pied touche le sol en avant</span>
-  <span class="fn">moveServo</span>(kneeCh, <span class="cn">KNEE_MID</span>,  <span class="kw">true</span>);
-  <span class="fn">delay</span>(<span class="num">20</span>);
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">sendServo() — envoi + attente 300 ms</span></div>
+      <pre><code><span class="kw">void</span> <span class="fn">sendServo</span>(<span class="typ">uint8_t</span> ch, <span class="typ">uint16_t</span> ticks) {
+  <span class="fn">setPWM</span>(ch, ticks);
+  <span class="fn">waitMove</span>(<span class="num">300</span>);
 }</code></pre>
     </div>
-
-    <div class="ascii">
-<span class="hl">Séquence liftMember() — vue de profil d'un membre</span>
-
-  Phase 1 : genou lève          Phase 2 : hanche avance       Phase 3 : genou pose
-  ┌──────────────┐              ┌──────────────┐              ┌──────────────┐
-  │    corps     │              │    corps     │              │    corps     │
-  │      │       │              │      │       │              │      │       │
-  │   hanche     │              │   hanche ──► │              │   hanche     │
-  │      │       │              │      │       │              │      │       │
-  │   genou ─►   │              │   genou ─►   │              │   genou      │
-  │         \    │              │         \    │              │      │       │
-  │    pied ↑    │              │    pied ↑    │              │    pied ▼    │
-  └──────────────┘              └──────────────┘              └──────────────┘
-  <span class="hl2">pied décolle</span>                  <span class="hl3">pied avance en l'air</span>          <span class="hl">pied touche le sol</span></div>
   </div>
 
   <hr class="sep">
 
-  <!-- ── centerAllHips() ── -->
-  <div class="fn-section" id="centerhips">
+  <!-- standStill() -->
+  <div class="fn-section" id="standstill">
     <div class="fn-header">
       <div class="fn-number blue">8</div>
       <div class="fn-title">
-        <h2>Recentrage des hanches — <span class="fn-name">centerAllHips()</span></h2>
+        <h2>Posture debout — <span class="fn-name">standStill()</span></h2>
         <div class="tags"><span class="tag pca">PCA9685</span></div>
       </div>
     </div>
 
-    <p>Recentre toutes les hanches à <code>HIP_MID</code> en même temps, <strong>sans interpolation</strong> (via <code>rawPWM</code>), puis attend suffisamment pour qu'elles atteignent physiquement le centre. Appelée à la fin de chaque cycle de marche complet pour remettre le robot en position neutre avant le cycle suivant.</p>
+    <p>Ramène tous les servos en position home de façon séquentielle et sécurisée. L'ordre en 3 phases évite les à-coups : d'abord les genoux à mi-course (ni pliés ni tendus), puis les hanches au centre, puis les genoux en position tendue. Appelée une seule fois à la transition vers CMD_STOP.</p>
 
     <div class="code-block">
-      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">centerAllHips() — recentrage simultané des 4 hanches</span></div>
-      <pre><code><span class="kw">void</span> <span class="fn">centerAllHips</span>() {
-  <span class="cmt">// Envoi direct (rawPWM) car les hanches sont déjà proches du centre
-  // après un cycle — l'interpolation serait inutilement lente ici</span>
-  <span class="fn">rawPWM</span>(<span class="cn">SERVO_BR_HIP</span>, <span class="cn">HIP_MID</span>, <span class="kw">false</span>);
-  <span class="fn">rawPWM</span>(<span class="cn">SERVO_BL_HIP</span>, <span class="cn">HIP_MID</span>, <span class="kw">false</span>);
-  <span class="fn">rawPWM</span>(<span class="cn">SERVO_FR_HIP</span>, <span class="cn">HIP_MID</span>, <span class="kw">false</span>);
-  <span class="fn">rawPWM</span>(<span class="cn">SERVO_FL_HIP</span>, <span class="cn">HIP_MID</span>, <span class="kw">false</span>);
-
-  <span class="cmt">// Délai pour laisser les 4 servos atteindre physiquement le centre
-  // MS_PER_STEP * 4 = 120 ms</span>
-  <span class="fn">delay</span>(<span class="cn">MS_PER_STEP</span> * <span class="num">4</span>);
-}</code></pre>
-    </div>
-  </div>
-
-  <hr class="sep">
-
-  <!-- ── standStill() ── -->
-  <div class="fn-section" id="standstill">
-    <div class="fn-header">
-      <div class="fn-number blue">9</div>
-      <div class="fn-title">
-        <h2>Posture neutre — <span class="fn-name">standStill()</span></h2>
-        <div class="tags"><span class="tag pca">PCA9685</span></div>
-      </div>
-    </div>
-
-    <p>Place tous les servos (hanches et genoux) en position neutre <code>KNEE_MID</code>/<code>HIP_MID</code> via des appels <strong>interpolés</strong> à <code>moveServo()</code>, puis recentre les hanches. Appelée une seule fois à l'arrêt (via <code>wasMoving</code>), au démarrage et à la déconnexion du client.</p>
-
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">standStill() — posture neutre interpolée</span></div>
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">standStill() — retour home en 3 phases sécurisées</span></div>
       <pre><code><span class="kw">void</span> <span class="fn">standStill</span>() {
-  <span class="cmt">// Ramène les 4 genoux au centre avec interpolation ease-in-out
-  // → transition douce sans à-coups, quel que soit leur position actuelle</span>
-  <span class="fn">moveServo</span>(<span class="cn">SERVO_BR_KNEE</span>, <span class="cn">KNEE_MID</span>, <span class="kw">true</span>);
-  <span class="fn">moveServo</span>(<span class="cn">SERVO_BL_KNEE</span>, <span class="cn">KNEE_MID</span>, <span class="kw">true</span>);
-  <span class="fn">moveServo</span>(<span class="cn">SERVO_FR_KNEE</span>, <span class="cn">KNEE_MID</span>, <span class="kw">true</span>);
-  <span class="fn">moveServo</span>(<span class="cn">SERVO_FL_KNEE</span>, <span class="cn">KNEE_MID</span>, <span class="kw">true</span>);
+  gaitStep = <span class="num">0</span>;
 
-  <span class="cmt">// Puis recentre toutes les hanches en même temps (sans interpolation)</span>
-  <span class="fn">centerAllHips</span>();
+  <span class="cmt">// Phase 1 : genoux à mi-course — évite les mouvements brusques
+  // depuis une position de patte potentiellement levée</span>
+  <span class="fn">sendServo</span>(<span class="cn">CH_BR_KNEE</span>, (<span class="cn">TENDU_BR</span> + <span class="cn">PLIE_BR</span>) / <span class="num">2</span>);
+  <span class="fn">sendServo</span>(<span class="cn">CH_BL_KNEE</span>, (<span class="cn">TENDU_BL</span> + <span class="cn">PLIE_BL</span>) / <span class="num">2</span>);
+  <span class="fn">sendServo</span>(<span class="cn">CH_FR_KNEE</span>, (<span class="cn">TENDU_FR</span> + <span class="cn">PLIE_FR</span>) / <span class="num">2</span>);
+  <span class="fn">sendServo</span>(<span class="cn">CH_FL_KNEE</span>, (<span class="cn">TENDU_FL</span> + <span class="cn">PLIE_FL</span>) / <span class="num">2</span>);
+
+  <span class="cmt">// Phase 2 : hanches au centre</span>
+  <span class="fn">sendServo</span>(<span class="cn">CH_BR_HIP</span>, <span class="cn">HOME_BR_HIP</span>);
+  <span class="fn">sendServo</span>(<span class="cn">CH_BL_HIP</span>, <span class="cn">HOME_BL_HIP</span>);
+  <span class="fn">sendServo</span>(<span class="cn">CH_FR_HIP</span>, <span class="cn">HOME_FR_HIP</span>);
+  <span class="fn">sendServo</span>(<span class="cn">CH_FL_HIP</span>, <span class="cn">HOME_FL_HIP</span>);
+
+  <span class="cmt">// Phase 3 : genoux tendus — robot posé sur ses 4 pattes</span>
+  <span class="fn">sendServo</span>(<span class="cn">CH_BR_KNEE</span>, <span class="cn">TENDU_BR</span>);
+  <span class="fn">sendServo</span>(<span class="cn">CH_BL_KNEE</span>, <span class="cn">TENDU_BL</span>);
+  <span class="fn">sendServo</span>(<span class="cn">CH_FR_KNEE</span>, <span class="cn">TENDU_FR</span>);
+  <span class="fn">sendServo</span>(<span class="cn">CH_FL_KNEE</span>, <span class="cn">TENDU_FL</span>);
 }</code></pre>
     </div>
   </div>
 
   <hr class="sep">
 
-  <!-- ── walkForward() ── -->
+  <!-- walkForward() -->
   <div class="fn-section" id="walkforward">
     <div class="fn-header">
-      <div class="fn-number orange">10</div>
+      <div class="fn-number orange">9</div>
       <div class="fn-title">
-        <h2>Marche avant — <span class="fn-name">walkForward()</span></h2>
+        <h2>Trot diagonal — <span class="fn-name">walkForward()</span></h2>
         <div class="tags"><span class="tag pca">PCA9685</span></div>
       </div>
     </div>
 
-    <p>Exécute un cycle complet de marche vers l'avant. L'ordre de déplacement des membres imite la démarche du cheval : <strong>PD → AG → PG → AD</strong> (deux membres diagonaux opposés bougent séquentiellement). Après chaque membre, la fonction vérifie si la commande a changé — si oui, elle s'arrête immédiatement pour réagir rapidement aux ordres du dashboard.</p>
+    <p>Exécute un cycle de trot diagonal vers l'avant en 4 phases. La clé est que <strong>les deux membres d'une paire bougent ensemble</strong> : deux <code>setPWM()</code> consécutifs (genou + hanche) sont envoyés sans attente entre eux, puis un seul <code>waitMove()</code> laisse les 4 servos de la paire atteindre leur cible simultanément.</p>
+
+    <div class="ascii">
+<span class="hl">Paire A = FR (avant droit) + BL (arrière gauche)</span>
+<span class="hl2">Paire B = FL (avant gauche) + BR (arrière droit)</span>
+
+  Phase 0                Phase 1                Phase 2                Phase 3
+  ┌──────────┐           ┌──────────┐           ┌──────────┐           ┌──────────┐
+  │ <span class="hl">A</span> lève   │           │ <span class="hl">A</span> pose   │           │ <span class="hl2">B</span> lève   │           │ <span class="hl2">B</span> pose   │
+  │ et avance│           │ <span class="hl2">B</span> pousse │           │ et avance│           │ <span class="hl">A</span> pousse │
+  │ <span class="hl2">B</span> au sol │           │ (propul) │           │ <span class="hl">A</span> au sol │           │ (propul) │
+  └──────────┘           └──────────┘           └──────────┘           └──────────┘
+  <span class="hl3">4 setPWM()</span>             <span class="hl3">4 setPWM()</span>             <span class="hl3">4 setPWM()</span>             <span class="hl3">4 setPWM()</span>
+  <span class="hl3">waitMove(ms)</span>           <span class="hl3">waitMove(ms)</span>           <span class="hl3">waitMove(ms)</span>           <span class="hl3">waitMove(ms)</span></div>
 
     <div class="code-block">
-      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">walkForward() — ordre de marche cheval PD→AG→PG→AD</span></div>
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">walkForward() — trot diagonal, 4 phases</span></div>
       <pre><code><span class="kw">void</span> <span class="fn">walkForward</span>() {
-  <span class="cmt">// Position avant = HIP_MID + HIP_AMPLITUDE  (= 375 + 70 = 445 ticks)
-  // Position arrière = HIP_MID - HIP_AMPLITUDE (= 375 - 70 = 305 ticks)
-  // Les membres gauches ont les directions inversées pour avancer tous dans le même sens</span>
-  <span class="typ">uint16_t</span> fwd = <span class="cn">HIP_MID</span> + <span class="cn">HIP_AMPLITUDE</span>;  <span class="cmt">// 445</span>
-  <span class="typ">uint16_t</span> bwd = <span class="cn">HIP_MID</span> - <span class="cn">HIP_AMPLITUDE</span>;  <span class="cmt">// 305</span>
+  <span class="typ">unsigned long</span> ms = <span class="fn">moveMs</span>();   <span class="cmt">// 300–800 ms selon speedPct</span>
 
-  <span class="fn">liftMember</span>(<span class="cn">SERVO_BR_HIP</span>, <span class="cn">SERVO_BR_KNEE</span>, fwd);  <span class="cmt">// PD avance → sens "fwd"</span>
-  <span class="kw">if</span> (currentCmd != CMD_FORWARD) <span class="kw">return</span>;           <span class="cmt">// Arrêt immédiat si commande changée</span>
+  <span class="kw">switch</span> (gaitStep) {
 
-  <span class="fn">liftMember</span>(<span class="cn">SERVO_FL_HIP</span>, <span class="cn">SERVO_FL_KNEE</span>, bwd);  <span class="cmt">// AG avance → sens inversé "bwd"</span>
-  <span class="kw">if</span> (currentCmd != CMD_FORWARD) <span class="kw">return</span>;
+    <span class="kw">case</span> <span class="num">0</span>:
+      <span class="cmt">// Paire A (FR+BL) : lever ET avancer simultanément
+      // 4 setPWM() envoyés en ~2.4 ms au total (délai I²C naturel)
+      // puis un seul waitMove() pour les laisser tous arriver</span>
+      <span class="fn">setPWM</span>(<span class="cn">CH_FR_KNEE</span>, <span class="cn">PLIE_FR</span>);           <span class="cmt">// FR genou plié</span>
+      <span class="fn">setPWM</span>(<span class="cn">CH_FR_HIP</span>,  <span class="fn">hipFR</span>(+<span class="cn">HIP_STEP</span>));   <span class="cmt">// FR hanche avance</span>
+      <span class="fn">setPWM</span>(<span class="cn">CH_BL_KNEE</span>, <span class="cn">PLIE_BL</span>);           <span class="cmt">// BL genou plié</span>
+      <span class="fn">setPWM</span>(<span class="cn">CH_BL_HIP</span>,  <span class="fn">hipBL</span>(+<span class="cn">HIP_STEP</span>));   <span class="cmt">// BL hanche avance</span>
+      <span class="fn">waitMove</span>(ms);
+      <span class="kw">break</span>;
 
-  <span class="fn">liftMember</span>(<span class="cn">SERVO_BL_HIP</span>, <span class="cn">SERVO_BL_KNEE</span>, fwd);  <span class="cmt">// PG avance → sens "fwd"</span>
-  <span class="kw">if</span> (currentCmd != CMD_FORWARD) <span class="kw">return</span>;
+    <span class="kw">case</span> <span class="num">1</span>:
+      <span class="cmt">// Paire A pose + Paire B pousse (propulsion vers l'arrière)</span>
+      <span class="fn">setPWM</span>(<span class="cn">CH_FR_KNEE</span>, <span class="cn">TENDU_FR</span>);           <span class="cmt">// FR pose</span>
+      <span class="fn">setPWM</span>(<span class="cn">CH_BL_KNEE</span>, <span class="cn">TENDU_BL</span>);           <span class="cmt">// BL pose</span>
+      <span class="fn">setPWM</span>(<span class="cn">CH_FL_HIP</span>,  <span class="fn">hipFL</span>(-<span class="cn">HIP_STEP</span>));   <span class="cmt">// FL pousse arrière</span>
+      <span class="fn">setPWM</span>(<span class="cn">CH_BR_HIP</span>,  <span class="fn">hipBR</span>(-<span class="cn">HIP_STEP</span>));   <span class="cmt">// BR pousse arrière</span>
+      <span class="fn">waitMove</span>(ms);
+      <span class="kw">break</span>;
 
-  <span class="fn">liftMember</span>(<span class="cn">SERVO_FR_HIP</span>, <span class="cn">SERVO_FR_KNEE</span>, bwd);  <span class="cmt">// AD avance → sens inversé "bwd"</span>
-  <span class="kw">if</span> (currentCmd != CMD_FORWARD) <span class="kw">return</span>;
+    <span class="kw">case</span> <span class="num">2</span>:
+      <span class="cmt">// Paire B (FL+BR) : lever ET avancer simultanément</span>
+      <span class="fn">setPWM</span>(<span class="cn">CH_FL_KNEE</span>, <span class="cn">PLIE_FL</span>);
+      <span class="fn">setPWM</span>(<span class="cn">CH_FL_HIP</span>,  <span class="fn">hipFL</span>(+<span class="cn">HIP_STEP</span>));
+      <span class="fn">setPWM</span>(<span class="cn">CH_BR_KNEE</span>, <span class="cn">PLIE_BR</span>);
+      <span class="fn">setPWM</span>(<span class="cn">CH_BR_HIP</span>,  <span class="fn">hipBR</span>(+<span class="cn">HIP_STEP</span>));
+      <span class="fn">waitMove</span>(ms);
+      <span class="kw">break</span>;
 
-  <span class="fn">centerAllHips</span>();  <span class="cmt">// Recentre pour repartir proprement au prochain cycle</span>
+    <span class="kw">case</span> <span class="num">3</span>:
+      <span class="cmt">// Paire B pose + Paire A pousse</span>
+      <span class="fn">setPWM</span>(<span class="cn">CH_FL_KNEE</span>, <span class="cn">TENDU_FL</span>);
+      <span class="fn">setPWM</span>(<span class="cn">CH_BR_KNEE</span>, <span class="cn">TENDU_BR</span>);
+      <span class="fn">setPWM</span>(<span class="cn">CH_FR_HIP</span>,  <span class="fn">hipFR</span>(-<span class="cn">HIP_STEP</span>));
+      <span class="fn">setPWM</span>(<span class="cn">CH_BL_HIP</span>,  <span class="fn">hipBL</span>(-<span class="cn">HIP_STEP</span>));
+      <span class="fn">waitMove</span>(ms);
+      <span class="kw">break</span>;
+  }
+  gaitStep = (gaitStep + <span class="num">1</span>) % <span class="num">4</span>;
 }</code></pre>
     </div>
 
     <div class="callout info">
-      <div class="callout-title">Pourquoi les membres gauches ont "bwd" pour avancer ?</div>
-      Les servos droits et gauches sont montés en miroir l'un de l'autre. Pour que tous les membres avancent dans la même direction (vers l'avant du robot), les hanches gauches doivent tourner dans le sens opposé aux hanches droites.
+      <div class="callout-title">Pourquoi genou ET hanche en même temps ?</div>
+      Dans les versions précédentes, le genou et la hanche bougeaient séparément (genou d'abord, puis hanche), ce qui donnait un mouvement saccadé peu naturel. En les commandant ensemble — genou plié + hanche avancée dans la même phase — la patte décrit une trajectoire courbe plus naturelle et le robot avance réellement au lieu de juste balancer ses membres.
     </div>
   </div>
 
   <hr class="sep">
 
-  <!-- ── walkBackward() ── -->
+  <!-- walkBackward() -->
   <div class="fn-section" id="walkbackward">
     <div class="fn-header">
-      <div class="fn-number orange">11</div>
+      <div class="fn-number orange">10</div>
       <div class="fn-title">
-        <h2>Marche arrière — <span class="fn-name">walkBackward()</span></h2>
+        <h2>Trot arrière — <span class="fn-name">walkBackward()</span></h2>
         <div class="tags"><span class="tag pca">PCA9685</span></div>
       </div>
     </div>
 
-    <p>Même ordre de membres que <code>walkForward()</code>, mais les cibles de hanche sont inversées : ce qui était <code>fwd</code> devient <code>bwd</code> et vice-versa.</p>
+    <p>Même structure en 4 phases que <code>walkForward()</code>, mais les deltas de hanche sont inversés : <code>+HIP_STEP</code> devient <code>-HIP_STEP</code> et vice versa. Les genoux plient et tendent dans le même ordre.</p>
 
     <div class="code-block">
-      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">walkBackward() — directions hanches inversées</span></div>
-      <pre><code><span class="kw">void</span> <span class="fn">walkBackward</span>() {
-  <span class="typ">uint16_t</span> fwd = <span class="cn">HIP_MID</span> + <span class="cn">HIP_AMPLITUDE</span>;
-  <span class="typ">uint16_t</span> bwd = <span class="cn">HIP_MID</span> - <span class="cn">HIP_AMPLITUDE</span>;
-
-  <span class="cmt">// Directions inversées par rapport à walkForward() → recule</span>
-  <span class="fn">liftMember</span>(<span class="cn">SERVO_BR_HIP</span>, <span class="cn">SERVO_BR_KNEE</span>, bwd);
-  <span class="kw">if</span> (currentCmd != CMD_BACKWARD) <span class="kw">return</span>;
-
-  <span class="fn">liftMember</span>(<span class="cn">SERVO_FL_HIP</span>, <span class="cn">SERVO_FL_KNEE</span>, fwd);
-  <span class="kw">if</span> (currentCmd != CMD_BACKWARD) <span class="kw">return</span>;
-
-  <span class="fn">liftMember</span>(<span class="cn">SERVO_BL_HIP</span>, <span class="cn">SERVO_BL_KNEE</span>, bwd);
-  <span class="kw">if</span> (currentCmd != CMD_BACKWARD) <span class="kw">return</span>;
-
-  <span class="fn">liftMember</span>(<span class="cn">SERVO_FR_HIP</span>, <span class="cn">SERVO_FR_KNEE</span>, fwd);
-  <span class="kw">if</span> (currentCmd != CMD_BACKWARD) <span class="kw">return</span>;
-
-  <span class="fn">centerAllHips</span>();
-}</code></pre>
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">walkBackward() — deltas de hanche inversés</span></div>
+      <pre><code><span class="kw">case</span> <span class="num">0</span>:
+  <span class="fn">setPWM</span>(<span class="cn">CH_FR_KNEE</span>, <span class="cn">PLIE_FR</span>);
+  <span class="fn">setPWM</span>(<span class="cn">CH_FR_HIP</span>,  <span class="fn">hipFR</span>(-<span class="cn">HIP_STEP</span>));  <span class="cmt">// ← inversé vs walkForward</span>
+  <span class="fn">setPWM</span>(<span class="cn">CH_BL_KNEE</span>, <span class="cn">PLIE_BL</span>);
+  <span class="fn">setPWM</span>(<span class="cn">CH_BL_HIP</span>,  <span class="fn">hipBL</span>(-<span class="cn">HIP_STEP</span>));  <span class="cmt">// ← inversé</span>
+  <span class="fn">waitMove</span>(ms);
+  <span class="kw">break</span>;
+<span class="cmt">// ... (phases 1-3 symétrique)</span></code></pre>
     </div>
   </div>
 
   <hr class="sep">
 
-  <!-- ── walkLeft() / walkRight() ── -->
-  <div class="fn-section" id="walkleft">
-    <div class="fn-header">
-      <div class="fn-number orange">12</div>
-      <div class="fn-title">
-        <h2>Virages — <span class="fn-name">walkLeft()</span> / <span class="fn-name">walkRight()</span></h2>
-        <div class="tags"><span class="tag pca">PCA9685</span></div>
-      </div>
-    </div>
-
-    <p>Les virages utilisent une <strong>différence d'amplitude</strong> entre les membres d'un côté et de l'autre : le côté qui avance fort fait pivoter le robot. Les membres droits avancent de <code>HIP_AMPLITUDE</code> (fort) et les membres gauches de <code>HIP_AMPLITUDE / 3</code> (faible) pour virer à gauche — et inversement pour virer à droite.</p>
-
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">walkLeft() — membres droits avancent fort, gauches peu</span></div>
-      <pre><code><span class="kw">void</span> <span class="fn">walkLeft</span>() {
-  <span class="typ">uint16_t</span> strongFwd = <span class="cn">HIP_MID</span> + <span class="cn">HIP_AMPLITUDE</span>;        <span class="cmt">// 445 — grand pas</span>
-  <span class="typ">uint16_t</span> weakFwd   = <span class="cn">HIP_MID</span> + <span class="cn">HIP_AMPLITUDE</span> / <span class="num">3</span>;    <span class="cmt">// 398 — petit pas</span>
-  <span class="typ">uint16_t</span> strongBwd = <span class="cn">HIP_MID</span> - <span class="cn">HIP_AMPLITUDE</span>;        <span class="cmt">// 305</span>
-  <span class="typ">uint16_t</span> weakBwd   = <span class="cn">HIP_MID</span> - <span class="cn">HIP_AMPLITUDE</span> / <span class="num">3</span>;    <span class="cmt">// 352</span>
-
-  <span class="fn">liftMember</span>(<span class="cn">SERVO_BR_HIP</span>, <span class="cn">SERVO_BR_KNEE</span>, strongFwd); <span class="cmt">// PD avance fort → pousse à gauche</span>
-  <span class="kw">if</span> (currentCmd != CMD_LEFT) <span class="kw">return</span>;
-
-  <span class="fn">liftMember</span>(<span class="cn">SERVO_FL_HIP</span>, <span class="cn">SERVO_FL_KNEE</span>, weakBwd);   <span class="cmt">// AG avance peu</span>
-  <span class="kw">if</span> (currentCmd != CMD_LEFT) <span class="kw">return</span>;
-
-  <span class="fn">liftMember</span>(<span class="cn">SERVO_BL_HIP</span>, <span class="cn">SERVO_BL_KNEE</span>, strongFwd); <span class="cmt">// PG avance fort → pousse à gauche</span>
-  <span class="kw">if</span> (currentCmd != CMD_LEFT) <span class="kw">return</span>;
-
-  <span class="fn">liftMember</span>(<span class="cn">SERVO_FR_HIP</span>, <span class="cn">SERVO_FR_KNEE</span>, weakBwd);   <span class="cmt">// AD avance peu</span>
-  <span class="kw">if</span> (currentCmd != CMD_LEFT) <span class="kw">return</span>;
-
-  <span class="fn">centerAllHips</span>();
-}
-
-<span class="kw">void</span> <span class="fn">walkRight</span>() {
-  <span class="typ">uint16_t</span> strongFwd = <span class="cn">HIP_MID</span> + <span class="cn">HIP_AMPLITUDE</span>;
-  <span class="typ">uint16_t</span> weakBwd   = <span class="cn">HIP_MID</span> - <span class="cn">HIP_AMPLITUDE</span> / <span class="num">3</span>;
-  <span class="typ">uint16_t</span> strongBwd = <span class="cn">HIP_MID</span> - <span class="cn">HIP_AMPLITUDE</span>;
-  <span class="typ">uint16_t</span> weakFwd   = <span class="cn">HIP_MID</span> + <span class="cn">HIP_AMPLITUDE</span> / <span class="num">3</span>;
-
-  <span class="cmt">// Inverse des rôles par rapport à walkLeft() : membres gauches avancent fort</span>
-  <span class="fn">liftMember</span>(<span class="cn">SERVO_BR_HIP</span>, <span class="cn">SERVO_BR_KNEE</span>, weakFwd);
-  <span class="kw">if</span> (currentCmd != CMD_RIGHT) <span class="kw">return</span>;
-
-  <span class="fn">liftMember</span>(<span class="cn">SERVO_FL_HIP</span>, <span class="cn">SERVO_FL_KNEE</span>, strongBwd);
-  <span class="kw">if</span> (currentCmd != CMD_RIGHT) <span class="kw">return</span>;
-
-  <span class="fn">liftMember</span>(<span class="cn">SERVO_BL_HIP</span>, <span class="cn">SERVO_BL_KNEE</span>, weakFwd);
-  <span class="kw">if</span> (currentCmd != CMD_RIGHT) <span class="kw">return</span>;
-
-  <span class="fn">liftMember</span>(<span class="cn">SERVO_FR_HIP</span>, <span class="cn">SERVO_FR_KNEE</span>, strongBwd);
-  <span class="kw">if</span> (currentCmd != CMD_RIGHT) <span class="kw">return</span>;
-
-  <span class="fn">centerAllHips</span>();
-}</code></pre>
-    </div>
-  </div>
-
-  <hr class="sep">
-
-  <!-- ── readMQ9() ── -->
+  <!-- readMQ9() -->
   <div class="fn-section" id="readmq9">
     <div class="fn-header">
-      <div class="fn-number purple">13</div>
+      <div class="fn-number purple">11</div>
       <div class="fn-title">
-        <h2>Lecture du capteur gaz — <span class="fn-name">readMQ9()</span></h2>
+        <h2>Capteur gaz — <span class="fn-name">readMQ9()</span></h2>
         <div class="tags"><span class="tag mq">MQ-9 ADC</span></div>
       </div>
     </div>
 
-    <p>Lit les deux sorties du module MQ-9 et calcule une estimation en ppm de CO. Le calcul suit la courbe caractéristique de la datasheet du MQ-9, modélisée par une loi puissance <strong>log-log</strong>.</p>
+    <p>Lit les deux sorties du module MQ-9 et calcule une estimation en ppm de CO via la loi puissance log-log de la datasheet. Sur ESP32-S3, l'ADC2 est utilisable avec le WiFi actif (contrairement à l'ESP32 classique).</p>
 
     <div class="code-block">
-      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">readMQ9() — lecture ADC et calcul ppm CO</span></div>
+      <div class="code-header"><span class="code-lang">C++</span><span class="code-desc">readMQ9() — lecture ADC + calcul ppm CO</span></div>
       <pre><code><span class="typ">SensorData</span> <span class="fn">readMQ9</span>() {
   <span class="typ">SensorData</span> d;
+  d.raw   = <span class="fn">analogRead</span>(<span class="cn">MQ9_ANALOG_PIN</span>);     <span class="cmt">// 0–4095, GPIO4</span>
+  d.alert = (<span class="fn">digitalRead</span>(<span class="cn">MQ9_DIGITAL_PIN</span>) == LOW); <span class="cmt">// GPIO5</span>
 
-  <span class="cmt">// ── Lecture analogique (GPIO34, ADC1) ─────────────────────────────────
-  // analogRead() retourne 0–4095 (résolution 12 bits de l'ESP32)
-  // GPIO34 est sur ADC1 → compatible avec le WiFi actif (ADC2 ne l'est pas)</span>
-  d.raw = <span class="fn">analogRead</span>(<span class="cn">MQ9_ANALOG_PIN</span>);
+  d.voltage = (d.raw / <span class="cn">ADC_MAX</span>) * <span class="cn">VCC_V</span>;   <span class="cmt">// 0–3.3 V</span>
 
-  <span class="cmt">// ── Lecture digitale (GPIO32) ─────────────────────────────────────────
-  // LOW = le comparateur interne du module a détecté un dépassement de seuil
-  // Le seuil est réglable via le potentiomètre bleu du module MQ-9</span>
-  d.alert = <span class="fn">digitalRead</span>(<span class="cn">MQ9_DIGITAL_PIN</span>) == LOW;
+  <span class="cmt">// RS = résistance interne du capteur (pont diviseur avec RL=10kΩ)</span>
+  d.rs = (d.voltage > <span class="num">0.01f</span>) ? <span class="cn">RL_VALUE</span> * (<span class="cn">VCC_V</span> - d.voltage) / d.voltage : <span class="num">0.0f</span>;
 
-  <span class="cmt">// ── Conversion en volts (ADC 12 bits, 0–3.3 V) ───────────────────────</span>
-  d.voltage = (d.raw / <span class="cn">ADC_MAX</span>) * <span class="cn">VCC</span>;   <span class="cmt">// ADC_MAX=4095, VCC=3.3</span>
+  <span class="cmt">// ratio RS/RO — entrée de la courbe datasheet (RO = résistance en air pur)</span>
+  d.ratio = (RO > <span class="num">0.0f</span>) ? d.rs / <span class="cn">RO</span> : <span class="num">0.0f</span>;
 
-  <span class="cmt">// ── Calcul de RS (résistance interne du capteur) ──────────────────────
-  // Le module MQ-9 est un pont diviseur : VCC — RS — Vout — RL — GND
-  // D'où : RS = RL × (VCC − Vout) / Vout
-  // RL_VALUE = 10 kΩ (valeur typique sur les modules)</span>
-  d.rs = (d.voltage > <span class="num">0.01f</span>) ? <span class="cn">RL_VALUE</span> * (<span class="cn">VCC</span> - d.voltage) / d.voltage : <span class="num">0</span>;
-
-  <span class="cmt">// ── Ratio RS/RO ───────────────────────────────────────────────────────
-  // RO = résistance dans l'air pur (à calibrer, défaut = 10 kΩ)
-  // Plus le ratio est faible, plus la concentration de gaz est élevée</span>
-  d.ratio = d.rs / <span class="cn">RO</span>;
-
-  <span class="cmt">// ── Estimation CO en ppm (courbe datasheet MQ-9) ─────────────────────
-  // La datasheet donne une droite log-log → ppm = a × (RS/RO)^b
-  // Pour le CO : a=599.65, b=-2.244 (ajustés depuis la courbe graphique)</span>
-  d.ppm = (d.ratio > <span class="num">0</span>) ? <span class="num">599.65f</span> * <span class="fn">pow</span>(d.ratio, -<span class="num">2.244f</span>) : <span class="num">0</span>;
+  <span class="cmt">// Loi puissance datasheet MQ-9 pour le CO : ppm = 599.65 × (RS/RO)^−2.244</span>
+  d.ppm = (d.ratio > <span class="num">0.0f</span>) ? <span class="num">599.65f</span> * <span class="fn">powf</span>(d.ratio, -<span class="num">2.244f</span>) : <span class="num">0.0f</span>;
 
   <span class="kw">return</span> d;
 }</code></pre>
     </div>
 
     <div class="callout warn">
-      <div class="callout-title">Calibration obligatoire — la valeur RO</div>
-      La constante <code>RO</code> (résistance dans l'air pur) varie d'un capteur à l'autre. Pour calibrer : laisse le MQ-9 chauffer <strong>5 minutes en air pur</strong>, relève la valeur de <code>d.rs</code> dans le moniteur série, et remplace <code>RO = 10.0</code> par cette valeur mesurée. Sans calibration, les ppm sont indicatives seulement.
+      <div class="callout-title">Calibration RO obligatoire</div>
+      La constante <code>RO = 10.0</code> est la résistance du capteur en air pur. Elle varie d'un module à l'autre. Pour calibrer : laissez chauffer 5 minutes en air pur, relevez la valeur de <code>rs</code> dans le moniteur série, et remplacez <code>RO</code> par cette valeur. Sans calibration, les ppm sont indicatives uniquement.
     </div>
 
     <table>
       <thead><tr><th>Variable</th><th>Unité</th><th>Description</th></tr></thead>
       <tbody>
-        <tr><td><code>raw</code></td><td>0 – 4095</td><td>Valeur brute ADC 12 bits</td></tr>
-        <tr><td><code>voltage</code></td><td>V</td><td>Tension en sortie du capteur (0–3.3 V)</td></tr>
-        <tr><td><code>rs</code></td><td>kΩ</td><td>Résistance interne du capteur (varie avec le gaz)</td></tr>
+        <tr><td><code>raw</code></td><td>0–4095</td><td>Valeur brute ADC 12 bits</td></tr>
+        <tr><td><code>voltage</code></td><td>V</td><td>Tension capteur (0–3.3 V)</td></tr>
+        <tr><td><code>rs</code></td><td>kΩ</td><td>Résistance interne — varie avec le gaz</td></tr>
         <tr><td><code>ratio</code></td><td>—</td><td>RS/RO — entrée de la courbe datasheet</td></tr>
-        <tr><td><code>ppm</code></td><td>ppm</td><td>Estimation CO par la loi puissance datasheet</td></tr>
-        <tr><td><code>alert</code></td><td>bool</td><td>Dépassement du seuil digital (potentiomètre du module)</td></tr>
+        <tr><td><code>ppm</code></td><td>ppm</td><td>Estimation CO par loi puissance</td></tr>
+        <tr><td><code>alert</code></td><td>bool</td><td>Dépassement du seuil digital (potentiomètre module)</td></tr>
       </tbody>
     </table>
   </div>
 
   <hr class="sep">
 
-  <!-- ── Flux complet ── -->
+  <!-- Flux complet -->
   <div class="fn-section" id="flux">
     <h2 style="font-size:1.3rem;margin-bottom:1.5rem">Flux complet — du clic au servo</h2>
 
     <div class="ascii">
-<span class="hl">DASHBOARD (navigateur)</span>                    <span class="hl2">ESP32 (firmware C++)</span>
+<span class="hl">DASHBOARD (navigateur)</span>                    <span class="hl2">ESP32-S3 (firmware C++)</span>
 
 Appui flèche ↑
-  startCmd('forward')
   sendCmd('forward')
-    ws.send({"type":"cmd",                ──► <span class="hl2">onWsEvent()</span>
-             "cmd":"forward",                   deserializeJson()
-             "speed":50})                       currentCmd = CMD_FORWARD
+    ws.send({&quot;type&quot;:&quot;cmd&quot;,                ──► <span class="hl2">onWsEvent()</span>
+             &quot;cmd&quot;:&quot;forward&quot;,                   deserializeJson()
+             &quot;speed&quot;:50})                        pendingCmd = CMD_FORWARD
 
                                           loop()
-                                            switch(CMD_FORWARD)
-                                              wasMoving = true
-                                              <span class="hl2">walkForward()</span>
-                                                liftMember(BR_HIP, BR_KNEE, 445)
-                                                  <span class="hl3">moveServo(knee, kneeUp)</span>
-                                                    ×20 : setPWM + delay(30ms)
-                                                          wsServer.loop() ← réseau OK
-                                                  <span class="hl3">moveServo(hip, 445)</span>
-                                                    ×20 : setPWM + delay(30ms)
-                                                  <span class="hl3">moveServo(knee, KNEE_MID)</span>
-                                                    ×20 : setPWM + delay(30ms)
-                                                liftMember(FL_HIP, FL_KNEE, 305)
-                                                ...
-                                                centerAllHips()
+                                            cmd != currentCmd → transition
+                                            currentCmd = CMD_FORWARD
+                                            gaitStep = 0
+                                            <span class="hl2">walkForward()</span>
+                                              case 0:
+                                                <span class="hl3">setPWM(FR_KNEE, PLIE_FR)</span>    ~600µs
+                                                <span class="hl3">setPWM(FR_HIP,  hipFR(+75))</span> ~600µs
+                                                <span class="hl3">setPWM(BL_KNEE, PLIE_BL)</span>    ~600µs
+                                                <span class="hl3">setPWM(BL_HIP,  hipBL(+75))</span> ~600µs
+                                                <span class="hl2">waitMove(ms)</span>
+                                                  loop : wsServer.loop() / 5ms
+                                              case 1: pose A + pousse B ...
+                                              case 2: lève B ...
+                                              case 3: pose B + pousse A ...
+                                              gaitStep = (step+1) % 4
 
 Relâche flèche
-  stopCmd()
   sendCmd('stop')
-    ws.send({"type":"cmd",                ──► <span class="hl2">onWsEvent()</span>
-             "cmd":"stop"})                     currentCmd = CMD_STOP
-                                          ↓
-                                      walkForward() voit currentCmd != CMD_FORWARD
-                                        → return immédiat
-                                          ↓
-                                      loop() : wasMoving=true → <span class="hl2">standStill()</span>
-                                        moveServo(BR_KNEE, KNEE_MID) × 4 genoux
-                                        centerAllHips()
-                                        wasMoving = false
+    ws.send({&quot;type&quot;:&quot;cmd&quot;,                ──► <span class="hl2">onWsEvent()</span>
+             &quot;cmd&quot;:&quot;stop&quot;})                      pendingCmd = CMD_STOP
+                                          loop()
+                                            cmd != currentCmd
+                                            cmd == STOP + wasMoving
+                                            → <span class="hl2">standStill()</span>  (12 sendServo)
+                                            wasMoving = false
 
-                                          ↓
   ws.onmessage → updateSensors()  ◄──  toutes les 2 s : <span class="hl4">readMQ9()</span> → broadcastTXT()</div>
 
-    <p style="margin-top:1.5rem"><strong>Résumé des fonctions :</strong></p>
     <table>
       <thead><tr><th>Fonction</th><th>Tag</th><th>Rôle</th></tr></thead>
       <tbody>
-        <tr><td><code>setup()</code></td><td><span class="tag ws">WS</span> <span class="tag pca">PCA</span></td><td>Initialise GPIO, curPos[], PCA9685, WiFi, serveurs</td></tr>
-        <tr><td><code>loop()</code></td><td><span class="tag ws">WS</span> <span class="tag pca">PCA</span> <span class="tag mq">MQ9</span></td><td>Switch sur currentCmd, envoi MQ-9 toutes les 2 s</td></tr>
-        <tr><td><code>onWsEvent()</code></td><td><span class="tag ws">WS</span></td><td>Reçoit et route les messages JSON du dashboard</td></tr>
-        <tr><td><code>rawPWM()</code></td><td><span class="tag pca">PCA</span></td><td>Envoi direct (sans interpolation) avec borne mécanique</td></tr>
-        <tr><td><code>moveServo()</code></td><td><span class="tag pca">PCA</span></td><td>Interpolation ease-in-out cubique en INTERP_STEPS pas</td></tr>
-        <tr><td><code>liftMember()</code></td><td><span class="tag pca">PCA</span></td><td>Lève un membre en 3 phases : genou↑ → hanche → genou↓</td></tr>
-        <tr><td><code>centerAllHips()</code></td><td><span class="tag pca">PCA</span></td><td>Recentre les 4 hanches simultanément (rawPWM)</td></tr>
-        <tr><td><code>standStill()</code></td><td><span class="tag pca">PCA</span></td><td>Posture neutre : 4 genoux + 4 hanches au centre</td></tr>
-        <tr><td><code>walkForward()</code></td><td><span class="tag pca">PCA</span></td><td>Cycle de marche avant — ordre cheval PD→AG→PG→AD</td></tr>
-        <tr><td><code>walkBackward()</code></td><td><span class="tag pca">PCA</span></td><td>Même ordre, directions inversées</td></tr>
-        <tr><td><code>walkLeft()</code></td><td><span class="tag pca">PCA</span></td><td>Virage gauche — membres droits avancent fort</td></tr>
-        <tr><td><code>walkRight()</code></td><td><span class="tag pca">PCA</span></td><td>Virage droite — membres gauches avancent fort</td></tr>
-        <tr><td><code>readMQ9()</code></td><td><span class="tag mq">MQ9</span></td><td>Lit ADC, calcule RS, ratio, ppm CO, alerte digitale</td></tr>
-        <tr><td><code>broadcastTXT()</code></td><td><span class="tag net">NET</span></td><td>Sérialise et diffuse le JSON capteur à tous les clients</td></tr>
+        <tr><td><code>setup()</code></td><td><span class="tag pca">PCA</span> <span class="tag net">NET</span></td><td>Init GPIO, PCA9685 (25 MHz/50 Hz), 12 servos home, WiFi</td></tr>
+        <tr><td><code>loop()</code></td><td><span class="tag ws">WS</span> <span class="tag pca">PCA</span> <span class="tag mq">MQ9</span></td><td>Pompe réseau, détecte transitions, appelle walkXxx()</td></tr>
+        <tr><td><code>onWsEvent()</code></td><td><span class="tag ws">WS</span></td><td>Décode JSON : ping/cmd/cal → met à jour pendingCmd</td></tr>
+        <tr><td><code>setPWM()</code></td><td><span class="tag pca">PCA</span></td><td>Envoi immédiat I²C, mémorise la position</td></tr>
+        <tr><td><code>waitMove()</code></td><td><span class="tag pca">PCA</span> <span class="tag ws">WS</span></td><td>Attente non-bloquante avec pompage WebSocket toutes les 5 ms</td></tr>
+        <tr><td><code>sendServo()</code></td><td><span class="tag pca">PCA</span></td><td>setPWM + waitMove(300) — init et standStill uniquement</td></tr>
+        <tr><td><code>standStill()</code></td><td><span class="tag pca">PCA</span></td><td>Retour home en 3 phases : genoux mi-course → hanches → genoux tendus</td></tr>
+        <tr><td><code>walkForward()</code></td><td><span class="tag pca">PCA</span></td><td>Trot diagonal avant — 4 phases, paires FR+BL et FL+BR</td></tr>
+        <tr><td><code>walkBackward()</code></td><td><span class="tag pca">PCA</span></td><td>Trot diagonal arrière — mêmes phases, deltas inversés</td></tr>
+        <tr><td><code>hipBR/BL/FR/FL()</code></td><td><span class="tag pca">PCA</span></td><td>Calcule la position hanche avec direction + constrain mécanique</td></tr>
+        <tr><td><code>readMQ9()</code></td><td><span class="tag mq">MQ9</span></td><td>ADC → tension → RS → ratio → ppm CO (loi puissance datasheet)</td></tr>
       </tbody>
     </table>
   </div>
